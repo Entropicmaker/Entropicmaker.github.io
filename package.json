@@ -13,7 +13,7 @@
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.8",
+    "@astrojs/mdx": "^7.0.3",
     "@astrojs/rss": "^4.0.14",
     "@astrojs/sitemap": "^3.6.0",
     "astro": "^5.16.6",
