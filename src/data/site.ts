@@ -3,8 +3,8 @@ export const siteConfig = {
   shortName: '选择性失忆',
   title: '选择性失忆',
   description: '自然地理专业学生，关注遥感、GIS、空间数据工程和GeoAI',
-  author: '自然地理专业学生',
-  email: 'LinCooper42@outlook.com',
+  author: '选择性失忆',
+  email: '163517493+Entropicmaker@users.noreply.github.com',
   github: 'https://github.com/Entropicmaker',
   intro: '自然地理专业学生，关注遥感、GIS、空间数据工程和GeoAI',
   about: '自然地理专业学生，关注遥感、GIS、空间数据工程和GeoAI'
