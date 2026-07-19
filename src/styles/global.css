@@ -329,8 +329,8 @@ main {
 .avatar-panel {
   position: relative;
   display: grid;
+  width: min(100%, 360px);
   aspect-ratio: 0.9;
-  max-width: 360px;
   place-items: center;
   justify-self: end;
   overflow: hidden;
@@ -339,29 +339,26 @@ main {
   background: linear-gradient(145deg, var(--ocean-soft), var(--green-soft));
 }
 
-.avatar-panel::before,
-.avatar-panel::after {
-  position: absolute;
-  border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
-  border-radius: 50%;
-  content: '';
-}
-
-.avatar-panel::before {
-  width: 260px;
-  height: 260px;
-}
-
-.avatar-panel::after {
-  width: 180px;
-  height: 180px;
-}
-
-.avatar-initial {
-  z-index: 1;
-  font-family: var(--font-serif);
-  font-size: 96px;
+.avatar-symbol {
+  width: 64%;
+  height: auto;
   color: var(--ocean);
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.avatar-marker {
+  fill: var(--surface);
+  stroke: var(--green);
+  stroke-width: 3;
+}
+
+.avatar-marker-dot {
+  fill: var(--green);
+  stroke: none;
 }
 
 .coordinate-label {

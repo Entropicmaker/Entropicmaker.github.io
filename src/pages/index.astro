@@ -39,8 +39,17 @@ const counts = Object.fromEntries(
         <a class="button secondary" href={withBase('/about/')}>认识作者</a>
       </div>
     </div>
-    <div class="avatar-panel" role="img" aria-label="个人头像占位区，可在站点配置中替换">
-      <span class="avatar-initial">忘</span>
+    <div class="avatar-panel" role="img" aria-label="由经纬网与定位标记组成的个人头像占位图标">
+      <svg class="avatar-symbol" viewBox="0 0 160 160" aria-hidden="true" focusable="false">
+        <circle cx="80" cy="80" r="54"></circle>
+        <ellipse cx="80" cy="80" rx="25" ry="54"></ellipse>
+        <path d="M28 64h104M28 96h104M80 26v108"></path>
+        <path
+          class="avatar-marker"
+          d="M80 48c-11 0-20 8.8-20 19.7 0 15.2 20 35.3 20 35.3s20-20.1 20-35.3C100 56.8 91 48 80 48Z"
+        ></path>
+        <circle class="avatar-marker-dot" cx="80" cy="68" r="7"></circle>
+      </svg>
       <div class="coordinate-label"><span>31.2304° N</span><span>121.4737° E</span></div>
     </div>
   </section>
