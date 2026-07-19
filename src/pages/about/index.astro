@@ -1,0 +1,43 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { siteConfig } from '../../data/site';
+---
+
+<PageLayout
+  title="关于我"
+  description="一名地理科学学生，以及这个知识博客为何存在。"
+  eyebrow="About This Atlas"
+>
+  <div class="about-grid">
+    <section class="about-card">
+      <h2>你好，我是{siteConfig.author}</h2>
+      <p>{siteConfig.about}</p>
+      <p>
+        我希望这里不是资料堆积处，而是一张能够反复返回、持续校正的知识地图。文章会优先说明问题背景、数据条件、方法选择与适用边界。
+      </p>
+    </section>
+    <section class="about-card">
+      <h2>写作原则</h2>
+      <ol class="principle-list">
+        <li>尽量给出可复现的步骤与关键参数。</li>
+        <li>区分事实、经验判断与尚未验证的假设。</li>
+        <li>为图片、数据和引用保留清晰来源。</li>
+        <li>在更新文章时记录实质性变化。</li>
+      </ol>
+    </section>
+    <section class="about-card">
+      <h2>关注方向</h2>
+      <p>
+        GIS
+        与空间分析、遥感数据处理、空间数据工程、地理可视化、GeoAI，以及它们背后的编程与算法基础。
+      </p>
+    </section>
+    <section class="about-card">
+      <h2>联系与使用</h2>
+      <p>
+        可通过 <a href={siteConfig.github} target="_blank" rel="me noopener">GitHub</a> 查看公开项目。示例邮箱为
+        <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>，发布前请在站点配置中替换。
+      </p>
+    </section>
+  </div>
+</PageLayout>

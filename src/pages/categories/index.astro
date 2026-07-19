@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import CategoryCard from '../../components/CategoryCard.astro';
+import { categories } from '../../data/categories';
+import { getPublishedPosts } from '../../utils/posts';
+
+const posts = getPublishedPosts(await getCollection('posts'));
+---
+
+<PageLayout
+  title="分类总览"
+  description="用一级分类确定文章的主要知识坐标，再用子分类与标签建立横向联系。"
+  eyebrow="Three Coordinates"
+>
+  <div class="category-grid">
+    {
+      categories.map((category) => (
+        <CategoryCard
+          category={category}
+          count={posts.filter((post) => post.data.category === category.id).length}
+        />
+      ))
+    }
+  </div>
+</PageLayout>

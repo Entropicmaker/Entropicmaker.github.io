@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { categories } from '../../data/categories';
+import { getPublishedPosts } from '../../utils/posts';
+import { withBase } from '../../utils/site';
+
+const posts = getPublishedPosts(await getCollection('posts'));
+---
+
+<PageLayout
+  title="全部文章"
+  description={`共 ${posts.length} 篇公开文章。按时间浏览地理、计算与交叉研究笔记。`}
+  eyebrow="All Notes"
+>
+  <div class="content-with-aside">
+    <div class="post-grid">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+    <aside class="filter-aside" aria-label="按分类筛选">
+      <h2>按知识坐标筛选</h2>
+      <ul>
+        {
+          categories.map((category) => (
+            <li>
+              <a href={withBase(`/categories/${category.id}/`)}>
+                <span>{category.name}</span>
+                <span>{posts.filter((post) => post.data.category === category.id).length}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </aside>
+  </div>
+</PageLayout>

@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getAllTags, getPublishedPosts, tagToSlug, type Post } from '../../utils/posts';
+
+export async function getStaticPaths() {
+  const posts = getPublishedPosts(await getCollection('posts'));
+  return getAllTags(posts).map((tag) => ({
+    params: { tag: tagToSlug(tag.name) },
+    props: { tag: tag.name, posts: posts.filter((post) => post.data.tags.includes(tag.name)) }
+  }));
+}
+
+interface Props {
+  tag: string;
+  posts: Post[];
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`标签：${tag}`} description={`包含“${tag}”标签的 ${posts.length} 篇文章。`}>
+  <div class="shell page-shell">
+    <Breadcrumb items={[{ label: '标签', href: '/tags/' }, { label: tag }]} />
+    <header class="page-heading">
+      <p class="eyebrow">Topic Index</p>
+      <h1>#{tag}</h1>
+      <p>共 {posts.length} 篇文章。</p>
+    </header>
+    <div class="post-grid">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </div>
+</BaseLayout>

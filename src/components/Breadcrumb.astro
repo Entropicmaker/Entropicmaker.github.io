@@ -1,0 +1,32 @@
+---
+import { withBase } from '../utils/site';
+
+interface Item {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="面包屑导航">
+  <ol>
+    <li><a href={withBase('/')}>首页</a></li>
+    {
+      items.map((item, index) => (
+        <li>
+          <span aria-hidden="true">/</span>
+          {item.href && index < items.length - 1 ? (
+            <a href={withBase(item.href)}>{item.label}</a>
+          ) : (
+            <span aria-current={index === items.length - 1 ? 'page' : undefined}>{item.label}</span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

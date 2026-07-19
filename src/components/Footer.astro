@@ -1,0 +1,23 @@
+---
+import { siteConfig } from '../data/site';
+import { withBase } from '../utils/site';
+---
+
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <div>
+      <a class="brand footer-brand" href={withBase('/')}>⌖ {siteConfig.name}</a>
+      <p>{siteConfig.intro}</p>
+    </div>
+    <div class="footer-links" aria-label="页脚导航">
+      <a href={withBase('/rss.xml')}>RSS</a>
+      <a href={withBase('/archive/')}>归档</a>
+      <a href={withBase('/about/')}>关于</a>
+      <a href={siteConfig.github} rel="me noopener" target="_blank">GitHub</a>
+    </div>
+  </div>
+  <div class="shell footer-bottom">
+    <span>© {new Date().getFullYear()} {siteConfig.author}</span>
+    <span>以 Astro 构建 · 部署于 GitHub Pages</span>
+  </div>
+</footer>

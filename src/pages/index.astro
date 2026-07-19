@@ -1,0 +1,143 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import PostCard from '../components/PostCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { categories } from '../data/categories';
+import { projects } from '../data/projects';
+import { siteConfig } from '../data/site';
+import {
+  formatDate,
+  getAllTags,
+  getPostUrl,
+  getPublishedPosts,
+  getReadingTime,
+  tagToSlug
+} from '../utils/posts';
+import { withBase } from '../utils/site';
+
+const posts = getPublishedPosts(await getCollection('posts'));
+const featured = posts.find((post) => post.data.featured) ?? posts[0];
+const latest = posts.filter((post) => post.id !== featured?.id).slice(0, 4);
+const tags = getAllTags(posts).slice(0, 12);
+const counts = Object.fromEntries(
+  categories.map((category) => [
+    category.id,
+    posts.filter((post) => post.data.category === category.id).length
+  ])
+);
+---
+
+<BaseLayout>
+  <section class="hero shell">
+    <div class="hero-copy">
+      <h1>选择性失忆的博客</h1>
+      <p>{siteConfig.about}</p>
+      <div class="hero-actions">
+        <a class="button" href={withBase('/posts/')}>开始阅读</a>
+        <a class="button secondary" href={withBase('/about/')}>认识作者</a>
+      </div>
+    </div>
+    <div class="avatar-panel" role="img" aria-label="个人头像占位区，可在站点配置中替换">
+      <span class="avatar-initial">忘</span>
+      <div class="coordinate-label"><span>31.2304° N</span><span>121.4737° E</span></div>
+    </div>
+  </section>
+
+  <section class="section shell" aria-labelledby="category-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Knowledge Coordinates</p>
+        <h2 id="category-title">三个知识坐标</h2>
+      </div>
+      <a href={withBase('/categories/')}>浏览分类总览 →</a>
+    </div>
+    <div class="category-grid">
+      {
+        categories.map((category) => (
+          <CategoryCard category={category} count={counts[category.id]} />
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    featured && (
+      <section class="section shell" aria-labelledby="featured-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Selected Reading</p>
+            <h2 id="featured-title">置顶文章</h2>
+          </div>
+        </div>
+        <div class="feature-layout">
+          <article class="featured-post">
+            <p class="eyebrow">本期坐标 · {featured.data.series ?? '独立文章'}</p>
+            <h3>
+              <a href={withBase(getPostUrl(featured))}>{featured.data.title}</a>
+            </h3>
+            <p>{featured.data.description}</p>
+            <div class="featured-post-meta">
+              <span>{formatDate(featured.data.pubDate)}</span>
+              <span>{getReadingTime(featured)} 分钟阅读</span>
+            </div>
+          </article>
+          <div class="latest-stack">
+            {latest.slice(0, 3).map((post) => (
+              <PostCard post={post} compact />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section shell" aria-labelledby="latest-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Recent Notes</p>
+        <h2 id="latest-title">最新文章</h2>
+      </div>
+      <a href={withBase('/posts/')}>查看全部文章 →</a>
+    </div>
+    <div class="post-grid">
+      {posts.slice(0, 4).map((post) => <PostCard post={post} />)}
+    </div>
+  </section>
+
+  <section class="section shell" aria-labelledby="projects-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">From Question To Practice</p>
+        <h2 id="projects-title">近期项目</h2>
+      </div>
+      <a href={withBase('/projects/')}>查看项目档案 →</a>
+    </div>
+    <div class="project-grid">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+
+  <section class="section shell" aria-labelledby="tags-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Index By Topic</p>
+        <h2 id="tags-title">热门标签</h2>
+      </div>
+      <a href={withBase('/tags/')}>全部标签 →</a>
+    </div>
+    <div class="tag-cloud">
+      {
+        tags.map((tag) => (
+          <a
+            href={withBase(`/tags/${tagToSlug(tag.name)}/`)}
+            style={`--tag-weight: ${Math.min(tag.count, 4)}`}
+          >
+            {tag.name} <small>{tag.count}</small>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

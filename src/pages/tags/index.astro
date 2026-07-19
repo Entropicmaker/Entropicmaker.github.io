@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getAllTags, getPublishedPosts, tagToSlug } from '../../utils/posts';
+import { withBase } from '../../utils/site';
+
+const tags = getAllTags(getPublishedPosts(await getCollection('posts')));
+---
+
+<PageLayout
+  title="标签总览"
+  description="标签跨越分类组织内容，适合沿着工具、方法与研究对象继续探索。"
+  eyebrow="Topic Index"
+>
+  <div class="tag-cloud">
+    {
+      tags.map((tag) => (
+        <a
+          href={withBase(`/tags/${tagToSlug(tag.name)}/`)}
+          style={`--tag-weight: ${Math.min(tag.count, 4)}`}
+        >
+          {tag.name} <small>{tag.count}</small>
+        </a>
+      ))
+    }
+  </div>
+</PageLayout>

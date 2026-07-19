@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import PostCard from '../../components/PostCard.astro';
+import { categories, type Category } from '../../data/categories';
+import { getPublishedPosts, type Post } from '../../utils/posts';
+
+export async function getStaticPaths() {
+  const posts = getPublishedPosts(await getCollection('posts'));
+  return categories.map((category) => ({
+    params: { category: category.id },
+    props: { category, posts: posts.filter((post) => post.data.category === category.id) }
+  }));
+}
+
+interface Props {
+  category: Category;
+  posts: Post[];
+}
+
+const { category, posts } = Astro.props;
+---
+
+<BaseLayout title={category.name} description={category.description}>
+  <div class="shell page-shell">
+    <Breadcrumb items={[{ label: '分类', href: '/categories/' }, { label: category.name }]} />
+    <header class="page-heading">
+      <p class="eyebrow">Coordinate {category.index}</p>
+      <h1>{category.name}</h1>
+      <p>{category.description}</p>
+    </header>
+    <section class="category-intro" aria-labelledby="subcategory-title">
+      <div>
+        <h2 id="subcategory-title">子分类</h2>
+        <p>主分类决定文章的归属，子分类用于呈现本栏目内部的方法与主题。</p>
+      </div>
+      <ul class="subcategory-list">
+        {category.subcategories.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+    <div class="post-grid">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </div>
+</BaseLayout>

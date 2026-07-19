@@ -1,0 +1,75 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../data/site';
+import { absoluteUrl, withBase } from '../utils/site';
+import '../styles/global.css';
+import 'katex/dist/katex.min.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  article?: boolean;
+  noindex?: boolean;
+}
+
+const {
+  title = siteConfig.title,
+  description = siteConfig.description,
+  image,
+  article = false,
+  noindex = false
+} = Astro.props;
+const pageTitle = title === siteConfig.title ? title : `${title}｜${siteConfig.name}`;
+const canonical = absoluteUrl(
+  Astro.url.pathname.replace(import.meta.env.BASE_URL, '/'),
+  Astro.site
+);
+const ogImage = absoluteUrl(image ?? '/og.png', Astro.site);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#12343b" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${siteConfig.name} RSS`}
+      href={withBase('/rss.xml')}
+    />
+    <link rel="manifest" href={withBase('/site.webmanifest')} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="选择性失忆的博客" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('theme');
+        const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = saved || preferred;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <Header />
+    <main id="main-content" data-pagefind-body>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

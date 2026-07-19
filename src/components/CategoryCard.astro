@@ -1,0 +1,21 @@
+---
+import type { Category } from '../data/categories';
+import { withBase } from '../utils/site';
+
+interface Props {
+  category: Category;
+  count?: number;
+}
+
+const { category, count } = Astro.props;
+---
+
+<a class={`category-card category-${category.id}`} href={withBase(`/categories/${category.id}/`)}>
+  <span class="category-index">{category.index}</span>
+  <div>
+    <p class="eyebrow">{category.shortName}坐标</p>
+    <h3>{category.name}</h3>
+    <p>{category.description}</p>
+    <span class="card-link">查看{typeof count === 'number' ? ` ${count} 篇` : '栏目'} →</span>
+  </div>
+</a>

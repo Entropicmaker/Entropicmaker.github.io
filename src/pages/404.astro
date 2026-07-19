@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../utils/site';
+---
+
+<BaseLayout title="页面未找到" description="你访问的页面不存在或已经移动。" noindex>
+  <section class="not-found shell">
+    <div>
+      <p class="not-found-code" aria-hidden="true">404</p>
+      <h1>这处坐标没有记录</h1>
+      <p>链接可能已经移动，也可能只是输入有误。回到知识地图继续探索吧。</p>
+      <a class="button" href={withBase('/')}>返回首页</a>
+    </div>
+  </section>
+</BaseLayout>

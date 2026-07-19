@@ -1,0 +1,158 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import {
+  formatDate,
+  getCategory,
+  getPostSlug,
+  getPostUrl,
+  getPublishedPosts,
+  getReadingTime,
+  getRelatedPosts,
+  tagToSlug,
+  type Post
+} from '../../utils/posts';
+import { withBase } from '../../utils/site';
+
+export async function getStaticPaths() {
+  const posts = getPublishedPosts(await getCollection('posts'));
+  return posts.map((post) => ({ params: { slug: getPostSlug(post) }, props: { post, posts } }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  posts: Post[];
+}
+
+const { post, posts } = Astro.props;
+const { Content, headings } = await render(post);
+const category = getCategory(post.data.category);
+const index = posts.findIndex((item) => item.id === post.id);
+const previous = posts[index + 1];
+const next = posts[index - 1];
+const related = getRelatedPosts(post, posts);
+const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.cover}
+  article
+>
+  <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
+  <article class="shell article-shell">
+    <Breadcrumb items={[{ label: '文章', href: '/posts/' }, { label: post.data.title }]} />
+    <header class="article-header">
+      <p class="eyebrow">{category.name}{post.data.series ? ` · ${post.data.series}` : ''}</p>
+      <h1 data-pagefind-meta="title">{post.data.title}</h1>
+      <p class="article-description">{post.data.description}</p>
+      <div class="article-meta">
+        <span>发布于 {formatDate(post.data.pubDate)}</span>
+        {post.data.updatedDate && <span>更新于 {formatDate(post.data.updatedDate)}</span>}
+        <a href={withBase(`/categories/${category.id}/`)}>{category.name}</a>
+        {post.data.subcategory && <span>{post.data.subcategory}</span>}
+        <span>预计 {getReadingTime(post)} 分钟</span>
+      </div>
+      {
+        post.data.tags.length > 0 && (
+          <div class="tag-list" aria-label="文章标签">
+            {post.data.tags.map((tag) => (
+              <a href={withBase(`/tags/${tagToSlug(tag)}/`)}>#{tag}</a>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <div class="article-layout">
+      <div class="article-content">
+        <Content />
+      </div>
+      {
+        tocHeadings.length > 0 && (
+          <aside class="toc" aria-label="文章目录">
+            <h2>本文目录</h2>
+            <ol>
+              {tocHeadings.map((heading) => (
+                <li class={`depth-${heading.depth}`}>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </aside>
+        )
+      }
+    </div>
+
+    {
+      post.data.references && post.data.references.length > 0 && (
+        <section class="references" aria-labelledby="references-title">
+          <h2 id="references-title">参考资料</h2>
+          <ol>
+            {post.data.references.map((reference) => (
+              <li>
+                <a href={reference.url} target="_blank" rel="noopener noreferrer">
+                  {reference.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+
+    <nav class="article-footer-nav" aria-label="文章前后导航">
+      {
+        previous ? (
+          <a href={withBase(getPostUrl(previous))}>
+            <small>上一篇</small>
+            {previous.data.title}
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      <a href={withBase('/posts/')}><small>返回</small>文章列表</a>
+      {
+        next ? (
+          <a href={withBase(getPostUrl(next))}>
+            <small>下一篇</small>
+            {next.data.title}
+          </a>
+        ) : (
+          <span />
+        )
+      }
+    </nav>
+
+    {
+      related.length > 0 && (
+        <section class="related-posts" aria-labelledby="related-title">
+          <h2 id="related-title">相关文章</h2>
+          <div class="related-posts-grid">
+            {related.map((item) => (
+              <a href={withBase(getPostUrl(item))}>
+                <small>{getCategory(item.data.category).name}</small>
+                {item.data.title}
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('#reading-progress');
+  const updateProgress = () => {
+    if (!bar) return;
+    const height = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = height > 0 ? (window.scrollY / height) * 100 : 0;
+    bar.style.width = `${Math.min(progress, 100)}%`;
+  };
+  updateProgress();
+  document.addEventListener('scroll', updateProgress, { passive: true });
+</script>

@@ -1,0 +1,16 @@
+# 依赖与构建产物
+node_modules/
+dist/
+.astro/
+.npm-cache/
+
+# 本地环境变量（示例文件除外）
+.env
+.env.*
+!.env.example
+
+# 系统与编辑器
+.DS_Store
+.idea/
+.vscode/
+*.log

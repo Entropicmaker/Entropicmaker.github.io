@@ -1,0 +1,67 @@
+name: 构建并部署到 GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: 构建静态网站
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: 配置 Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 计算 GitHub Pages 路径
+        shell: bash
+        run: |
+          REPOSITORY_NAME="${GITHUB_REPOSITORY#*/}"
+          if [[ "${REPOSITORY_NAME}" == "${GITHUB_REPOSITORY_OWNER}.github.io" ]]; then
+            BASE_PATH="/"
+          else
+            BASE_PATH="/${REPOSITORY_NAME}/"
+          fi
+          echo "PUBLIC_SITE_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io" >> "${GITHUB_ENV}"
+          echo "PUBLIC_BASE_PATH=${BASE_PATH}" >> "${GITHUB_ENV}"
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 类型与内容检查
+        run: npm run check
+
+      - name: 构建网站与搜索索引
+        run: npm run build
+
+      - name: 上传 Pages 构建产物
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: ./dist
+
+  deploy:
+    name: 发布到 GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: 部署
+        id: deployment
+        uses: actions/deploy-pages@d6db90192b27c25a4d8a67b8b7098b87b7665c4e # v4.0.5

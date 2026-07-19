@@ -1,0 +1,24 @@
+---
+import Breadcrumb from '../components/Breadcrumb.astro';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  eyebrow?: string;
+}
+
+const { title, description, eyebrow } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="shell page-shell">
+    <Breadcrumb items={[{ label: title }]} />
+    <header class="page-heading">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </header>
+    <slot />
+  </div>
+</BaseLayout>
