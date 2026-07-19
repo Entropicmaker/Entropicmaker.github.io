@@ -58,7 +58,7 @@ npm run preview        # 本地预览生产构建
 - 首页头像占位区：`src/pages/index.astro` 中的 `.avatar-panel`。如换成图片，建议放入 `src/assets/` 并使用 Astro 的 `<Image />` 组件，同时填写准确的 `alt`；
 - 颜色与排版：`src/styles/global.css` 顶部的 CSS 变量。
 
-GitHub 用户名和仓库名不需要写入多个文件。部署工作流根据 `GITHUB_REPOSITORY_OWNER` 和仓库名自动计算站点地址与子路径。本地测试特殊路径时可复制 `.env.example` 为 `.env` 并修改：
+GitHub 用户名和仓库名不需要写入多个文件。部署工作流根据 `GITHUB_REPOSITORY_OWNER` 和仓库名自动计算站点地址与子路径；配置自定义域名时，在仓库 **Settings → Secrets and variables → Actions → Variables** 中创建 `SITE_URL`，值为完整的 HTTPS 地址。本地测试特殊路径时可复制 `.env.example` 为 `.env` 并修改：
 
 ```dotenv
 PUBLIC_SITE_URL=https://yourname.github.io
@@ -93,6 +93,16 @@ PUBLIC_BASE_PATH=/your-repository/
 步骤相同，但仓库名可以自定义，例如 `blog`。部署地址将自动变为 `https://<你的用户名>.github.io/blog/`，不需要修改代码中的链接。
 
 如果仓库已经初始化过 Git，请不要重复运行 `git init`。本项目不会自动创建远程仓库、推送代码或修改 GitHub 设置。
+
+### 绑定自定义域名
+
+1. 先在 GitHub 仓库 **Settings → Pages → Custom domain** 中填写域名；
+2. 在域名服务商处配置根域名的 `A` 记录，或为子域名配置指向 `<你的用户名>.github.io` 的 `CNAME`；
+3. 在仓库 Actions Variables 中创建 `SITE_URL=https://你的域名`；
+4. DNS 生效后开启 **Enforce HTTPS**，再重新运行部署工作流；
+5. 建议在 GitHub 个人设置的 Pages 页面验证域名，避免域名接管风险。
+
+本项目通过自定义 GitHub Actions 工作流部署，因此无需创建 `CNAME` 文件。
 
 ## 内容与安全提醒
 

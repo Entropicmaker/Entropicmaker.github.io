@@ -27,6 +27,8 @@ jobs:
 
       - name: 计算 GitHub Pages 路径
         shell: bash
+        env:
+          CUSTOM_SITE_URL: ${{ vars.SITE_URL }}
         run: |
           REPOSITORY_NAME="${GITHUB_REPOSITORY#*/}"
           if [[ "${REPOSITORY_NAME}" == "${GITHUB_REPOSITORY_OWNER}.github.io" ]]; then
@@ -34,7 +36,12 @@ jobs:
           else
             BASE_PATH="/${REPOSITORY_NAME}/"
           fi
-          echo "PUBLIC_SITE_URL=https://${GITHUB_REPOSITORY_OWNER}.github.io" >> "${GITHUB_ENV}"
+          if [[ -n "${CUSTOM_SITE_URL}" ]]; then
+            SITE_URL="${CUSTOM_SITE_URL%/}"
+          else
+            SITE_URL="https://${GITHUB_REPOSITORY_OWNER}.github.io"
+          fi
+          echo "PUBLIC_SITE_URL=${SITE_URL}" >> "${GITHUB_ENV}"
           echo "PUBLIC_BASE_PATH=${BASE_PATH}" >> "${GITHUB_ENV}"
 
       - name: 安装依赖
