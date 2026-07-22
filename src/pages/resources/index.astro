@@ -1,0 +1,56 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { resourceGroups } from '../../data/resources';
+import { withBase } from '../../utils/site';
+---
+
+<PageLayout
+  title="学习资料"
+  description="按课程整理的个人复习材料，可直接下载、阅读或在本地继续补充。"
+  eyebrow="Study Archive"
+>
+  <aside class="resource-notice" aria-label="资料使用说明">
+    <span class="resource-notice-mark" aria-hidden="true">↓</span>
+    <div>
+      <h2>使用说明</h2>
+      <p>
+        本页收录个人整理的课程复习资料，仅供学习交流与个人复习参考。课程安排、考核范围和资料准确性请以任课教师的最新要求为准。
+      </p>
+    </div>
+  </aside>
+
+  <div class="resource-groups">
+    {
+      resourceGroups.map((group) => (
+        <section class="resource-group" aria-labelledby={`${group.id}-title`}>
+          <header class="resource-group-heading">
+            <div>
+              <p class="eyebrow">2025—2026 · 大一第二学期</p>
+              <h2 id={`${group.id}-title`}>{group.title}</h2>
+            </div>
+            <p>{group.description}</p>
+          </header>
+
+          <div class="resource-grid">
+            {group.files.map((file) => (
+              <article class="resource-card">
+                <div class="resource-card-topline">
+                  <span class={`file-format file-format-${file.format.toLowerCase()}`}>{file.format}</span>
+                  <span>{file.size}</span>
+                </div>
+                <h3>{file.title}</h3>
+                <p>{file.description}</p>
+                <div class="resource-card-footer">
+                  <span>{file.updatedAt}</span>
+                  <a href={withBase(file.href)} download>
+                    下载文件 <span aria-hidden="true">↓</span>
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</PageLayout>
