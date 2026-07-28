@@ -2,7 +2,7 @@
 title: 碎碎念01 一年
 description: 很遗憾，第一篇正式手打的博客文章要从我的碎碎念开始。
 pubDate: 2026-07-24
-draft: false
+draft: true
 category: geography
 subcategory: 成长记录
 tags: [碎碎念, 年度记录, 大一, 成长]

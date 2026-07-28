@@ -70,20 +70,26 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
       <div class="article-content">
         <Content />
       </div>
-      {
-        tocHeadings.length > 0 && (
-          <aside class="toc" aria-label="文章目录">
-            <h2>本文目录</h2>
-            <ol>
-              {tocHeadings.map((heading) => (
-                <li class={`depth-${heading.depth}`}>
-                  <a href={`#${heading.slug}`}>{heading.text}</a>
-                </li>
-              ))}
-            </ol>
-          </aside>
-        )
-      }
+      <aside class="article-sidebar" aria-label="文章辅助信息">
+        <section class="article-summary" aria-labelledby="article-summary-title">
+          <h2 id="article-summary-title">文章摘要</h2>
+          <p>{post.data.description}</p>
+        </section>
+        {
+          tocHeadings.length > 0 && (
+            <nav class="toc" aria-label="文章目录">
+              <h2>本文目录</h2>
+              <ol>
+                {tocHeadings.map((heading) => (
+                  <li class={`depth-${heading.depth}`}>
+                    <a href={`#${heading.slug}`}>{heading.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+      </aside>
     </div>
 
     {
