@@ -6,7 +6,6 @@ import PostCard from '../components/PostCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { categories } from '../data/categories';
 import { projects } from '../data/projects';
-import { siteConfig } from '../data/site';
 import {
   formatDate,
   getAllTags,
@@ -32,8 +31,8 @@ const counts = Object.fromEntries(
 <BaseLayout>
   <section class="hero shell">
     <div class="hero-copy">
-      <h1>选择性失忆的博客</h1>
-      <p>{siteConfig.about}</p>
+      <h1>牢选的地理小站</h1>
+      <p>尽量多更新，没更新就是在吃双层吉士汉堡</p>
       <div class="hero-actions">
         <a class="button" href={withBase('/posts/')}>开始阅读</a>
         <a class="button secondary" href={withBase('/about/')}>认识作者</a>
