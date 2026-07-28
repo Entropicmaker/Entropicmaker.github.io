@@ -153,12 +153,64 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
 
 <script>
   const bar = document.querySelector<HTMLElement>('#reading-progress');
+  const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]'));
+  const tocEntries = tocLinks.flatMap((link) => {
+    const rawId = link.getAttribute('href')?.slice(1);
+    if (!rawId) return [];
+    const heading = document.getElementById(decodeURIComponent(rawId));
+    return heading ? [{ link, heading }] : [];
+  });
+
+  const setActiveTocLink = (activeLink?: HTMLAnchorElement) => {
+    tocLinks.forEach((link) => {
+      const isActive = link === activeLink;
+      link.classList.toggle('is-active', isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  };
+
+  const updateToc = () => {
+    const headingOffset = 130;
+    let activeLink: HTMLAnchorElement | undefined;
+
+    for (const entry of tocEntries) {
+      if (entry.heading.getBoundingClientRect().top <= headingOffset) {
+        activeLink = entry.link;
+      } else {
+        break;
+      }
+    }
+
+    setActiveTocLink(activeLink);
+  };
+
+  let frameRequested = false;
   const updateProgress = () => {
     if (!bar) return;
     const height = document.documentElement.scrollHeight - window.innerHeight;
     const progress = height > 0 ? (window.scrollY / height) * 100 : 0;
     bar.style.width = `${Math.min(progress, 100)}%`;
   };
-  updateProgress();
-  document.addEventListener('scroll', updateProgress, { passive: true });
+
+  const updateReadingState = () => {
+    if (frameRequested) return;
+    frameRequested = true;
+    requestAnimationFrame(() => {
+      updateProgress();
+      updateToc();
+      frameRequested = false;
+    });
+  };
+
+  tocLinks.forEach((link) => {
+    link.addEventListener('click', () => setActiveTocLink(link));
+  });
+
+  updateReadingState();
+  document.addEventListener('scroll', updateReadingState, { passive: true });
+  window.addEventListener('resize', updateReadingState, { passive: true });
 </script>
