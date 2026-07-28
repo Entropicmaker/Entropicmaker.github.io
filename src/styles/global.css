@@ -1172,7 +1172,6 @@ main {
 .article-content h2,
 .article-content h3,
 .article-content h4 {
-  scroll-margin-top: 100px;
   font-family: var(--font-serif);
   line-height: 1.45;
 }
