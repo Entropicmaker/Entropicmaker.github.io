@@ -44,8 +44,17 @@ const isActive = (href: string) => {
     </div>
   </div>
   <nav class="mobile-nav shell" id="mobile-nav" aria-label="移动端导航" hidden>
-    {navigation.map((item) => <a href={withBase(item.href)}>{item.label}</a>)}
-    <a href={withBase('/search/')}>搜索</a>
+    {
+      navigation.map((item) => (
+        <a href={withBase(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
+          {item.label}
+        </a>
+      ))
+    }
+    <a
+      href={withBase('/search/')}
+      aria-current={currentPath.startsWith(withBase('/search/')) ? 'page' : undefined}>搜索</a
+    >
   </nav>
 </header>
 

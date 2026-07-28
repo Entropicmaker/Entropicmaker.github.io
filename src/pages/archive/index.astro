@@ -21,7 +21,10 @@ const groups = groupPostsByYear(getPublishedPosts(await getCollection('posts')))
   {
     groups.map(([year, posts]) => (
       <section class="archive-year" aria-labelledby={`year-${year}`}>
-        <h2 id={`year-${year}`}>{year}</h2>
+        <header class="archive-year-heading">
+          <h2 id={`year-${year}`}>{year}年</h2>
+          <span>{posts.length} 篇文章</span>
+        </header>
         <ol class="archive-list">
           {posts.map((post) => (
             <li>

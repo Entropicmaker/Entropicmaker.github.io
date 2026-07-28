@@ -10,14 +10,24 @@ const { project } = Astro.props;
 
 <article class="project-card">
   <div class="project-card-head">
-    <span class="project-index" aria-hidden="true">◫</span>
+    <span class="project-index" aria-hidden="true">⌁</span>
     <span class="status-badge">{project.status}</span>
   </div>
-  <p class="eyebrow">{project.category} · {project.year}</p>
-  <h3>{project.title}</h3>
+  <p class="eyebrow">{project.category}</p>
+  <div class="project-title-line">
+    <h3>{project.title}</h3>
+    <span class="project-year">{project.year}</span>
+  </div>
   <p>{project.description}</p>
   <p class="project-outcome"><strong>阶段结果</strong>{project.outcome}</p>
   <ul class="tech-list" aria-label="项目技术栈">
     {project.stack.map((item) => <li>{item}</li>)}
   </ul>
+  {
+    project.href && (
+      <a class="project-link" href={project.href} target="_blank" rel="noopener noreferrer">
+        查看项目 ↗
+      </a>
+    )
+  }
 </article>
