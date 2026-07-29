@@ -12,6 +12,7 @@ export const siteConfig = {
 
 export const navigation = [
   { label: '文章', href: '/posts/' },
+  { label: '日常', href: '/categories/daily/' },
   { label: '分类', href: '/categories/' },
   { label: '标签', href: '/tags/' },
   { label: '归档', href: '/archive/' },

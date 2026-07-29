@@ -1,7 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-export const CATEGORY_IDS = ['geography', 'computer-science', 'geocomputing'] as const;
+export const CATEGORY_IDS = ['geography', 'computer-science', 'geocomputing', 'daily'] as const;
 
 const referenceSchema = z.object({
   title: z.string(),

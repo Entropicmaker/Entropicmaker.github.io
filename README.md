@@ -45,7 +45,8 @@ npm run preview        # 本地预览生产构建
 
 - `geography`：地理科学；
 - `computer-science`：计算机科学；
-- `geocomputing`：交叉研究 / 地理计算。
+- `geocomputing`：交叉研究 / 地理计算；
+- `daily`：日常。
 
 `readingTime` 可以省略，构建时会根据中英文正文估算。Markdown 中不要写不受信任的原始 HTML；站点没有接收外部用户内容的入口。
 

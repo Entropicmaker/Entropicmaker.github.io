@@ -3,10 +3,10 @@ import { navigation, siteConfig } from '../data/site';
 import { withBase } from '../utils/site';
 
 const currentPath = Astro.url.pathname;
-const isActive = (href: string) => {
-  const target = withBase(href);
-  return href === '/' ? currentPath === target : currentPath.startsWith(target);
-};
+const activeNavigationHref = navigation
+  .filter((item) => currentPath.startsWith(withBase(item.href)))
+  .sort((a, b) => withBase(b.href).length - withBase(a.href).length)[0]?.href;
+const isActive = (href: string) => href === activeNavigationHref;
 ---
 
 <header class="site-header">

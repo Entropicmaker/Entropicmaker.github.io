@@ -1,4 +1,4 @@
-export type CategoryId = 'geography' | 'computer-science' | 'geocomputing';
+export type CategoryId = 'geography' | 'computer-science' | 'geocomputing' | 'daily';
 
 export interface Category {
   id: CategoryId;
@@ -45,6 +45,14 @@ export const categories: Category[] = [
     index: '03',
     description: '让空间问题与计算方法相遇，探索 GeoAI 与空间数据工程。',
     subcategories: ['地理计算', 'GeoAI / 机器学习', '空间数据工程', '项目复盘']
+  },
+  {
+    id: 'daily',
+    name: '日常',
+    shortName: '日常',
+    index: '04',
+    description: '记录阅读、学习与生活中的片段，保留当时的想法和长期积累的轨迹。',
+    subcategories: ['阅读记录', '学习日志', '生活随笔', '建站日记']
   }
 ];
 

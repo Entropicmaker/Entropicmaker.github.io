@@ -452,7 +452,7 @@ main {
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
@@ -535,6 +535,10 @@ main {
 
 .category-geocomputing {
   border-top: 4px solid var(--sand);
+}
+
+.category-daily {
+  border-top: 4px solid color-mix(in srgb, var(--green) 46%, var(--sand));
 }
 
 .feature-layout {
