@@ -21,7 +21,7 @@ references:
 | --------- | ------------------------------------------------------------ |
 | 作者        | S. Keshav                                                    |
 | 年份        | 2007                                                         |
-| 来源        | ACM SIGCOMM Computer Communication Review，第 37 卷第 3 期（需人工核对） |
+| 来源        | ACM SIGCOMM Computer Communication Review，第 37 卷第 3 期             |
 | Citekey   | 信息不足                                                         |
 
 ## 一句话摘要
