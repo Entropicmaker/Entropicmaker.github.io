@@ -16,7 +16,6 @@ export const navigation = [
   { label: '标签', href: '/tags/' },
   { label: '归档', href: '/archive/' },
   { label: '留言', href: '/messages/' },
-  { label: '资料', href: '/resources/' },
   { label: '项目', href: '/projects/' },
   { label: '关于', href: '/about/' }
 ] as const;
