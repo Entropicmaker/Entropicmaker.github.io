@@ -1,0 +1,64 @@
+---
+import { lingeoNetwork, lingeoSites, type LingeoSiteId } from '../data/ecosystem';
+
+interface Props {
+  current: LingeoSiteId;
+  mobile?: boolean;
+}
+
+const { current, mobile = false } = Astro.props;
+---
+
+<details class:list={['site-switcher', { 'site-switcher-mobile': mobile }]}>
+  <summary aria-label={`打开 ${lingeoNetwork.name} 系列站点`}>
+    <span class="network-orbit" aria-hidden="true">◎</span>
+    <span class="network-name">
+      <strong>{lingeoNetwork.name}</strong>
+      <small>{lingeoNetwork.label}</small>
+    </span>
+    <span class="network-chevron" aria-hidden="true">⌄</span>
+  </summary>
+  <div class="site-switcher-panel">
+    <div class="site-switcher-heading">
+      <div>
+        <span>Network coordinates</span>
+        <strong>{lingeoNetwork.name} / {String(lingeoSites.length).padStart(2, '0')}</strong>
+      </div>
+      <span class="network-status">ONLINE</span>
+    </div>
+    <p>{lingeoNetwork.description}</p>
+    <div class="site-switcher-list">
+      {
+        lingeoSites.map((site, index) => {
+          const content = (
+            <>
+              <span class="series-site-index">{String(index + 1).padStart(2, '0')}</span>
+              <span class="series-site-copy">
+                <strong>{site.name}</strong>
+                <small>{site.descriptor}</small>
+              </span>
+              <span class="series-site-state">
+                {site.id === current
+                  ? site.primary
+                    ? '主站 · 当前'
+                    : '当前'
+                  : site.primary
+                    ? '返回主站'
+                    : '进入 ↗'}
+              </span>
+            </>
+          );
+          return site.id === current ? (
+            <span class="series-site is-current" aria-current="page">
+              {content}
+            </span>
+          ) : (
+            <a class="series-site" href={site.href}>
+              {content}
+            </a>
+          );
+        })
+      }
+    </div>
+  </div>
+</details>

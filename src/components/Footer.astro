@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from '../data/site';
+import { lingeoSites } from '../data/ecosystem';
 import { withBase } from '../utils/site';
 ---
 
@@ -10,6 +11,11 @@ import { withBase } from '../utils/site';
       <p>{siteConfig.intro}</p>
     </div>
     <div class="footer-links" aria-label="页脚导航">
+      {
+        lingeoSites
+          .filter((site) => site.id !== 'blog')
+          .map((site) => <a href={site.href}>{site.name} ↗</a>)
+      }
       <a href={withBase('/rss.xml')}>RSS</a>
       <a href={withBase('/archive/')}>归档</a>
       <a href={withBase('/about/')}>关于</a>

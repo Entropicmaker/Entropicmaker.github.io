@@ -25,8 +25,14 @@ const { project } = Astro.props;
   </ul>
   {
     project.href && (
-      <a class="project-link" href={project.href} target="_blank" rel="noopener noreferrer">
-        查看项目 ↗
+      <a
+        class="project-card-link"
+        href={project.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`访问${project.title}`}
+      >
+        访问项目 <span aria-hidden="true">↗</span>
       </a>
     )
   }

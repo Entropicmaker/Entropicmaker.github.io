@@ -1,6 +1,7 @@
 ---
 import { navigation, siteConfig } from '../data/site';
 import { withBase } from '../utils/site';
+import SiteSwitcher from './SiteSwitcher.astro';
 
 const currentPath = Astro.url.pathname;
 const activeNavigationHref = navigation
@@ -24,6 +25,9 @@ const isActive = (href: string) => href === activeNavigationHref;
         ))
       }
     </nav>
+    <div class="desktop-site-switcher">
+      <SiteSwitcher current="blog" />
+    </div>
     <div class="header-actions">
       <a class="icon-button search-button" href={withBase('/search/')} aria-label="搜索文章">
         <span aria-hidden="true">⌕</span>
@@ -55,6 +59,7 @@ const isActive = (href: string) => href === activeNavigationHref;
       href={withBase('/search/')}
       aria-current={currentPath.startsWith(withBase('/search/')) ? 'page' : undefined}>搜索</a
     >
+    <SiteSwitcher current="blog" mobile />
   </nav>
 </header>
 
@@ -76,5 +81,30 @@ const isActive = (href: string) => href === activeNavigationHref;
     mobileNav.hidden = !willOpen;
     menuButton.setAttribute('aria-expanded', String(willOpen));
     menuButton.setAttribute('aria-label', willOpen ? '关闭导航菜单' : '打开导航菜单');
+  });
+
+  const siteSwitchers = Array.from(document.querySelectorAll<HTMLDetailsElement>('.site-switcher'));
+  siteSwitchers.forEach((switcher) => {
+    switcher.addEventListener('toggle', () => {
+      if (!switcher.open) return;
+      siteSwitchers.forEach((other) => {
+        if (other !== switcher) other.open = false;
+      });
+    });
+  });
+
+  document.addEventListener('pointerdown', (event) => {
+    siteSwitchers.forEach((switcher) => {
+      if (!switcher.contains(event.target as Node)) switcher.open = false;
+    });
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    siteSwitchers.forEach((switcher) => {
+      if (!switcher.open) return;
+      switcher.open = false;
+      switcher.querySelector<HTMLElement>('summary')?.focus();
+    });
   });
 </script>

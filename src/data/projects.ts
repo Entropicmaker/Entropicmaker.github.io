@@ -11,6 +11,16 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: 'CodeVision Lab · 编程视界',
+    description: '面向 C++、C#、Python 学习者的交互式编程与算法可视化学习平台。',
+    status: '线上运行',
+    year: '2026',
+    stack: ['React', 'TypeScript', 'Pyodide'],
+    category: 'LingeoCS Series',
+    outcome: '实现 27 个算法的步骤回放、三语言课程、练习、路线图与本地学习进度。',
+    href: 'https://lingeocs.com/codevision-lab/'
+  },
+  {
     title: '城市热岛效应空间分析',
     description: '融合 Landsat 地表温度、土地覆盖与人口数据，分析城市热岛的空间分异。',
     status: '研究复盘',

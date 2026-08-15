@@ -4,6 +4,9 @@ dist/
 .astro/
 .npm-cache/
 
+# 本地并列开发的独立子站仓库（单独提交与部署）
+codevision-lab/
+
 # 本地环境变量（示例文件除外）
 .env
 .env.*
