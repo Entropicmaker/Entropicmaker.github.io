@@ -1356,19 +1356,71 @@ main {
   margin: 2em 0;
 }
 
+.article-content .mermaid-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  gap: 6px;
+}
+
+.article-content .mermaid-control {
+  display: inline-grid;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 11px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface-strong) 88%, var(--ocean-soft));
+  color: var(--text);
+  box-shadow: 0 3px 12px rgb(39 72 66 / 0.06);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.article-content .mermaid-control:hover:not(:disabled) {
+  border-color: var(--ocean);
+  color: var(--ocean);
+}
+
+.article-content .mermaid-control:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.article-content .mermaid-zoom-value {
+  min-width: 54px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  text-align: center;
+}
+
 .article-content .mermaid-viewport {
   width: 100%;
+  max-height: min(76vh, 760px);
   padding: clamp(16px, 3vw, 28px);
-  overflow-x: auto;
+  overflow: auto;
+  overscroll-behavior: contain;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: var(--surface-strong);
   scrollbar-color: var(--line) transparent;
+  scrollbar-gutter: stable both-edges;
+  touch-action: pan-x pan-y pinch-zoom;
 }
 
-.article-content .mermaid-viewport svg {
+.article-content .mermaid-canvas {
+  width: 100%;
+  min-width: 0;
+}
+
+.article-content .mermaid-canvas svg {
   display: block;
-  min-width: min(680px, 100%);
+  width: 100%;
   max-width: none !important;
   height: auto;
   margin-inline: auto;
@@ -1382,6 +1434,17 @@ main {
 
 .article-content .mermaid-viewport.has-render-error pre {
   margin: 0;
+}
+
+@media (max-width: 720px) {
+  .article-content .mermaid-toolbar {
+    justify-content: center;
+  }
+
+  .article-content .mermaid-viewport {
+    max-height: 68vh;
+    padding: 12px;
+  }
 }
 
 .article-content table {
