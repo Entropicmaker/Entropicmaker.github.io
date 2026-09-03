@@ -1352,6 +1352,38 @@ main {
   line-height: 1.65;
 }
 
+.article-content .mermaid-diagram {
+  margin: 2em 0;
+}
+
+.article-content .mermaid-viewport {
+  width: 100%;
+  padding: clamp(16px, 3vw, 28px);
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-strong);
+  scrollbar-color: var(--line) transparent;
+}
+
+.article-content .mermaid-viewport svg {
+  display: block;
+  min-width: min(680px, 100%);
+  max-width: none !important;
+  height: auto;
+  margin-inline: auto;
+}
+
+.article-content .mermaid-viewport.has-render-error {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.article-content .mermaid-viewport.has-render-error pre {
+  margin: 0;
+}
+
 .article-content table {
   width: 100%;
   margin: 1.6em 0;
