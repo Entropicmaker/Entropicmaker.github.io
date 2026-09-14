@@ -2201,32 +2201,68 @@ main {
   line-height: 1.4;
 }
 
-/* 全屏查看 */
-.article-content .deck-slide figure:fullscreen {
+/* 全屏查看：整个组件进入全屏，工具栏保持可用 */
+.article-content .slide-deck:fullscreen {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 12px;
   margin: 0;
-  padding: 0;
+  padding: 16px clamp(14px, 3vw, 40px) 20px;
+  background: var(--bg);
+  overflow: auto;
+}
+
+.article-content .slide-deck:fullscreen::backdrop {
   background: var(--bg);
 }
 
-.article-content .deck-slide figure:fullscreen .deck-link {
+.article-content .slide-deck:fullscreen .deck-toolbar {
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.article-content .slide-deck:fullscreen .deck-stage {
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+.article-content .slide-deck:fullscreen .deck-slide figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+
+.article-content .slide-deck:fullscreen .deck-link {
+  display: inline-flex;
+  max-width: 100%;
   border: 0;
-  border-radius: 0;
+  border-radius: 10px;
   background: transparent;
   box-shadow: none;
 }
 
-.article-content .deck-slide figure:fullscreen img {
-  max-height: 100vh;
-  object-fit: contain;
+.article-content .slide-deck:fullscreen .deck-link img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 170px);
 }
 
-.article-content .deck-slide figure:fullscreen figcaption {
+.article-content .slide-deck:fullscreen .deck-slide figcaption {
   justify-content: center;
-  padding: 10px 16px;
-  margin-top: 0;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.article-content .slide-deck:fullscreen .deck-thumbs {
+  max-height: 34vh;
+  overflow: auto;
+}
+
+.article-content .slide-deck:fullscreen .deck-hint {
+  display: none;
 }
 
 @media (max-width: 720px) {

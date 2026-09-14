@@ -170,7 +170,7 @@ const thumbOf = (n: number) => withBase(`${dir}/thumb-${pad(n)}.webp`);
       deck.prev.disabled = next === 0;
       deck.next.disabled = next === total - 1;
 
-      if (options.scroll) {
+      if (options.scroll && !inFullscreen()) {
         const active = deck.slides[next].querySelector('figure');
         active?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       }
@@ -201,15 +201,50 @@ const thumbOf = (n: number) => withBase(`${dir}/thumb-${pad(n)}.webp`);
       });
     });
 
-    fullscreen?.addEventListener('click', () => {
-      const active = deck.slides[current].querySelector('figure');
-      if (!active) return;
-      if (document.fullscreenElement) void document.exitFullscreen();
-      else void active.requestFullscreen?.();
-    });
+    // 全屏对整个组件生效，而不是单独一页。
+    // 若只把 <figure> 设为全屏元素，翻页时隐藏它的祖先 <li> 会连带把全屏元素藏起来，
+    // 浏览器会因此直接退出全屏；同时键盘事件只发给全屏元素内部，挂在 <ol> 上的
+    // 方向键监听也收不到事件。
+    type FullscreenCapable = HTMLElement & {
+      webkitRequestFullscreen?: () => Promise<void> | void;
+    };
+    const fsRoot = root as FullscreenCapable;
+    const canFullscreen = Boolean(fsRoot.requestFullscreen || fsRoot.webkitRequestFullscreen);
+    const inFullscreen = () => document.fullscreenElement === root;
 
-    // 仅在组件获得焦点时接管方向键，避免影响页面正常滚动
-    stage.addEventListener('keydown', (event) => {
+    if (fullscreen && !canFullscreen) fullscreen.hidden = true;
+
+    const syncFullscreen = () => {
+      const on = inFullscreen();
+      root.toggleAttribute('data-fullscreen', on);
+      if (fullscreen) fullscreen.textContent = on ? '退出全屏' : '全屏';
+      if (on) {
+        root.scrollTop = 0;
+        stage.focus({ preventScroll: true });
+      }
+    };
+
+    const toggleFullscreen = () => {
+      if (inFullscreen()) {
+        void document.exitFullscreen();
+        return;
+      }
+      try {
+        const request =
+          fsRoot.requestFullscreen?.bind(fsRoot) ?? fsRoot.webkitRequestFullscreen?.bind(fsRoot);
+        const pending = request?.();
+        if (pending && typeof pending.catch === 'function') pending.catch(() => {});
+      } catch {
+        // 少数环境不允许该元素进入全屏，忽略即可
+      }
+    };
+
+    fullscreen?.addEventListener('click', toggleFullscreen);
+    document.addEventListener('fullscreenchange', syncFullscreen);
+
+    // 全屏时独占方向键（焦点可能落在工具栏按钮上，所以要监听 document）；
+    // 非全屏时仅在组件获得焦点后接管，避免影响页面正常滚动。
+    const onKey = (event: KeyboardEvent) => {
       switch (event.key) {
         case 'ArrowLeft':
         case 'ArrowUp':
@@ -238,6 +273,15 @@ const thumbOf = (n: number) => withBase(`${dir}/thumb-${pad(n)}.webp`);
         default:
           break;
       }
+    };
+
+    document.addEventListener('keydown', (event) => {
+      if (inFullscreen()) onKey(event);
+    });
+
+    stage.addEventListener('keydown', (event) => {
+      if (inFullscreen()) return;
+      onKey(event);
     });
 
     // 触屏滑动翻页
