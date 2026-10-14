@@ -2,6 +2,7 @@
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
+import MermaidRenderer from '../../components/MermaidRenderer.astro';
 import {
   formatDate,
   getCategory,
@@ -33,6 +34,7 @@ const previous = posts[index + 1];
 const next = posts[index - 1];
 const related = getRelatedPosts(post, posts);
 const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const hasMermaid = /```mermaid(?:\s|$)/i.test(post.body ?? '');
 ---
 
 <BaseLayout
@@ -69,6 +71,7 @@ const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.
     <div class="article-layout">
       <div class="article-content">
         <Content />
+        {hasMermaid && <MermaidRenderer />}
       </div>
       <aside class="article-sidebar" aria-label="文章辅助信息">
         <section class="article-summary" aria-labelledby="article-summary-title">

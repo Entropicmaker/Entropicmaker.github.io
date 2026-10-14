@@ -1,0 +1,209 @@
+<script>
+  const sourceBlocks = Array.from(
+    document.querySelectorAll<HTMLElement>(
+      '.article-content pre[data-language="mermaid"] > code, .article-content pre > code.language-mermaid'
+    )
+  );
+
+  if (sourceBlocks.length > 0) {
+    void (async () => {
+      try {
+        const { default: mermaid } = await import('mermaid');
+        const minZoom = 0.5;
+        const maxZoom = 2.5;
+        const zoomStep = 0.25;
+
+        const createControl = (label: string, text: string) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'mermaid-control';
+          button.setAttribute('aria-label', label);
+          button.title = label;
+          button.textContent = text;
+          return button;
+        };
+
+        const diagrams = sourceBlocks.flatMap((code, index) => {
+          const source = code.textContent?.trim();
+          const original = code.closest('pre');
+          if (!source || !original) return [];
+
+          const figure = document.createElement('figure');
+          const toolbar = document.createElement('div');
+          const viewport = document.createElement('div');
+          const canvas = document.createElement('div');
+          const zoomOut = createControl('缩小关系图', '−');
+          const zoomValue = document.createElement('output');
+          const zoomIn = createControl('放大关系图', '+');
+          const resetZoom = createControl('使关系图适应窗口', '适应');
+
+          figure.className = 'mermaid-diagram';
+          toolbar.className = 'mermaid-toolbar';
+          toolbar.setAttribute('role', 'group');
+          toolbar.setAttribute('aria-label', `关系图 ${index + 1}缩放控制`);
+          zoomValue.className = 'mermaid-zoom-value';
+          zoomValue.setAttribute('aria-label', '当前缩放比例');
+          zoomValue.setAttribute('aria-live', 'polite');
+          zoomValue.value = '100%';
+          viewport.className = 'mermaid-viewport';
+          viewport.tabIndex = 0;
+          viewport.setAttribute('role', 'region');
+          viewport.setAttribute(
+            'aria-label',
+            `文章关系图 ${index + 1}，可使用上方按钮或按加号、减号缩放`
+          );
+          viewport.setAttribute('aria-busy', 'true');
+          canvas.className = 'mermaid-canvas';
+          toolbar.append(zoomOut, zoomValue, zoomIn, resetZoom);
+          viewport.append(canvas);
+          figure.append(toolbar, viewport);
+          original.replaceWith(figure);
+
+          let zoom = 1;
+          const applyZoom = (next = zoom, preservePosition = true) => {
+            const oldScrollWidth = Math.max(viewport.scrollWidth, 1);
+            const oldScrollHeight = Math.max(viewport.scrollHeight, 1);
+            const centerX = (viewport.scrollLeft + viewport.clientWidth / 2) / oldScrollWidth;
+            const centerY = (viewport.scrollTop + viewport.clientHeight / 2) / oldScrollHeight;
+            zoom = Math.min(maxZoom, Math.max(minZoom, Math.round(next / zoomStep) * zoomStep));
+
+            const svg = canvas.querySelector<SVGSVGElement>('svg');
+            if (svg) {
+              svg.style.width = `${zoom * 100}%`;
+              svg.style.maxWidth = 'none';
+              svg.removeAttribute('height');
+            }
+
+            zoomValue.value = `${Math.round(zoom * 100)}%`;
+            zoomOut.disabled = zoom <= minZoom;
+            zoomIn.disabled = zoom >= maxZoom;
+
+            if (svg && preservePosition) {
+              requestAnimationFrame(() => {
+                viewport.scrollLeft = centerX * viewport.scrollWidth - viewport.clientWidth / 2;
+                viewport.scrollTop = centerY * viewport.scrollHeight - viewport.clientHeight / 2;
+              });
+            }
+          };
+
+          zoomOut.addEventListener('click', () => applyZoom(zoom - zoomStep));
+          zoomIn.addEventListener('click', () => applyZoom(zoom + zoomStep));
+          resetZoom.addEventListener('click', () => applyZoom(1));
+
+          viewport.addEventListener('keydown', (event) => {
+            if (event.key === '+' || event.key === '=') {
+              event.preventDefault();
+              applyZoom(zoom + zoomStep);
+            } else if (event.key === '-' || event.key === '_') {
+              event.preventDefault();
+              applyZoom(zoom - zoomStep);
+            } else if (event.key === '0') {
+              event.preventDefault();
+              applyZoom(1);
+            }
+          });
+
+          viewport.addEventListener(
+            'wheel',
+            (event) => {
+              if (!event.ctrlKey && !event.metaKey) return;
+              event.preventDefault();
+              applyZoom(zoom + (event.deltaY < 0 ? zoomStep : -zoomStep));
+            },
+            { passive: false }
+          );
+
+          applyZoom(1, false);
+
+          return [{ source, original, toolbar, viewport, canvas, applyZoom, index }];
+        });
+
+        let renderGeneration = 0;
+
+        const renderDiagrams = async () => {
+          const generation = ++renderGeneration;
+          const dark = document.documentElement.dataset.theme === 'dark';
+
+          mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: 'strict',
+            suppressErrorRendering: true,
+            theme: 'base',
+            themeVariables: dark
+              ? {
+                  darkMode: true,
+                  background: '#132124',
+                  primaryColor: '#26382d',
+                  primaryTextColor: '#e8ece7',
+                  primaryBorderColor: '#93b09a',
+                  lineColor: '#9daead',
+                  secondaryColor: '#1e3438',
+                  tertiaryColor: '#192a2d',
+                  fontFamily:
+                    'ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif'
+                }
+              : {
+                  darkMode: false,
+                  background: '#ffffff',
+                  primaryColor: '#e3ece1',
+                  primaryTextColor: '#183034',
+                  primaryBorderColor: '#5b7f65',
+                  lineColor: '#667679',
+                  secondaryColor: '#dcebec',
+                  tertiaryColor: '#f1f4f1',
+                  fontFamily:
+                    'ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif'
+                },
+            flowchart: {
+              htmlLabels: false,
+              useMaxWidth: true
+            }
+          });
+
+          for (const diagram of diagrams) {
+            try {
+              const id = `mermaid-diagram-${diagram.index}-${generation}`;
+              const { svg, bindFunctions } = await mermaid.render(id, diagram.source);
+              if (generation !== renderGeneration) return;
+
+              diagram.canvas.innerHTML = svg;
+              diagram.toolbar.hidden = false;
+              diagram.viewport.classList.remove('has-render-error');
+              diagram.viewport.setAttribute('aria-busy', 'false');
+              const renderedSvg = diagram.canvas.querySelector('svg');
+              renderedSvg?.setAttribute('role', 'img');
+              renderedSvg?.setAttribute('aria-label', `文章关系图 ${diagram.index + 1}`);
+              diagram.applyZoom(undefined, false);
+              bindFunctions?.(diagram.canvas);
+            } catch (error) {
+              if (generation !== renderGeneration) return;
+              diagram.canvas.replaceChildren(diagram.original.cloneNode(true));
+              diagram.toolbar.hidden = true;
+              diagram.viewport.classList.add('has-render-error');
+              diagram.viewport.setAttribute(
+                'aria-label',
+                `文章关系图 ${diagram.index + 1}渲染失败，显示源码`
+              );
+              diagram.viewport.setAttribute('aria-busy', 'false');
+              console.error('Mermaid 关系图渲染失败', error);
+            }
+          }
+        };
+
+        await renderDiagrams();
+
+        const themeObserver = new MutationObserver((records) => {
+          if (records.some((record) => record.attributeName === 'data-theme')) {
+            void renderDiagrams();
+          }
+        });
+        themeObserver.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-theme']
+        });
+      } catch (error) {
+        console.error('Mermaid 渲染器加载失败', error);
+      }
+    })();
+  }
+</script>

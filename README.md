@@ -50,6 +50,15 @@ npm run preview        # 本地预览生产构建
 
 `readingTime` 可以省略，构建时会根据中英文正文估算。Markdown 中不要写不受信任的原始 HTML；站点没有接收外部用户内容的入口。
 
+文章中的关系图可以直接使用 Mermaid 代码块，发布后会自动渲染，并适配网站的深浅色模式。图表上方提供放大、缩小和适应窗口按钮：
+
+````markdown
+```mermaid
+flowchart LR
+  A[概念 A] --> B[概念 B]
+```
+````
+
 ## 新增一句留言
 
 留言保存在 `src/data/messages.ts`，每条只需要填写日期和一句话：
