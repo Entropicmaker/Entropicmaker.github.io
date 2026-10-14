@@ -1,0 +1,140 @@
+---
+import { categories } from '../data/categories';
+import { projects } from '../data/projects';
+import { formatDate, getPostUrl, type Post } from '../utils/posts';
+import { withBase } from '../utils/site';
+
+interface Props {
+  posts: Post[];
+}
+const { posts } = Astro.props;
+const codes = ['GEOGRAPHY', 'COMPUTING', 'GEOCOMPUTING', 'EVERYDAY'];
+const fields = categories.map((category, index) => {
+  const candidates = posts.filter((post) => post.data.category === category.id);
+  const post = candidates.find((post) => post.data.featured) ?? candidates[0];
+  const project =
+    !post && category.id === 'geocomputing' ? projects.find((project) => project.href) : undefined;
+  return {
+    name: category.id === 'geocomputing' ? '地理计算' : category.name,
+    code: codes[index],
+    title: post?.data.title ?? project?.title ?? category.name,
+    description: post?.data.description ?? project?.description ?? category.description,
+    date: post ? formatDate(post.data.pubDate) : project ? `项目 / ${project.year}` : '持续记录',
+    href: post
+      ? withBase(getPostUrl(post))
+      : (project?.href ?? withBase(`/categories/${category.id}/`)),
+    categoryHref: withBase(`/categories/${category.id}/`),
+    count: candidates.length
+  };
+});
+const first = fields[0];
+---
+
+<div
+  id="geo-design"
+  class="geo-screen"
+  data-design-version="v005"
+  data-fields={JSON.stringify(fields)}
+>
+  <div class="geo-content shell">
+    <div class="geo-toolbar">
+      <p class="geo-eyebrow">
+        <span class="geo-dot"></span>PERSONAL COORDINATES / {new Date().getFullYear()}
+      </p>
+      <button class="geo-replay" type="button" hidden
+        >重播入场 <span aria-hidden="true">↻</span></button
+      >
+    </div>
+    <section class="geo-hero" aria-labelledby="home-title">
+      <div>
+        <h1 id="home-title" class="geo-headline" tabindex="-1" aria-label="Linzii的地理小站">
+          <span class="geo-text-window"><span>Linzii的</span></span><span class="geo-text-window"
+            ><span><em>地理</em>小站</span></span>
+        </h1>
+        <p class="geo-subtitle">尽量多更新，没更新就是在吃双层吉士汉堡</p>
+        <p class="geo-title-label">GEOGRAPHY · CODE · EVERYDAY</p>
+      </div>
+      <div class="geo-instrument" role="img" aria-label="经纬曲线、观测圆环与定位点组成的地理图形">
+        <span class="geo-instrument-label top">OBSERVATION / SPACE</span>
+        <canvas class="geo-art" aria-hidden="true"></canvas>
+        <span class="geo-measure" aria-hidden="true"></span>
+        <span class="geo-instrument-label bottom">理解空间，记录日常</span>
+      </div>
+    </section>
+    <section class="geo-coordinates" aria-labelledby="coordinates-title">
+      <div class="geo-section-label">
+        <h2 id="coordinates-title">四个内容坐标</h2><a href={withBase('/categories/')}
+          >分类总览 <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="geo-filters" aria-label="选择内容坐标" hidden>
+        {
+          fields.map((field, index) => (
+            <button
+              class="geo-category"
+              data-category={index}
+              aria-pressed={index === 0 ? 'true' : 'false'}
+              type="button"
+            >
+              <>
+                <span>{field.name}</span>
+                <span class="geo-mono">{String(index + 1).padStart(2, '0')}</span>
+              </>
+            </button>
+          ))
+        }
+      </div>
+      <noscript
+        ><nav class="geo-category-fallback" aria-label="内容分类">
+          {fields.map((field) => <a href={field.categoryHref}>{field.name}</a>)}
+        </nav></noscript
+      >
+      <article class="geo-feature" aria-live="polite" aria-atomic="true">
+        <div>
+          <span class="geo-collection">FIELD 01 / {first.code}</span>
+          <h3><a class="geo-feature-title" href={first.href}>{first.title}</a></h3>
+          <p class="geo-description">{first.description}</p>
+          <div class="geo-feature-bottom">
+            <span class="geo-date">{first.date} / {first.name}</span><a
+              class="geo-category-link"
+              href={first.categoryHref}>进入地理科学 <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="geo-number-window" aria-hidden="true"><span class="geo-number">01</span></div>
+      </article>
+    </section>
+    <div class="geo-rule" aria-hidden="true"></div>
+  </div>
+  <p class="sr-only geo-motion-status" role="status" data-pagefind-ignore></p>
+  <div
+    class="geo-entry"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Linzii的地理小站入场动画"
+    hidden
+    data-pagefind-ignore
+  >
+    <div class="geo-entry-composition" aria-hidden="true">
+      <canvas class="geo-entry-art"></canvas><div class="geo-entry-big">
+        <span class="geo-entry-line">FIELD</span><span class="geo-entry-line">JOURNAL</span>
+      </div><canvas class="geo-entry-front"></canvas>
+      <div class="geo-entry-identity">
+        <span class="geo-entry-kicker"><span>GEOGRAPHY / COMPUTING / EVERYDAY</span></span><strong
+          class="geo-entry-title"><span>Linzii的</span><span>地理小站</span></strong>
+      </div>
+    </div>
+    <div class="geo-entry-inverse" aria-hidden="true">
+      <canvas class="geo-entry-art"></canvas><div class="geo-entry-big">
+        <span class="geo-entry-line">FIELD</span><span class="geo-entry-line">JOURNAL</span>
+      </div><canvas class="geo-entry-front"></canvas>
+      <div class="geo-entry-identity">
+        <span class="geo-entry-kicker"><span>GEOGRAPHY / COMPUTING / EVERYDAY</span></span><strong
+          class="geo-entry-title"><span>Linzii的</span><span>地理小站</span></strong>
+      </div>
+    </div>
+    <button class="geo-skip" type="button">跳过动画 <span aria-hidden="true">↗</span></button>
+  </div>
+</div>
+
+<script>
+  import '../scripts/coordinate-home.js';
+</script>

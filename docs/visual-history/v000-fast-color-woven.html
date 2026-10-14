@@ -1,0 +1,739 @@
+<style>
+@property --geo-entry-hole { syntax: '<length>'; inherits: false; initial-value: 0px; }
+#geo-design { background: transparent; }
+#geo-design .geo-screen {
+  --geo-bg: light-dark(#f1f4f1,#0e181a);
+  --geo-paper: light-dark(#fcfdfa,#132124);
+  --geo-ink: light-dark(#183034,#e8ece7);
+  --geo-muted: light-dark(#667679,#9daead);
+  --geo-line: light-dark(#d8dfdc,#2d4043);
+  --geo-ocean: light-dark(#174653,#80b8c1);
+  --geo-green: light-dark(#5b7f65,#93b09a);
+  --geo-soft: light-dark(#e3ece1,#26382d);
+  --geo-sand: light-dark(#b9865e,#d3a47d);
+  --geo-dark: #183034; --geo-light: #f1f4f1;
+  --geo-headline: 72px;
+  position: relative; display: flex; flex-direction: column; min-height: 920px;
+  overflow: hidden; background: var(--geo-bg); color: var(--geo-ink);
+  font-family: 'PingFang SC','Microsoft YaHei',sans-serif;
+  font-size: 14px; line-height: 1.65; isolation: isolate;
+}
+#geo-design .geo-screen * { box-sizing: border-box; }
+#geo-design .geo-screen [hidden] { display: none !important; }
+#geo-design .geo-screen button { font: inherit; color: inherit; }
+#geo-design .geo-screen p, #geo-design .geo-screen h1, #geo-design .geo-screen h2, #geo-design .geo-screen h3 { margin: 0; }
+#geo-design .geo-mono { font-family: 'SFMono-Regular',Consolas,monospace; font-size: 11px; letter-spacing: .07em; }
+#geo-design .geo-header { display: flex; align-items: center; gap: 24px; padding: 25px 34px; border-bottom: 1px solid var(--geo-line); }
+#geo-design .geo-brand { font-size: 17px; font-weight: 700; white-space: nowrap; letter-spacing: .04em; }
+#geo-design .geo-brand small { display: block; color: var(--geo-muted); font-size: 10px; font-weight: 400; letter-spacing: .18em; }
+#geo-design .geo-nav { display: flex; margin-left: auto; align-items: center; flex-wrap: wrap; gap: 20px; padding-right: 70px; }
+#geo-design .geo-nav span { color: var(--geo-muted); font-size: 12px; }
+#geo-design .geo-nav .geo-current { color: var(--geo-ocean); border-bottom: 2px solid var(--geo-green); padding-bottom: 4px; }
+#geo-design .geo-theme { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; background: var(--geo-paper); border: 1px solid var(--geo-line); border-radius: 3px; font-size: 11px !important; }
+#geo-design .geo-theme svg { width: 13px; height: 13px; }
+#geo-design .geo-main { flex: 1; padding: 32px 34px 20px; }
+#geo-design .geo-eyebrow { display: flex; gap: 10px; align-items: center; color: var(--geo-muted); font-size: 11px; letter-spacing: .1em; }
+#geo-design .geo-dot { display: inline-block; width: 6px; height: 6px; background: var(--geo-green); flex: 0 0 auto; }
+#geo-design .geo-rule { height: 1px; background: var(--geo-line); transform-origin: left; }
+#geo-design .geo-headline { font-size: clamp(42px,7.2vw,var(--geo-headline)); line-height: 1.14; font-weight: 750; letter-spacing: -.055em; }
+#geo-design .geo-text-window { display: block; overflow: hidden; padding-bottom: .05em; }
+#geo-design .geo-text-window > span { display: inline-block; }
+#geo-design .geo-subtitle { max-width: 380px; margin-top: 21px !important; color: var(--geo-muted); font-size: 13px; }
+#geo-design .geo-foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin: 0 34px; padding: 16px 0; border-top: 1px solid var(--geo-line); color: var(--geo-muted); font-size: 11px; }
+#geo-design .geo-replay { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border: 1px solid var(--geo-line); border-radius: 3px; background: var(--geo-paper); color: var(--geo-ocean); font-size: 12px !important; }
+#geo-design .geo-replay:disabled { opacity: .6; }
+#geo-design .geo-replay svg { width: 13px; height: 13px; }
+#geo-design .geo-category { border: 0; background: transparent; padding: 12px 16px; text-align: left; transition: background-color 160ms,color 160ms; }
+#geo-design .geo-category[aria-pressed='true'] { background: var(--geo-dark); color: var(--geo-light); }
+#geo-design .geo-category:hover { background: var(--geo-soft); color: var(--geo-ocean); }
+#geo-design .geo-category[aria-pressed='true']:hover { background: var(--geo-ocean); color: var(--geo-bg); }
+#geo-design .geo-category .geo-mono { font-size: 10px; opacity: .8; }
+#geo-design .geo-feature { position: relative; overflow: hidden; }
+#geo-design .geo-feature .geo-feature-title { font-size: 22px; line-height: 1.45; font-weight: 650; }
+#geo-design .geo-feature .geo-description { max-width: 530px; margin-top: 12px; font-size: 12px; color: var(--geo-muted); }
+#geo-design .geo-number-window { overflow: hidden; }
+#geo-design .geo-number { display: block; font-family: Arial,sans-serif; font-weight: 700; }
+#geo-design .geo-invert { border: 0; background: var(--geo-dark); color: var(--geo-light) !important; padding: 8px 12px; border-radius: 2px; font-size: 12px !important; }
+#geo-design .geo-invert:hover { background: var(--geo-ocean); }
+#geo-design .geo-feature.is-reversed { background: var(--geo-dark); color: var(--geo-light); }
+#geo-design .geo-feature.is-reversed .geo-description, #geo-design .geo-feature.is-reversed .geo-meta { color: #bbcfca; }
+#geo-design .geo-feature.is-reversed .geo-number { color: #bbcfca; }
+#geo-design .geo-feature.is-reversed .geo-invert { background: var(--geo-light); color: var(--geo-dark) !important; }
+#geo-design .geo-meta { color: var(--geo-muted); font-size: 11px; }
+#geo-design .geo-wipe { position: absolute; inset: 0; z-index: 3; transform: translateX(-101%); background: var(--geo-ocean); pointer-events: none; }
+#geo-design .geo-hero-balanced { display: grid; grid-template-columns: 1.2fr 1fr; align-items: center; gap: 25px; padding: 30px 0 36px; }
+#geo-design .geo-hero-balanced .geo-headline em { font-style: normal; color: var(--geo-green); }
+#geo-design .geo-title-label { display: inline-block; margin-top: 24px; padding: 4px 7px; background: var(--geo-dark); color: var(--geo-light); font-family: Consolas,monospace; font-size: 10px; letter-spacing: .1em; }
+#geo-design .geo-instrument { position: relative; height: 264px; display: grid; place-items: center; border: 1px solid var(--geo-line); background: var(--geo-paper); }
+#geo-design .geo-instrument::before, #geo-design .geo-instrument::after { content: ''; position: absolute; background: var(--geo-line); }
+#geo-design .geo-instrument::before { width: 1px; height: 100%; left: 50%; }
+#geo-design .geo-instrument::after { height: 1px; width: 100%; top: 50%; }
+#geo-design .geo-orbit { position: relative; height: 185px; width: 185px; z-index: 1; border: 1px solid var(--geo-green); border-radius: 50%; background: var(--geo-soft); }
+#geo-design .geo-orbit::before { content: ''; position: absolute; inset: 0 49px; border: 1px solid var(--geo-green); border-radius: 50%; }
+#geo-design .geo-orbit::after { content: ''; position: absolute; inset: 49px 0; border: 1px solid var(--geo-green); border-radius: 50%; }
+#geo-design .geo-cross { position: absolute; inset: 30px; border: 1px solid var(--geo-green); border-radius: 50%; }
+#geo-design .geo-dot-marker { position: absolute; z-index: 4; right: 34px; top: 44px; height: 13px; width: 13px; background: var(--geo-sand); border: 3px solid var(--geo-paper); border-radius: 50%; }
+#geo-design .geo-instrument-label { position: absolute; z-index: 2; font-family: Consolas,monospace; font-size: 10px; background: var(--geo-paper); padding: 2px 5px; color: var(--geo-muted); }
+#geo-design .geo-instrument-label.top { left: 9px; top: 9px; }
+#geo-design .geo-instrument-label.bottom { bottom: 9px; right: 9px; }
+#geo-design .geo-measure { position: absolute; left: 16px; bottom: 14px; width: 45px; height: 9px; border-left: 1px solid var(--geo-ink); border-right: 1px solid var(--geo-ink); border-bottom: 1px solid var(--geo-ink); }
+#geo-design .geo-section-label { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: var(--geo-muted); font-size: 11px; }
+#geo-design .geo-filters { display: grid; grid-template-columns: repeat(4,1fr); border: 1px solid var(--geo-line); }
+#geo-design .geo-filters .geo-category { display: flex; align-items: center; justify-content: space-between; border-right: 1px solid var(--geo-line); font-size: 12px; }
+#geo-design .geo-filters .geo-category:last-child { border-right: 0; }
+#geo-design .geo-feature-balanced { display: grid; grid-template-columns: minmax(0,1fr) 80px; gap: 18px; padding: 25px 20px; margin-top: 16px; border-bottom: 1px solid var(--geo-line); }
+#geo-design .geo-feature-balanced .geo-feature-title { margin-top: 8px; }
+#geo-design .geo-feature-balanced .geo-number { color: var(--geo-green); font-size: 56px; line-height: 1; text-align: right; }
+#geo-design .geo-feature-bottom { display: flex; gap: 18px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-top: 20px; }
+#geo-design .geo-terminal .geo-main { padding-top: 0; }
+#geo-design .geo-terminal-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 23px 0; }
+#geo-design .geo-terminal-top h1 { font-size: 27px; font-weight: 650; letter-spacing: -.025em; }
+#geo-design .geo-terminal-layout { display: grid; grid-template-columns: 170px minmax(0,1fr); gap: 28px; padding: 23px 0 24px; }
+#geo-design .geo-rail { display: flex; flex-direction: column; border-right: 1px solid var(--geo-line); }
+#geo-design .geo-rail .geo-category { display: grid; gap: 6px; margin-right: 14px; margin-bottom: 8px; padding: 14px 12px; font-size: 13px; }
+#geo-design .geo-rail-note { color: var(--geo-muted); font-size: 11px; padding: 30px 12px 0 0; }
+#geo-design .geo-archive-diagram { position: relative; height: 287px; background: var(--geo-paper); overflow: hidden; border: 1px solid var(--geo-line); }
+#geo-design .geo-grid-bg { position: absolute; inset: 0; opacity: .45; background-image: linear-gradient(var(--geo-line) 1px,transparent 1px),linear-gradient(90deg,var(--geo-line) 1px,transparent 1px); background-size: 35px 35px; }
+#geo-design .geo-plate { position: absolute; left: 50%; top: 50%; width: 150px; height: 195px; border: 1px solid var(--geo-line); background: var(--geo-soft); transform: translate(-50%,-50%); }
+#geo-design .geo-plate.back { transform: translate(-42%,-57%); background: var(--geo-paper); }
+#geo-design .geo-plate.front { padding: 14px; }
+#geo-design .geo-plate strong { display: block; font-family: Arial,sans-serif; font-size: 32px; line-height: 1; color: var(--geo-ocean); letter-spacing: -.08em; }
+#geo-design .geo-plate .geo-ring { width: 64px; height: 64px; border: 6px solid var(--geo-green); border-radius: 50%; margin: 16px auto 0; }
+#geo-design .geo-callout { position: absolute; font-size: 10px; font-family: Consolas,monospace; color: var(--geo-muted); }
+#geo-design .geo-callout.first { left: 16px; top: 18px; }
+#geo-design .geo-callout.second { right: 14px; bottom: 16px; }
+#geo-design .geo-callout-line { position: absolute; left: 13px; top: 75px; height: 1px; width: 28%; background: var(--geo-muted); transform: rotate(26deg); transform-origin: left; }
+#geo-design .geo-callout-line.second { left: auto; right: 16px; top: auto; bottom: 68px; width: 26%; transform: rotate(26deg); transform-origin: right; }
+#geo-design .geo-feature-terminal { padding: 22px 0 10px; }
+#geo-design .geo-feature-terminal .geo-feature-title { margin-top: 7px; }
+#geo-design .geo-terminal-status { margin-top: 24px; border-top: 1px solid var(--geo-line); padding-top: 17px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+#geo-design .geo-poster .geo-main { padding: 0; }
+#geo-design .geo-poster-hero { position: relative; padding: 35px 34px 30px; background: #174653; color: #f1f4f1; min-height: 342px; overflow: hidden; }
+#geo-design .geo-poster-hero .geo-eyebrow { color: #c7d9d7; }
+#geo-design .geo-poster-hero .geo-headline { position: relative; z-index: 2; width: 58%; margin-top: 28px; }
+#geo-design .geo-poster-hero .geo-subtitle { position: relative; z-index: 2; max-width: 400px; color: #cedbd7; margin-top: 21px !important; }
+#geo-design .geo-poster-field { position: absolute; right: -16px; top: 0; bottom: 0; width: 43%; background: #5b7f65; clip-path: polygon(17% 0,100% 0,100% 100%,0 100%,0 30%); }
+#geo-design .geo-poster-disc { position: absolute; width: 200px; height: 200px; top: 42px; left: 38px; border-radius: 50%; background: #e3ece1; }
+#geo-design .geo-poster-disc::after { content: ''; position: absolute; width: 125px; height: 125px; top: 38px; left: 38px; border: 1px solid #5b7f65; border-radius: 50%; }
+#geo-design .geo-poster-strip { position: absolute; width: 95%; height: 50px; bottom: 78px; right: 0; transform: rotate(-17deg); background: #b9865e; }
+#geo-design .geo-poster-word { position: absolute; left: 20px; bottom: -23px; font-family: 'Arial Black',Arial,sans-serif; font-size: 89px; line-height: 1; font-weight: 900; color: #183034; letter-spacing: -.08em; transform: rotate(-8deg); }
+#geo-design .geo-poster-index { position: absolute; right: 29px; top: 32px; z-index: 2; color: #174653; font-family: Arial,sans-serif; font-size: 66px; font-weight: 700; line-height: 1; }
+#geo-design .geo-poster-main { padding: 25px 34px 15px; }
+#geo-design .geo-poster-filters { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 13px; }
+#geo-design .geo-poster-filters .geo-category { padding: 8px 12px; border: 1px solid var(--geo-line); font-size: 12px; border-radius: 2px; }
+#geo-design .geo-feature-poster { border-top: 1px solid var(--geo-line); margin-top: 19px; padding: 24px 18px; }
+#geo-design .geo-feature-poster .geo-feature-title { margin-top: 8px; }
+#geo-design .geo-collection { font-family: Consolas,monospace; font-size: 11px; letter-spacing: .12em; }
+#geo-design .geo-entry { position: absolute; z-index: 10; inset: 0; pointer-events: none; overflow: hidden; background: #183034; color: #f1f4f1; --geo-entry-hole: 0px; mask-image: radial-gradient(circle at 70% 45%,transparent var(--geo-entry-hole),#000 calc(var(--geo-entry-hole) + 1px)); }
+#geo-design .geo-entry-identity { position: absolute; z-index: 3; left: 9%; top: 39%; font-size: 13px; letter-spacing: .12em; }
+#geo-design .geo-entry-identity strong { display: block; margin-top: 8px; font-size: 24px; font-weight: 500; letter-spacing: .04em; }
+#geo-design .geo-entry-big { position: absolute; top: 20%; right: -2%; font-family: 'Arial Black',Arial,sans-serif; font-size: clamp(62px,14vw,150px); line-height: .88; font-weight: 900; letter-spacing: -.065em; }
+#geo-design .geo-screen .geo-motion-status { min-height: 18px; }
+@media (max-width: 650px) {
+  #geo-design .geo-screen { min-height: 1280px; }
+  #geo-design .geo-header { align-items: flex-start; flex-direction: column; padding: 20px; gap: 14px; }
+  #geo-design .geo-nav { margin-left: 0; padding-right: 0; gap: 22px; }
+  #geo-design .geo-main { padding: 26px 20px 15px; }
+  #geo-design .geo-hero-balanced { grid-template-columns: 1fr; gap: 24px; padding: 23px 0 28px; }
+  #geo-design .geo-instrument { height: 200px; }
+  #geo-design .geo-orbit { width: 151px; height: 151px; }
+  #geo-design .geo-orbit::before { inset: 0 40px; }
+  #geo-design .geo-orbit::after { inset: 40px 0; }
+  #geo-design .geo-filters { grid-template-columns: repeat(2,1fr); }
+  #geo-design .geo-filters .geo-category { border-bottom: 1px solid var(--geo-line); }
+  #geo-design .geo-filters .geo-category:nth-child(even) { border-right: 0; }
+  #geo-design .geo-filters .geo-category:nth-child(n+3) { border-bottom: 0; }
+  #geo-design .geo-feature-balanced { grid-template-columns: minmax(0,1fr) 45px; padding: 20px 12px; gap: 10px; }
+  #geo-design .geo-feature-balanced .geo-number { font-size: 38px; }
+  #geo-design .geo-feature .geo-feature-title { font-size: 19px; }
+  #geo-design .geo-foot { margin-inline: 20px; }
+  #geo-design .geo-terminal-top { flex-wrap: wrap; }
+  #geo-design .geo-terminal-top h1 { font-size: 25px; }
+  #geo-design .geo-terminal-layout { grid-template-columns: 1fr; gap: 23px; }
+  #geo-design .geo-rail { display: grid; grid-template-columns: repeat(2,1fr); border-right: 0; gap: 6px; }
+  #geo-design .geo-rail .geo-category { margin: 0; padding: 9px 12px; gap: 3px; border: 1px solid var(--geo-line); }
+  #geo-design .geo-rail-note { grid-column: 1 / -1; padding: 6px 0; }
+  #geo-design .geo-archive-diagram { height: 267px; }
+  #geo-design .geo-poster-hero { padding: 26px 20px; min-height: 441px; }
+  #geo-design .geo-poster-hero .geo-headline { width: 100%; margin-top: 20px; }
+  #geo-design .geo-poster-hero .geo-subtitle { width: 65%; font-size: 12px; margin-top: 16px !important; }
+  #geo-design .geo-poster-field { top: 255px; width: 60%; }
+  #geo-design .geo-poster-disc { height: 118px; width: 118px; top: 8px; left: 44px; }
+  #geo-design .geo-poster-disc::after { height: 74px; width: 74px; top: 22px; left: 22px; }
+  #geo-design .geo-poster-strip { height: 30px; bottom: 49px; }
+  #geo-design .geo-poster-word { font-size: 56px; bottom: -11px; }
+  #geo-design .geo-poster-index { font-size: 39px; top: 16px; right: 18px; }
+  #geo-design .geo-poster-main { padding: 22px 20px; }
+  #geo-design .geo-entry-identity { top: 28%; }
+  #geo-design .geo-entry-big { top: 45%; }
+}
+@media (pointer: coarse) { #geo-design .geo-category, #geo-design .geo-replay, #geo-design .geo-invert { min-height: 44px; } }
+@media (prefers-reduced-motion: reduce) { #geo-design .geo-screen * { transition: none !important; } }
+
+/* Continuous composition: typography and objects share the same field. */
+#geo-design .geo-screen { --geo-headline: 64px; background: radial-gradient(ellipse at 75% 24%,color-mix(in srgb,var(--geo-soft) 32%,transparent),transparent 48%),var(--geo-bg); }
+#geo-design .geo-header { border-bottom-color: color-mix(in srgb,var(--geo-line) 42%,transparent); }
+#geo-design .geo-theme { border: 0; background: transparent; }
+#geo-design .geo-dot { border-radius: 50%; }
+#geo-design .geo-title-label { padding: 0; background: transparent; color: var(--geo-muted); font-size: 11px; letter-spacing: .12em; }
+#geo-design .geo-headline { font-weight: 650; letter-spacing: -.045em; }
+#geo-design .geo-instrument { border: 0; background: transparent; height: 300px; }
+#geo-design .geo-instrument::before,#geo-design .geo-instrument::after { display: none; }
+#geo-design .geo-art { display: block; position: absolute; inset: 0; width: 100%; height: 100%; color: var(--geo-green); }
+#geo-design .geo-instrument-label { font-size: 11px; background: transparent; padding: 0; }
+#geo-design .geo-instrument-label.top { top: 10px; left: 5px; }
+#geo-design .geo-instrument-label.bottom { bottom: 7px; right: 9px; }
+#geo-design .geo-measure { width: 29px; height: 5px; border-color: var(--geo-muted); opacity: .45; left: 8px; bottom: 9px; }
+#geo-design .geo-filters { border: 0; column-gap: 12px; }
+#geo-design .geo-category { position: relative; background: transparent !important; border: 0 !important; padding: 12px 12px 17px; color: var(--geo-muted); }
+#geo-design .geo-category[aria-pressed='true'] { color: var(--geo-ocean) !important; }
+#geo-design .geo-category[aria-pressed='true']::after { content: ''; position: absolute; bottom: 3px; left: 12px; width: 5px; height: 5px; border-radius: 50%; background: var(--geo-sand); }
+#geo-design .geo-category:hover { color: var(--geo-ocean) !important; }
+#geo-design .geo-filters .geo-category { border: 0; }
+#geo-design .geo-category .geo-mono { font-size: 11px; }
+#geo-design .geo-section-label { margin-bottom: 7px; }
+#geo-design .geo-feature-balanced { padding: 23px 12px 25px; margin-top: 20px; border: 0; }
+#geo-design .geo-feature .geo-feature-title { font-weight: 550; }
+#geo-design .geo-number { font-weight: 400; }
+#geo-design .geo-feature-balanced .geo-number { opacity: .6; font-size: 49px; }
+#geo-design .geo-feature.is-reversed { background: transparent; color: var(--geo-ink); }
+#geo-design .geo-feature.is-reversed .geo-description,#geo-design .geo-feature.is-reversed .geo-meta { color: var(--geo-muted); }
+#geo-design .geo-feature.is-reversed .geo-number { color: var(--geo-green); }
+#geo-design .geo-invert,#geo-design .geo-feature.is-reversed .geo-invert { padding: 7px 12px; border: 1px solid color-mix(in srgb,var(--geo-line) 65%,transparent); border-radius: 999px; background: transparent; color: var(--geo-ocean) !important; }
+#geo-design .geo-invert:hover { background: color-mix(in srgb,var(--geo-soft) 50%,transparent); }
+#geo-design .geo-wipe { display: none; }
+#geo-design .geo-feature { isolation: isolate; }
+#geo-design .geo-feature-title .geo-word { display: inline-block; transform-origin: 25% 100%; }
+#geo-design .geo-field-echo { position: absolute; z-index: -1; top: -6px; right: -4px; font: 600 clamp(56px,8vw,90px)/1 Arial,sans-serif; letter-spacing: -.07em; color: transparent; -webkit-text-stroke: 1px var(--geo-ocean); white-space: nowrap; pointer-events: none; opacity: 0; }
+#geo-design .geo-foot { border-top-color: color-mix(in srgb,var(--geo-line) 40%,transparent); }
+#geo-design .geo-replay { border-radius: 999px; background: transparent; border-color: color-mix(in srgb,var(--geo-line) 65%,transparent); }
+#geo-design .geo-terminal-layout { grid-template-columns: 158px minmax(0,1fr); gap: 37px; }
+#geo-design .geo-rail { border: 0; }
+#geo-design .geo-rail .geo-category { padding: 12px 10px 17px; }
+#geo-design .geo-rail-note { line-height: 1.8; }
+#geo-design .geo-archive-diagram { border: 0; background: transparent; height: 312px; }
+#geo-design .geo-grid-bg { opacity: .13; background-size: 47px 47px; mask-image: radial-gradient(ellipse at center,#000,transparent 71%); }
+#geo-design .geo-callout { font-size: 11px; }
+#geo-design .geo-callout-line { opacity: .35; left: 12px; top: 67px; width: 20%; }
+#geo-design .geo-callout-line.second { right: 17px; bottom: 52px; width: 19%; }
+#geo-design .geo-feature-terminal { padding-top: 24px; }
+#geo-design .geo-terminal-status { border: 0; margin-top: 12px; }
+#geo-design .geo-poster-hero { background: transparent; color: var(--geo-ink); padding-top: 43px; min-height: 357px; }
+#geo-design .geo-poster-hero .geo-eyebrow { color: var(--geo-muted); }
+#geo-design .geo-poster-hero .geo-subtitle { color: var(--geo-muted); }
+#geo-design .geo-poster-field { background: transparent; clip-path: none; width: 44%; right: 7px; top: 13px; }
+#geo-design .geo-poster-word { font-size: 88px; opacity: .075; color: var(--geo-ocean); transform: none; bottom: 47px; left: 0; letter-spacing: -.065em; }
+#geo-design .geo-poster-index { right: 20px; top: 37px; font-size: 44px; font-weight: 400; color: var(--geo-muted); opacity: .6; }
+#geo-design .geo-poster-filters .geo-category { border: 0; border-radius: 0; padding: 9px 13px 17px; }
+#geo-design .geo-feature-poster { border: 0; padding-left: 13px; margin-top: 16px; }
+#geo-design .geo-entry { background: #183034; mask-image: radial-gradient(circle at var(--geo-focus-x,70%) var(--geo-focus-y,45%),transparent var(--geo-entry-hole),#000 calc(var(--geo-entry-hole) + 1px)); }
+#geo-design .geo-entry-inverse { position: absolute; inset: 0; z-index: 4; background: #d5e4ce; color: #183034; clip-path: circle(0px at 170% 170%); }
+#geo-design .geo-entry-art, #geo-design .geo-entry-front { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+#geo-design .geo-entry-front { z-index: 2; }
+#geo-design .geo-entry-identity { left: 8%; top: 30%; z-index: 3; font-size: 11px; letter-spacing: .12em; }
+#geo-design .geo-entry-identity strong { font-size: 22px; line-height: 1.6; font-weight: 400; letter-spacing: .02em; }
+#geo-design .geo-entry-big { z-index: 1; font-family: Arial,sans-serif; font-weight: 600; font-size: clamp(65px,11.5vw,118px); top: 12%; right: 7%; opacity: .24; letter-spacing: -.075em; }
+@media(max-width:650px) {
+  #geo-design .geo-instrument { height: 220px; }
+  #geo-design .geo-instrument-label.top { top: 0; }
+  #geo-design .geo-hero-balanced { padding-top: 30px; padding-bottom: 34px; gap: 33px; }
+  #geo-design .geo-filters { gap: 5px 12px; }
+  #geo-design .geo-feature-balanced { padding: 22px 10px; }
+  #geo-design .geo-feature-balanced .geo-number { font-size: 34px; }
+  #geo-design .geo-terminal-layout { grid-template-columns: 1fr; gap: 28px; }
+  #geo-design .geo-archive-diagram { height: 287px; }
+  #geo-design .geo-poster-hero { min-height: 443px; padding-top: 30px; }
+  #geo-design .geo-poster-field { top: 252px; bottom: 3px; width: 66%; right: -5px; }
+  #geo-design .geo-poster-word { font-size: 61px; bottom: 18px; }
+  #geo-design .geo-poster-index { top: 10px; right: 15px; font-size: 30px; }
+  #geo-design .geo-entry-identity { top: 19%; right: 10%; }
+  #geo-design .geo-entry-big { top: 34%; right: 5%; font-size: 68px; }
+}
+</style>
+<div id="geo-design" class="viz-carousel" aria-label="博客视觉方向" data-previous-label="上一种构思" data-next-label="下一种构思">
+  <section data-variant="坐标档案" aria-label="坐标档案首页构思">
+    <div class="geo-screen geo-balanced" id="geo-balanced" aria-label="坐标档案的排版与动效">
+      <header class="geo-header">
+        <div class="geo-brand">选择性失忆<small>LINGEOCS / FIELD NOTES</small></div>
+        <nav class="geo-nav" aria-label="首页导航示意"><span class="geo-current">文章</span><span>分类</span><span>项目</span><span>关于</span><button class="geo-theme cursor-interaction" aria-label="切换浅色与深色" type="button"><i data-lucide="contrast" aria-hidden="true"></i>明暗</button></nav>
+      </header>
+      <div class="geo-main">
+        <p class="geo-eyebrow"><span class="geo-dot"></span><span class="geo-mono">PERSONAL COORDINATES / 2026</span></p>
+        <div class="geo-hero-balanced">
+          <div>
+            <h1 class="geo-headline" aria-label="Linzii的地理小站"><span class="geo-text-window"><span>Linzii的</span></span><span class="geo-text-window"><span><em>地理</em>小站</span></span></h1>
+            <p class="geo-subtitle">尽量多更新，没更新就是在吃双层吉士汉堡</p>
+            <span class="geo-title-label">GEOGRAPHY · CODE · EVERYDAY</span>
+          </div>
+          <div class="geo-instrument" role="img" aria-label="平面经纬网与测量线构成的地理图形">
+            <span class="geo-instrument-label top">OBSERVATION / SPACE</span>
+            <canvas class="geo-art geo-shape" aria-hidden="true"></canvas>
+            <span class="geo-measure"></span><span class="geo-instrument-label bottom">理解空间，记录日常</span>
+          </div>
+        </div>
+        <div class="geo-section-label"><span>四个内容坐标</span><span class="geo-mono">SELECT A FIELD</span></div>
+        <div class="geo-filters" aria-label="切换内容坐标">
+          <button class="geo-category cursor-interaction" data-category="0" aria-pressed="true" type="button">地理科学<span class="geo-mono">01</span></button>
+          <button class="geo-category cursor-interaction" data-category="1" aria-pressed="false" type="button">计算机科学<span class="geo-mono">02</span></button>
+          <button class="geo-category cursor-interaction" data-category="2" aria-pressed="false" type="button">地理计算<span class="geo-mono">03</span></button>
+          <button class="geo-category cursor-interaction" data-category="3" aria-pressed="false" type="button">日常<span class="geo-mono">04</span></button>
+        </div>
+        <article class="geo-feature geo-feature-balanced" aria-live="polite">
+          <div><span class="geo-meta geo-collection">FIELD 01 / GEOGRAPHY</span><h2 class="geo-feature-title">26暑期论文名词解释</h2><p class="geo-description">从基础光合机制、叶片资源到冠层遥感观测，整理暑期论文中的概念。</p><div class="geo-feature-bottom"><span class="geo-meta geo-date">2026.09.02 / 地理科学</span><button class="geo-invert cursor-interaction" type="button" aria-pressed="false">反色预览</button></div></div>
+          <div class="geo-number-window"><span class="geo-number">01</span></div><div class="geo-wipe"></div>
+        </article>
+      </div>
+      <footer class="geo-foot"><span class="geo-motion-status" role="status">首页构思 · 灰绿与深青</span><button class="geo-replay cursor-interaction" type="button"><i data-lucide="rotate-ccw" aria-hidden="true"></i>重播入场</button></footer>
+      <div class="geo-entry" aria-hidden="true" hidden>
+        <canvas class="geo-entry-art"></canvas><div class="geo-entry-big">FIELD<br>NOTES.</div><canvas class="geo-entry-front"></canvas><div class="geo-entry-identity">PERSONAL COORDINATES<strong>Linzii的地理小站</strong></div>
+        <div class="geo-entry-inverse"><canvas class="geo-entry-art"></canvas><div class="geo-entry-big">FIELD<br>NOTES.</div><canvas class="geo-entry-front"></canvas><div class="geo-entry-identity">PERSONAL COORDINATES<strong>Linzii的地理小站</strong></div></div>
+      </div>
+    </div>
+  </section>
+  <section data-variant="研究终端" aria-label="研究终端首页构思" hidden>
+    <div class="geo-screen geo-terminal" id="geo-terminal" aria-label="研究终端的排版与动效">
+      <header class="geo-header"><div class="geo-brand">选择性失忆<small>LINGEOCS / RESEARCH ARCHIVE</small></div><nav class="geo-nav" aria-label="首页导航示意"><span class="geo-current">文章</span><span>分类</span><span>项目</span><span>关于</span><button class="geo-theme cursor-interaction" aria-label="切换浅色与深色" type="button"><i data-lucide="contrast" aria-hidden="true"></i>明暗</button></nav></header>
+      <div class="geo-main">
+        <div class="geo-terminal-top"><h1>Linzii的地理小站</h1><span class="geo-mono geo-eyebrow"><span class="geo-dot"></span>PERSONAL ARCHIVE / 2026</span></div><div class="geo-rule"></div>
+        <div class="geo-terminal-layout">
+          <aside class="geo-rail" aria-label="切换档案分类">
+            <button class="geo-category cursor-interaction" data-category="0" aria-pressed="true" type="button"><span class="geo-mono">01 / GEOGRAPHY</span>地理科学</button>
+            <button class="geo-category cursor-interaction" data-category="1" aria-pressed="false" type="button"><span class="geo-mono">02 / COMPUTING</span>计算机科学</button>
+            <button class="geo-category cursor-interaction" data-category="2" aria-pressed="false" type="button"><span class="geo-mono">03 / GEOCOMPUTING</span>交叉研究</button>
+            <button class="geo-category cursor-interaction" data-category="3" aria-pressed="false" type="button"><span class="geo-mono">04 / EVERYDAY</span>日常</button>
+            <p class="geo-rail-note">遥感 · GIS · 空间数据工程<br>与学习生活中的记录</p>
+          </aside>
+          <div>
+            <div class="geo-archive-diagram" role="img" aria-label="连续的观测圆环、编号和测量标注组成的档案主视觉">
+              <div class="geo-grid-bg"></div><canvas class="geo-art geo-shape" aria-hidden="true"></canvas>
+              <span class="geo-callout first">CLASSIFICATION<br><span class="geo-collection">FIELD 01</span></span><span class="geo-callout second">SELECTED READING<br>个人知识档案</span>
+            </div>
+            <article class="geo-feature geo-feature-terminal" aria-live="polite"><span class="geo-meta geo-collection">FIELD 01 / GEOGRAPHY</span><h2 class="geo-feature-title">26暑期论文名词解释</h2><p class="geo-description">从基础光合机制、叶片资源到冠层遥感观测，整理暑期论文中的概念。</p><div class="geo-feature-bottom"><span class="geo-meta geo-date">2026.09.02 / 地理科学</span></div><div class="geo-wipe"></div></article>
+          </div>
+        </div>
+        <div class="geo-terminal-status"><span class="geo-mono">FOUR COORDINATES</span><span class="geo-meta">地理 / 计算 / 交叉 / 日常</span></div>
+      </div>
+      <footer class="geo-foot"><span class="geo-motion-status" role="status">首页构思 · 细线、留白与档案层级</span><button class="geo-replay cursor-interaction" type="button"><i data-lucide="rotate-ccw" aria-hidden="true"></i>重播入场</button></footer>
+      <div class="geo-entry" aria-hidden="true" hidden>
+        <canvas class="geo-entry-art"></canvas><div class="geo-entry-big">GEO<br>ARCHIVE.</div><canvas class="geo-entry-front"></canvas><div class="geo-entry-identity">FIELD NOTES / PERSONAL ARCHIVE<strong>Linzii的地理小站</strong></div>
+        <div class="geo-entry-inverse"><canvas class="geo-entry-art"></canvas><div class="geo-entry-big">GEO<br>ARCHIVE.</div><canvas class="geo-entry-front"></canvas><div class="geo-entry-identity">FIELD NOTES / PERSONAL ARCHIVE<strong>Linzii的地理小站</strong></div></div>
+      </div>
+    </div>
+  </section>
+  <section data-variant="图形随笔" aria-label="图形随笔首页构思" hidden>
+    <div class="geo-screen geo-poster" id="geo-poster" aria-label="图形随笔的排版与动效">
+      <header class="geo-header"><div class="geo-brand">选择性失忆<small>LINGEOCS / FIELD JOURNAL</small></div><nav class="geo-nav" aria-label="首页导航示意"><span class="geo-current">文章</span><span>分类</span><span>项目</span><span>关于</span><button class="geo-theme cursor-interaction" aria-label="切换浅色与深色" type="button"><i data-lucide="contrast" aria-hidden="true"></i>明暗</button></nav></header>
+      <div class="geo-main">
+        <div class="geo-poster-hero">
+          <p class="geo-eyebrow geo-mono">GEOGRAPHY / COMPUTING / EVERYDAY</p>
+          <h1 class="geo-headline" aria-label="Linzii的地理小站"><span class="geo-text-window"><span>Linzii的</span></span><span class="geo-text-window"><span>地理小站</span></span></h1>
+          <p class="geo-subtitle">尽量多更新，没更新就是在吃双层吉士汉堡</p>
+          <div class="geo-poster-field" aria-hidden="true"><span class="geo-poster-word">FIELD</span><canvas class="geo-art geo-shape" aria-hidden="true"></canvas><span class="geo-poster-index geo-number">01</span></div>
+        </div>
+        <div class="geo-poster-main">
+          <div class="geo-section-label"><span>四个内容坐标</span><span class="geo-mono">CHOOSE YOUR FIELD</span></div>
+          <div class="geo-poster-filters" aria-label="切换内容坐标"><button class="geo-category cursor-interaction" data-category="0" aria-pressed="true" type="button">地理科学</button><button class="geo-category cursor-interaction" data-category="1" aria-pressed="false" type="button">计算机科学</button><button class="geo-category cursor-interaction" data-category="2" aria-pressed="false" type="button">地理计算</button><button class="geo-category cursor-interaction" data-category="3" aria-pressed="false" type="button">日常</button></div>
+          <article class="geo-feature geo-feature-poster" aria-live="polite"><span class="geo-meta geo-collection">FIELD 01 / GEOGRAPHY</span><h2 class="geo-feature-title">26暑期论文名词解释</h2><p class="geo-description">从基础光合机制、叶片资源到冠层遥感观测，整理暑期论文中的概念。</p><div class="geo-feature-bottom"><span class="geo-meta geo-date">2026.09.02 / 地理科学</span><button class="geo-invert cursor-interaction" type="button" aria-pressed="false">反色预览</button></div><div class="geo-wipe"></div></article>
+        </div>
+      </div>
+      <footer class="geo-foot"><span class="geo-motion-status" role="status">首页构思 · 深青反色与图形错层</span><button class="geo-replay cursor-interaction" type="button"><i data-lucide="rotate-ccw" aria-hidden="true"></i>重播入场</button></footer>
+      <div class="geo-entry" aria-hidden="true" hidden>
+        <canvas class="geo-entry-art"></canvas><div class="geo-entry-big">FIELD<br>JOURNAL.</div><canvas class="geo-entry-front"></canvas><div class="geo-entry-identity">GEOGRAPHY / COMPUTING / EVERYDAY<strong>Linzii的地理小站</strong></div>
+        <div class="geo-entry-inverse"><canvas class="geo-entry-art"></canvas><div class="geo-entry-big">FIELD<br>JOURNAL.</div><canvas class="geo-entry-front"></canvas><div class="geo-entry-identity">GEOGRAPHY / COMPUTING / EVERYDAY<strong>Linzii的地理小站</strong></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('geo-design');
+  const fields = [
+    {name:'地理科学',code:'GEOGRAPHY',title:'26暑期论文名词解释',description:'从基础光合机制、叶片资源到冠层遥感观测，整理暑期论文中的概念。',date:'2026.09.02'},
+    {name:'计算机科学',code:'COMPUTING',title:'建站日记 01：这个博客是怎样开始的',description:'记录个人博客从想法、技术选择到首次上线的过程。',date:'2026.07.20'},
+    {name:'地理计算',code:'GEOCOMPUTING',title:'CodeVision Lab · 编程视界',description:'交互式编程与算法可视化学习平台，让计算方法变得可观察。',date:'项目 / 2026'},
+    {name:'日常',code:'EVERYDAY',title:'度假日志',description:'一篇关于鹰角 FES、明日方舟夏活与上海假期的个人记录。',date:'2026.07.29'}
+  ];
+  const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const preferences = {};
+  function remember(id,index) {
+    preferences[id] = index;
+    if (window.openai && window.openai.setWidgetState) {
+      window.openai.setWidgetState({modelContent:{categoryByDesign:preferences},privateContent:{categoryByDesign:preferences}}).catch(() => {});
+    }
+  }
+  function animate(el,frames,options) {
+    if (!el || reduced()) return null;
+    return el.animate(frames,Object.assign({easing:'cubic-bezier(.22,1,.36,1)',fill:'none'},options));
+  }
+  const clamp = value => Math.min(1,Math.max(0,value));
+  const ease = value => {const v=clamp(value);return v*v*(3-2*v);};
+  function prepareCanvas(canvas) {
+    const bounds=canvas.getBoundingClientRect();
+    if(bounds.width<1 || bounds.height<1) return null;
+    const ratio=Math.min(window.devicePixelRatio || 1,2);
+    const width=Math.round(bounds.width*ratio),height=Math.round(bounds.height*ratio);
+    if(canvas.width!==width || canvas.height!==height) {canvas.width=width;canvas.height=height;}
+    const ctx=canvas.getContext('2d');
+    if(!ctx) return null;
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+    ctx.clearRect(0,0,bounds.width,bounds.height);
+    return {ctx,width:bounds.width,height:bounds.height};
+  }
+  function paintObservatory(canvas,options={}) {
+    const surface=prepareCanvas(canvas);
+    if(!surface) return;
+    const {ctx,width,height}=surface;
+    const frontSurface=options.frontCanvas?prepareCanvas(options.frontCanvas):null;
+    const front=frontSurface && frontSurface.ctx;
+    const cx=options.cx ?? width*.52,cy=options.cy ?? height*.48;
+    const radius=options.radius ?? Math.min(width,height)*.35;
+    const phase=options.phase ?? 1,turn=options.turn ?? 0;
+    const dark=!!options.dark,inverted=!!options.inverted;
+    const entryWeight=options.entry?(options.entryBlend ?? 1):0;
+    const base=options.ink || (dark?[183,207,198]:[48,84,76]);
+    const ink=inverted?(dark?[33,64,56]:[217,230,218]):base;
+    const rgba=(rgb,alpha)=>'rgba('+rgb.join(',')+','+alpha+')';
+    const project=(x,y,z)=>{
+      const a=.31+turn,b=.47,c=-.22;
+      const ax=x*Math.cos(a)+z*Math.sin(a),az=-x*Math.sin(a)+z*Math.cos(a);
+      const by=y*Math.cos(b)-az*Math.sin(b),bz=y*Math.sin(b)+az*Math.cos(b);
+      return {x:cx+radius*(ax*Math.cos(c)-by*Math.sin(c)),y:cy+radius*(ax*Math.sin(c)+by*Math.cos(c)),z:bz};
+    };
+    const projectOrbit=(x,y,z)=>{
+      const tilt=options.ringTurn || 0;
+      return project(x,y*Math.cos(tilt)-z*Math.sin(tilt),y*Math.sin(tilt)+z*Math.cos(tilt));
+    };
+    const glow=ctx.createRadialGradient(cx-radius*.25,cy-radius*.35,0,cx,cy,radius*1.36);
+    glow.addColorStop(0,rgba(dark?[126,166,145]:[166,193,168],dark?.085:.19));
+    glow.addColorStop(1,rgba(dark?[126,166,145]:[166,193,168],0));
+    ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,radius*1.36,0,Math.PI*2);ctx.fill();
+    if(inverted) {
+      ctx.fillStyle=dark?'#dbe7db':'#183034';
+      ctx.beginPath();ctx.arc(cx,cy,radius*.99,0,Math.PI*2);ctx.fill();
+    }
+    const ribbonSpan=ease(phase)*Math.PI*1.73;
+    const ribbon=ctx.createLinearGradient(cx-radius*1.35,cy-radius*.5,cx+radius*1.35,cy+radius*.5);
+    ribbon.addColorStop(0,rgba(ink,.015));
+    ribbon.addColorStop(.42,rgba(ink,.075+.115*entryWeight));
+    ribbon.addColorStop(.73,rgba(ink,.045+.075*entryWeight));
+    ribbon.addColorStop(1,rgba(ink,.015));
+    let ribbonPrevious=null,ribbonRun=null;
+    const ribbonRuns=[];
+    for(let i=0;i<=100;i++) {
+      const t=.22+ribbonSpan*i/100;
+      const p=projectOrbit(Math.cos(t)*1.29,Math.sin(t)*.50,Math.sin(t)*1.11);
+      if(ribbonPrevious) {
+        const pen=front && p.z>=0?front:ctx;
+        if(!ribbonRun || ribbonRun.pen!==pen) {
+          ribbonRun={pen,points:[ribbonPrevious,p]};ribbonRuns.push(ribbonRun);
+        } else ribbonRun.points.push(p);
+      }
+      ribbonPrevious=p;
+    }
+    for(const run of ribbonRuns) {
+      const pen=run.pen;
+      pen.strokeStyle=ribbon;pen.lineWidth=5+8*entryWeight;pen.lineCap='round';pen.beginPath();
+      run.points.forEach((point,i)=>i===0?pen.moveTo(point.x,point.y):pen.lineTo(point.x,point.y));
+      pen.stroke();pen.lineCap='butt';
+    }
+    const curve=(sample,opacity=.35,lineWidth=.7,portion=1,projection=project)=>{
+      const count=96,end=Math.max(.015,portion)*Math.PI*2;
+      let previous=null;
+      for(let i=0;i<=count;i++) {
+        const t=end*i/count,p=sample(t),next=projection(p[0],p[1],p[2]);
+        if(previous) {
+          const depth=clamp((next.z+1.2)/2.4);
+          const alpha=opacity*(.22+.78*depth);
+          const pen=front && next.z>=0?front:ctx;
+          pen.strokeStyle=rgba(ink,alpha);pen.lineWidth=lineWidth;
+          pen.beginPath();pen.moveTo(previous.x,previous.y);pen.lineTo(next.x,next.y);pen.stroke();
+        }
+        previous=next;
+      }
+    };
+    const opening=ease(phase);
+    for(const latitude of [-Math.PI/3,-Math.PI/6,0,Math.PI/6,Math.PI/3]) {
+      curve(t=>[Math.cos(latitude)*Math.sin(t),Math.sin(latitude),Math.cos(latitude)*Math.cos(t)],inverted?.72:.52,.65,opening);
+    }
+    for(let longitude=0;longitude<6;longitude++) {
+      const l=longitude*Math.PI/6;
+      curve(t=>[Math.sin(t)*Math.sin(l),Math.cos(t),Math.sin(t)*Math.cos(l)],inverted?.7:.46,.7,opening);
+    }
+    const rim=front || ctx;
+    rim.strokeStyle=rgba(ink,inverted?.62:.32);rim.lineWidth=.8;
+    rim.beginPath();rim.arc(cx,cy,radius,Math.PI*.12,Math.PI*(.12+1.74*opening));rim.stroke();
+    for(let ring=0;ring<4;ring++) {
+      const r=1.24+ring*.025;
+      curve(t=>[Math.cos(t)*r,Math.sin(t)*r*.39,Math.sin(t)*r*.86],.12+ring*.028,ring===3?1.2:.6,opening,projectOrbit);
+    }
+    const orbit=1.45;
+    ctx.strokeStyle=rgba(base,.15);ctx.lineWidth=.6;
+    ctx.beginPath();ctx.ellipse(cx,cy,radius*orbit,radius*.51,-.34+(options.ringTurn || 0),Math.PI*.93,Math.PI*(.93+.76*opening));ctx.stroke();
+    const angle=.65+(options.index || 0)*.19+(options.markTurn ?? turn);
+    const mark=project(Math.sin(angle)*.78,-.38,Math.cos(angle)*.78);
+    const accent=options.accent ?? 0;
+    const markPen=front && mark.z>=0?front:ctx;
+    if(accent>0) {
+      markPen.strokeStyle=rgba(dark?[227,171,116]:[179,122,68],.82*accent);
+      markPen.lineWidth=1.5;markPen.lineCap='round';markPen.beginPath();
+      for(let i=0;i<=24;i++) {
+        const t=angle-.40+(.40*i/24),point=project(Math.sin(t)*.78,-.38,Math.cos(t)*.78);
+        if(i===0)markPen.moveTo(point.x,point.y);else markPen.lineTo(point.x,point.y);
+      }
+      markPen.stroke();markPen.lineCap='butt';
+    }
+    markPen.fillStyle=dark?'#e3ab74':'#b9865e';
+    markPen.beginPath();markPen.arc(mark.x,mark.y,2.8+accent*.7,0,Math.PI*2);markPen.fill();
+    const horizon=project(-1.02,0,0);
+    ctx.strokeStyle=rgba(base,.22);ctx.lineWidth=.6;
+    ctx.beginPath();ctx.moveTo(horizon.x-radius*.42,horizon.y);ctx.lineTo(horizon.x-radius*.10,horizon.y);ctx.stroke();
+    ctx.fillStyle=rgba(base,.5);ctx.beginPath();ctx.arc(horizon.x,horizon.y,1.3,0,Math.PI*2);ctx.fill();
+    if(options.annotation) {
+      const endpoints=[project(-.86,-.30,.35),project(.88,.35,.30)];
+      const routes=[[[15,65],[cx-radius*1.65,cy-radius*.57],[endpoints[0].x,endpoints[0].y]],[[width-17,height-52],[cx+radius*1.58,cy+radius*.63],[endpoints[1].x,endpoints[1].y]]];
+      ctx.strokeStyle=rgba(base,.23);ctx.lineWidth=.7;
+      for(const route of routes) {
+        ctx.beginPath();route.forEach((point,i)=>i===0?ctx.moveTo(point[0],point[1]):ctx.lineTo(point[0],point[1]));ctx.stroke();
+        const last=route[route.length-1];ctx.fillStyle=rgba(base,.4);ctx.beginPath();ctx.arc(last[0],last[1],1.45,0,Math.PI*2);ctx.fill();
+      }
+    }
+  }
+  root.querySelectorAll('.geo-screen').forEach(screen => {
+    const settings = {headline:64,entryDuration:2200,grid:true,inversion:true};
+    const replay = screen.querySelector('.geo-replay');
+    const status = screen.querySelector('.geo-motion-status');
+    const originalStatus = status.textContent;
+    let running = false;
+    let selected=0;
+    let displayed=0,fieldFrame=0,fieldRevision=0,artState=null;
+    let fieldAnimations=[];
+    const art=screen.querySelector('.geo-art');
+    const feature=screen.querySelector('.geo-feature');
+    const echo=document.createElement('span');
+    echo.className='geo-field-echo';echo.setAttribute('aria-hidden','true');echo.hidden=true;
+    feature.append(echo);
+    const wordSegmenter=typeof Intl.Segmenter==='function'?new Intl.Segmenter('zh-CN',{granularity:'word'}):null;
+    function drawArtwork() {
+      if(!art) return;
+      paintObservatory(art,{dark:getComputedStyle(screen).backgroundColor==='rgb(14, 24, 26)',index:displayed,inverted:feature.classList.contains('is-reversed'),annotation:screen.classList.contains('geo-terminal'),...(artState || {})});
+    }
+    const artObserver=new ResizeObserver(()=>drawArtwork());
+    if(art) artObserver.observe(art);
+    const theme = screen.querySelector('.geo-theme');
+    theme.addEventListener('click', () => {
+      const dark = getComputedStyle(screen).backgroundColor === 'rgb(14, 24, 26)';
+      screen.style.colorScheme = dark ? 'light' : 'dark';
+      theme.setAttribute('aria-pressed', String(!dark));
+      drawArtwork();
+    });
+    function drawSettings() {
+      screen.style.setProperty('--geo-headline',settings.headline+'px');
+      const grid = screen.querySelector('.geo-grid-bg');
+      if (grid) grid.hidden = !settings.grid;
+      drawArtwork();
+    }
+    function selectField(index,motion=true) {
+      if (!Number.isInteger(index) || !fields[index]) return;
+      if(motion && index===selected && index===displayed) return;
+      const revision=++fieldRevision;
+      cancelAnimationFrame(fieldFrame);
+      fieldAnimations.forEach(animation=>animation && animation.cancel());fieldAnimations=[];
+      screen.querySelectorAll('.geo-number,.geo-feature-title,.geo-word,.geo-description,.geo-date,.geo-collection,.geo-shape').forEach(element=>element.getAnimations().forEach(animation=>animation.cancel()));
+      artState=null;echo.hidden=true;
+      const field = fields[index];
+      const sourceIndex=displayed;
+      selected=index;
+      const number = String(index+1).padStart(2,'0');
+      const title=screen.querySelector('.geo-feature-title');
+      const description=screen.querySelector('.geo-description');
+      const date=screen.querySelector('.geo-date');
+      const labels=Array.from(screen.querySelectorAll('.geo-collection'));
+      const numbers=Array.from(screen.querySelectorAll('.geo-number'));
+      screen.querySelectorAll('[data-category]').forEach(button => button.setAttribute('aria-pressed',String(Number(button.dataset.category)===index)));
+      const commit=()=>{
+        displayed=index;
+        labels.forEach(label=>label.textContent='FIELD '+number+' / '+field.code);
+        title.textContent=field.title;title.setAttribute('aria-label',field.title);
+        description.textContent=field.description;date.textContent=field.date+' / '+field.name;
+        numbers.forEach(element=>element.textContent=number);
+      };
+      if(!motion || reduced()) {commit();drawArtwork();return;}
+      const keep=animation=>{if(animation)fieldAnimations.push(animation);return animation;};
+      const outgoing=[title,description,date,...labels,...numbers].map(element=>keep(animate(element,[{opacity:1,transform:'translate(0,0) scale(1)'},{opacity:0,transform:'translate(-7px,-5px) scale(.98)'}],{duration:105,easing:'cubic-bezier(.55,0,1,.45)',fill:'forwards'})));
+      echo.textContent=['GEO.','CODE.','GEO/CODE.','DAILY.'][index];echo.hidden=false;
+      keep(animate(echo,[{opacity:0,transform:'translate(18px,10px) rotate(-7deg) scale(1.2)',offset:0},{opacity:.16,transform:'translate(0,0) rotate(-3deg) scale(1)',offset:.32},{opacity:.13,transform:'translate(-4px,-3px) rotate(-2deg) scale(.98)',offset:.64},{opacity:0,transform:'translate(-12px,-7px) rotate(0) scale(.94)',offset:1}],{duration:610,easing:'linear',fill:'both'}));
+      const direction=index>=sourceIndex?1:-1;
+      const bounds=art.getBoundingClientRect(),baseRadius=Math.min(bounds.width,bounds.height)*.35;
+      let committed=false;
+      const start=performance.now();
+      function frame(now) {
+        if(revision!==fieldRevision) return;
+        const elapsed=now-start,p=clamp(elapsed/650),pulse=Math.sin(Math.PI*p);
+        const lagPulse=Math.sin(Math.PI*clamp((elapsed-80)/570));
+        if(!committed && elapsed>=105) {
+          outgoing.forEach(animation=>animation && animation.cancel());
+          commit();committed=true;
+          const words=wordSegmenter?Array.from(wordSegmenter.segment(field.title),part=>part.segment):Array.from(field.title);
+          title.textContent='';
+          words.forEach((word,i)=>{
+            if(/^\s+$/.test(word)) {title.append(document.createTextNode(word));return;}
+            const span=document.createElement('span');span.className='geo-word';span.textContent=word;span.setAttribute('aria-hidden','true');title.append(span);
+            keep(animate(span,[{opacity:0,transform:'translate(7px,14px) rotate(-3deg) skewX(-5deg)'},{opacity:1,transform:'translate(0,0) rotate(0) skewX(0)'}],{duration:330,delay:Math.min(i*14,84),fill:'both'}));
+          });
+          [description,date,...labels].forEach((element,i)=>keep(animate(element,[{opacity:0,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],{duration:290,delay:65+i*20,fill:'both'})));
+          numbers.forEach(element=>keep(animate(element,[{opacity:0,transform:'translateY(65%) rotate(-9deg) scale(1.15)'},{opacity:1,transform:'translateY(0) rotate(0) scale(1)'}],{duration:360,fill:'both'})));
+        }
+        artState={index:sourceIndex+(index-sourceIndex)*ease(p),radius:baseRadius*(1+.13*pulse),turn:direction*.22*pulse,ringTurn:-direction*.28*lagPulse,markTurn:direction*.22*lagPulse,accent:.55*pulse};
+        drawArtwork();
+        feature.dataset.switchPhase=String(Math.round(p*100));
+        if(p<1) fieldFrame=requestAnimationFrame(frame);
+        else {
+          if(!committed) commit();
+          artState=null;echo.hidden=true;drawArtwork();
+          fieldAnimations.forEach(animation=>animation && animation.cancel());fieldAnimations=[];
+        }
+      }
+      fieldFrame=requestAnimationFrame(frame);
+    }
+    screen.querySelectorAll('[data-category]').forEach(button=>button.addEventListener('click',()=>{const index=Number(button.dataset.category);selectField(index);remember(screen.id,index);}));
+    const invert=screen.querySelector('.geo-invert');
+    if(invert) invert.addEventListener('click',()=>{
+      const active=invert.getAttribute('aria-pressed')!=='true';
+      invert.setAttribute('aria-pressed',String(active));
+      invert.textContent=active?'恢复图形':'反色预览';
+      screen.querySelector('.geo-feature').classList.toggle('is-reversed',active);
+      drawArtwork();
+    });
+    replay.addEventListener('click',async()=>{
+      if(running) return;
+      if(reduced()) {status.textContent='已按减少动态效果设置显示';return;}
+      selectField(selected,false);
+      screen.scrollIntoView({block:'start',behavior:'instant'});
+      running=true; replay.disabled=true;
+      const layer=screen.querySelector('.geo-entry');
+      layer.hidden=false;
+      status.textContent='正在演示入场';
+      const duration=settings.entryDuration;
+      const count=[];
+      layer.querySelectorAll('.geo-entry-big').forEach(text=>count.push(animate(text,[{transform:'translateX(24px) scale(1.06)',opacity:0,offset:0,easing:'cubic-bezier(.22,1,.36,1)'},{transform:'translateX(0) scale(1)',opacity:.24,offset:.24},{transform:'translateX(0) scale(1)',opacity:.24,offset:.78},{transform:'translateX(0) scale(1)',opacity:0,offset:1}],{duration:duration*.92,easing:'linear',fill:'both'})));
+      layer.querySelectorAll('.geo-entry-identity').forEach(text=>count.push(animate(text,[{opacity:0,transform:'translateY(5px)',offset:0,easing:'cubic-bezier(.22,1,.36,1)'},{opacity:1,transform:'translateY(0)',offset:.15},{opacity:1,transform:'translateY(0)',offset:.81},{opacity:0,transform:'translateY(0)',offset:1}],{duration:duration*.90,easing:'linear',fill:'both'})));
+      const inverseLayer=layer.querySelector('.geo-entry-inverse');
+      inverseLayer.hidden=true;
+      inverseLayer.style.clipPath='circle(0px at 170% 170%)';
+      const screenStyle=getComputedStyle(screen);
+      const homepageDark=screenStyle.backgroundColor==='rgb(14, 24, 26)';
+      const darkPalette={name:'暗场',background:'#183034',text:'#f1f4f1',ink:[183,207,198],dark:true};
+      const homepagePalette={name:'主页',background:screenStyle.backgroundColor,image:screenStyle.backgroundImage,text:screenStyle.color,ink:homepageDark?[183,207,198]:[48,84,76],dark:homepageDark,home:true,start:.73,end:.84};
+      const colorStages=settings.inversion?[
+        {name:'绿色',background:'#d5e4ce',text:'#183034',ink:[50,91,74],dark:false,start:.12,end:.25},
+        {name:'深蓝',background:'#23556f',text:'#eff5ef',ink:[193,221,225],dark:true,start:.25,end:.37},
+        {name:'钴蓝',background:'#3f59c5',text:'#f0f4ed',ink:[210,225,241],dark:true,start:.37,end:.46},
+        {name:'青绿',background:'#6bc8c2',text:'#173e45',ink:[32,79,80],dark:false,start:.46,end:.55},
+        {name:'鸢尾紫',background:'#655c9b',text:'#f1f0e9',ink:[216,219,237],dark:true,start:.55,end:.64},
+        {name:'原站深青',background:'#174653',text:'#edf2e9',ink:[183,207,198],dark:true,start:.64,end:.73},
+        homepagePalette
+      ]:[homepagePalette];
+      const applyPalette=(surface,palette)=>{
+        if(surface.dataset.palette===palette.name) return;
+        surface.style.backgroundColor=palette.background;
+        surface.style.backgroundImage=palette.image || 'none';
+        surface.style.color=palette.text;
+        surface.dataset.palette=palette.name;
+      };
+      layer.dataset.palette='';
+      inverseLayer.dataset.palette='';
+      layer.dataset.visited='暗场';
+      applyPalette(layer,darkPalette);
+      const screenBox=screen.getBoundingClientRect(),artBox=art.getBoundingClientRect();
+      const targetX=artBox.left-screenBox.left+artBox.width*.52,targetY=artBox.top-screenBox.top+artBox.height*.48;
+      layer.style.setProperty('--geo-focus-x',(targetX/screenBox.width*100)+'%');
+      layer.style.setProperty('--geo-focus-y',(targetY/screenBox.height*100)+'%');
+      const entryArt=layer.querySelector(':scope > .geo-entry-art');
+      const entryFront=layer.querySelector(':scope > .geo-entry-front');
+      const inverseArt=inverseLayer.querySelector('.geo-entry-art');
+      const inverseFront=inverseLayer.querySelector('.geo-entry-front');
+      const baseType=layer.querySelector(':scope > .geo-entry-big');
+      const incomingType=inverseLayer.querySelector('.geo-entry-big');
+      const styleType=(element,palette,outline)=>{
+        const rgb=palette.text.startsWith('#')?palette.text.slice(1).match(/.{2}/g).map(part=>parseInt(part,16)):palette.text.match(/[\d.]+/g).slice(0,3).map(Number);
+        element.style.color='rgba('+rgb.join(',')+','+(1-outline)+')';
+        element.style.webkitTextStrokeWidth=(2*outline)+'px';
+        element.style.webkitTextStrokeColor=palette.text;
+      };
+      const diagonal=Math.hypot(screenBox.width,screenBox.height);
+      const waveOffset=diagonal*.70;
+      const waveX=screenBox.width+waveOffset,waveY=screenBox.height+waveOffset;
+      const waveStart=Math.hypot(waveOffset,waveOffset)-1;
+      const waveEnd=Math.hypot(waveX,waveY)+2;
+      const start=performance.now();
+      const geometry=new Promise(resolve=>{
+        function frame(now) {
+          const p=clamp((now-start)/duration),settle=ease((p-.32)/.52);
+          const initialX=screenBox.width*.69,initialY=Math.min(screenBox.height*.39,470);
+          const targetRadius=Math.min(artBox.width,artBox.height)*.35;
+          const expansion=1+1.3*Math.sin(Math.PI*clamp(p/.82));
+          const radius=targetRadius*expansion;
+          const accent=ease((p-.17)/.10)*(1-ease((p-.62)/.22));
+          const ringTurn=-.25*Math.sin(Math.PI*clamp((p-80/duration)/.78))*(1-ease((p-.72)/.12));
+          const laggedSettle=ease((p-.32-80/duration)/.52);
+          const markTurn=(1-laggedSettle)*1.05*(1-ease((p-.76)/.08));
+          const outline=ease((p-.22)/.08)*(1-ease((p-.54)/.08));
+          const observation={cx:initialX+(targetX-initialX)*settle,cy:initialY+(targetY-initialY)*settle,radius,turn:(1-settle)*1.05,ringTurn,markTurn,phase:ease(p/.28),index:selected,entry:true,entryBlend:1-ease((p-.67)/.17),accent};
+          let previous=darkPalette,incoming=null;
+          for(const stage of colorStages) {
+            if(p>=stage.end) previous=stage;
+            else if(p>=stage.start) {incoming=stage;break;}
+            else break;
+          }
+          const isReversed=screen.querySelector('.geo-feature').classList.contains('is-reversed');
+          applyPalette(layer,previous);
+          styleType(baseType,previous,outline);
+          paintObservatory(entryArt,{...observation,frontCanvas:entryFront,dark:previous.dark,ink:previous.ink,inverted:previous.home && isReversed});
+          inverseLayer.hidden=!incoming;
+          if(incoming) {
+            applyPalette(inverseLayer,incoming);
+            styleType(incomingType,incoming,outline);
+            paintObservatory(inverseArt,{...observation,frontCanvas:inverseFront,dark:incoming.dark,ink:incoming.ink,inverted:incoming.home && isReversed});
+            const wave=ease((p-incoming.start)/(incoming.end-incoming.start));
+            inverseLayer.style.clipPath='circle('+(waveStart+(waveEnd-waveStart)*wave)+'px at '+waveX+'px '+waveY+'px)';
+            layer.dataset.wave=String(Math.round(wave*100));
+            const visited=layer.dataset.visited.split(' / ');
+            if(!visited.includes(incoming.name)) layer.dataset.visited+=' / '+incoming.name;
+          } else layer.dataset.wave='100';
+          layer.dataset.color=incoming?incoming.name:previous.name;
+          layer.dataset.outline=String(Math.round(outline*100));
+          layer.dataset.ringTurn=String(Math.round(ringTurn*180/Math.PI));
+          layer.dataset.phase=String(Math.round(p*100));
+          if(p<1) requestAnimationFrame(frame); else resolve();
+        }
+        requestAnimationFrame(frame);
+      });
+      const radius=Math.hypot(screen.clientWidth,screen.clientHeight)+40;
+      const reveal=animate(layer,[{'--geo-entry-hole':'0px'},{'--geo-entry-hole':radius+'px'}],{duration:duration*.16,delay:duration*.84,fill:'forwards'});
+      count.push(reveal);
+      screen.querySelectorAll('.geo-text-window > span').forEach((text,i)=>count.push(animate(text,[{transform:'translateY(110%)'},{transform:'translateY(0)'}],{duration:duration*.14,delay:duration*.84+i*30})));
+      count.push(animate(screen.querySelector('.geo-rule'),[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:duration*.14,delay:duration*.86}));
+      try {await Promise.all([geometry,...count.filter(Boolean).map(animation=>animation.finished.catch(()=>{}))]);}
+      finally {layer.hidden=true; count.filter(Boolean).forEach(animation=>animation.cancel());replay.disabled=false;running=false;status.textContent=originalStatus;}
+    });
+    drawSettings();
+    if(globalThis.Tweak) {
+      const tweak=new Tweak({container:screen,onChange:drawSettings});
+      if(!screen.classList.contains('geo-terminal')) tweak.addSlider(settings,'headline',{label:'标题尺度',min:50,max:72,step:2,unit:'px'});
+      tweak.addSlider(settings,'entryDuration',{label:'入场时长',min:1800,max:3000,step:100,unit:'ms'});
+      tweak.addToggle(settings,'inversion',{label:'入场多色反色'});
+      if(screen.classList.contains('geo-terminal')) tweak.addToggle(settings,'grid',{label:'测量网格'});
+    }
+    const saved=window.openai && window.openai.widgetState;
+    const savedCategories=saved && ((saved.privateContent && saved.privateContent.categoryByDesign) || (saved.modelContent && saved.modelContent.categoryByDesign) || saved.categoryByDesign);
+    const initial=savedCategories && savedCategories[screen.id];
+    if(Number.isInteger(initial)) selectField(initial,false);
+    window.addEventListener('openai:set_globals',event=>{
+      const state=event.detail && event.detail.globals && event.detail.globals.widgetState;
+      const categories=state && ((state.privateContent && state.privateContent.categoryByDesign) || (state.modelContent && state.modelContent.categoryByDesign) || state.categoryByDesign);
+      const index=categories && categories[screen.id];
+      if(Number.isInteger(index) && index!==selected) selectField(index,false);
+    });
+  });
+})();
+</script>

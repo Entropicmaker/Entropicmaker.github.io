@@ -1,0 +1,67 @@
+{
+  "currentVersion": "v005",
+  "activePreview": "/Users/linzii/.codex/visualizations/2026/10/14/01a13a75-7e90-72d0-871b-4458b27b9f39/coordinate-design.html",
+  "snapshotsAreImmutable": true,
+  "versions": [
+    {
+      "id": "v000",
+      "file": "v000-fast-color-woven.html",
+      "name": "多色反色与穿插动效",
+      "parent": null,
+      "notes": "较早的多色过渡版本，含蓝与紫色；保留大字穿插和外环错拍。",
+      "sha256": "274013ea1ccc8108979f9ef4286de0e45bb0dfa7c21c9d71ca38fd98a3c06c2e",
+      "bytes": 61724,
+      "recordedDate": "2026-10-15"
+    },
+    {
+      "id": "v001",
+      "file": "v001-green-story.html",
+      "name": "绿系构图初版",
+      "parent": "v000",
+      "notes": "本轮修改前版本：2.2秒入场、绿系构图、蓝色椭圆局部反色。",
+      "sha256": "040a85a466444358d945d44da97d3b7fdcaab8d3dc627efdcbd32b857eb040f0",
+      "bytes": 64740,
+      "recordedDate": "2026-10-15"
+    },
+    {
+      "id": "v002",
+      "file": "v002-fluid-orbit.html",
+      "name": "连续轨迹与文字入场",
+      "parent": "v001",
+      "notes": "3.2秒入场、左上文字错拍揭示、连续缩放漂移和转轴变化；深青经纬轨迹替代蓝色椭圆。",
+      "sha256": "b21dae13673b6e1bc86c093498494d68c6fd4e290d8a949218c63f70463ae237",
+      "bytes": 68087,
+      "recordedDate": "2026-10-15"
+    },
+    {
+      "id": "v003",
+      "file": "v003-typographic-rhythm.html",
+      "name": "窄体排版与节奏校准",
+      "parent": "v002",
+      "notes": "2.8秒入场、站名约0.47秒落稳；窄体大小层级、固定词义与对齐线、主词一次转描边；保留原配色、连续地球运动和反色。",
+      "sha256": "0aed510e2475009a6eed2e79405264cccd7f1526775b63380b7a82ca5423f23b",
+      "bytes": 68393,
+      "recordedDate": "2026-10-15"
+    },
+    {
+      "id": "v004",
+      "file": "v004-staged-identity.html",
+      "name": "站名随转色分拍进入",
+      "parent": "v003",
+      "notes": "保留2.8秒整体节奏；中文两段各560毫秒揭示，后半句在苔绿向浅绿转场时开始，约1.51秒落稳。",
+      "sha256": "04f3b2736d7148b420e57ee843aa28a3e3d2852c372651c57cb7c14f3336869c",
+      "bytes": 68399,
+      "recordedDate": "2026-10-15"
+    },
+    {
+      "id": "v005",
+      "file": "v005-field-journal.html",
+      "name": "恢复 FIELD JOURNAL 文案",
+      "parent": "v004",
+      "notes": "坐标档案入场英文恢复 FIELD / JOURNAL 与 GEOGRAPHY / COMPUTING / EVERYDAY；保留v004站名分拍和既有排版动效。",
+      "sha256": "ba4590e146ae3ac83c45cfa116ed8119299ec3f0a27676023b8b8115f3ec529c",
+      "bytes": 68367,
+      "recordedDate": "2026-10-15"
+    }
+  ]
+}

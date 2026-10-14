@@ -69,7 +69,9 @@ const isActive = (href: string) => href === activeNavigationHref;
     const root = document.documentElement;
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
-    localStorage.setItem('theme', next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch {}
     themeButton.setAttribute('aria-label', next === 'dark' ? '切换到浅色模式' : '切换到深色模式');
   });
 
