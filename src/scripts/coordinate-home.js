@@ -1,4 +1,4 @@
-// v008: a curved, two-tone inversion wave connects the article feed to the entry animation.
+// v009: cover the old text completely, then reveal the new text with a second wipe.
 (() => {
   const screen = document.getElementById('geo-design');
   if (!screen) return;
@@ -331,39 +331,39 @@
     cancelAnimationFrame(fieldFrame);
     fieldFrame = 0;
     if (!fieldTransition) return;
-    const { incoming, outgoing, waves } = fieldTransition;
+    const { incoming, outgoing, veils } = fieldTransition;
     outgoing.remove();
-    waves.forEach((wave) => wave.remove());
+    veils.forEach((veil) => veil.remove());
     incoming.style.removeProperty('clip-path');
+    incoming.classList.remove('geo-incoming');
     incoming.inert = false;
     results.style.removeProperty('height');
     results.classList.remove('is-switching');
     results.setAttribute('aria-busy', 'false');
     results.dataset.switchPhase = '100';
+    results.dataset.wipeStage = 'complete';
     fieldTransition = null;
     if (announce) status.textContent = `${fields[selected].name}，${fields[selected].count}篇文章`;
   }
-  function fieldWave(panel, tone, height) {
-    // These copies only carry the moving color treatment; the real article stays in place.
-    const wave = panel.cloneNode(true);
-    wave.className = `geo-field-wave geo-field-wave--${tone}`;
-    wave.removeAttribute('data-field');
-    wave.setAttribute('aria-hidden', 'true');
-    wave.setAttribute('data-pagefind-ignore', '');
-    wave.inert = true;
-    wave.style.height = height + 'px';
-    wave.style.clipPath = 'inset(0 0 0 100%)';
-    return wave;
+  function fieldVeil(tone, height) {
+    // Blank planes cover text; they never contain inverted or duplicated article content.
+    const veil = document.createElement('div');
+    veil.className = `geo-field-veil geo-field-veil--${tone}`;
+    veil.setAttribute('aria-hidden', 'true');
+    veil.inert = true;
+    veil.style.height = height + 'px';
+    veil.style.clipPath = 'inset(0 0 0 100%)';
+    return veil;
   }
   function fieldWaveGeometry(width, height) {
-    const bow = Math.min(width * 0.18, 120);
-    const tilt = Math.min(width * 0.11, 78);
+    const bow = Math.min(width * 0.05, 34);
+    const tilt = Math.min(width * 0.09, 60);
     const overscan = bow + tilt + 2;
     const boundary = (progress) => {
       const x = width + overscan - (width + overscan * 2) * ease(progress);
       return Array.from({ length: 33 }, (_, i) => {
         const y = i / 32;
-        // A broad arc, with its lower end slightly ahead, echoes the entry's expanding circle.
+        // A restrained, slightly slanted edge keeps the motion directional without a bulky ribbon.
         return [x + bow * (4 * (y - 0.5) ** 2 - 1) + tilt * (0.5 - y), y * height];
       });
     };
@@ -373,8 +373,7 @@
       boundary,
       left: (edge) => polygon([[-1, -1], ...edge, [-1, height + 1]]),
       right: (edge) =>
-        polygon([[width + 1, -1], [width + 1, height + 1], ...edge.slice().reverse()]),
-      between: (leading, trailing) => polygon([...leading, ...trailing.slice().reverse()])
+        polygon([[width + 1, -1], [width + 1, height + 1], ...edge.slice().reverse()])
     };
   }
   function selectField(index, motion = true) {
@@ -407,39 +406,42 @@
     outgoing.setAttribute('aria-hidden', 'true');
     outgoing.inert = true;
     incoming.inert = true;
+    incoming.classList.add('geo-incoming');
     incoming.style.clipPath = 'inset(0 0 0 100%)';
     results.replaceChildren(incoming, outgoing);
     const nextHeight = incoming.getBoundingClientRect().height;
     const waveHeight = Math.max(oldHeight, nextHeight);
     const geometry = fieldWaveGeometry(results.getBoundingClientRect().width, waveHeight);
-    const waves = [
-      fieldWave(outgoing, 'inverse', waveHeight),
-      fieldWave(incoming, 'moss', waveHeight)
-    ];
-    results.append(...waves);
+    const veils = [fieldVeil('cover', waveHeight), fieldVeil('reveal', waveHeight)];
+    results.append(...veils);
     results.style.height = oldHeight + 'px';
     results.classList.add('is-switching');
     results.setAttribute('aria-busy', 'true');
     results.dataset.wipeDirection = 'right-to-left';
-    results.dataset.wipeMotion = 'curved-inversion';
+    results.dataset.wipeMotion = 'cover-then-reveal';
     results.dataset.switchPhase = '0';
-    fieldTransition = { incoming, outgoing, waves, revision };
+    results.dataset.wipeStage = 'cover';
+    fieldTransition = { incoming, outgoing, veils, revision };
     const start = performance.now();
     function frame(now) {
       if (fieldTransition?.revision !== revision) return;
       const elapsed = now - start;
-      const progress = clamp(elapsed / 580);
-      // Two short, delayed color fronts share the same arc, then settle into the homepage palette.
-      const leading = geometry.boundary(clamp(elapsed / 400));
-      const middle = geometry.boundary(clamp((elapsed - 55) / 400));
-      const trailing = geometry.boundary(clamp((elapsed - 110) / 400));
-      outgoing.style.clipPath = geometry.left(leading);
-      waves[0].style.clipPath = geometry.between(leading, middle);
-      waves[1].style.clipPath = geometry.between(middle, trailing);
-      incoming.style.clipPath = geometry.right(trailing);
-      results.style.height = oldHeight + (nextHeight - oldHeight) * ease(progress) + 'px';
+      const progress = clamp(elapsed / 620);
+      const cover = clamp(elapsed / 240);
+      const reveal = clamp((elapsed - 285) / 285);
+      const coverEdge = geometry.boundary(cover);
+      const revealEdge = geometry.boundary(reveal);
+      // The reveal cannot begin until the old text is fully covered, including a short blank beat.
+      outgoing.style.clipPath = geometry.left(coverEdge);
+      outgoing.hidden = cover === 1;
+      veils[0].style.clipPath = geometry.right(coverEdge);
+      veils[1].style.clipPath = geometry.right(revealEdge);
+      incoming.style.clipPath = geometry.right(revealEdge);
+      results.style.height = oldHeight + (nextHeight - oldHeight) * ease(reveal) + 'px';
       results.dataset.switchPhase = String(Math.round(progress * 100));
-      results.dataset.wipeEdge = trailing[16][0].toFixed(2);
+      results.dataset.wipeStage =
+        elapsed < 240 ? 'cover' : elapsed < 285 ? 'hold' : elapsed < 570 ? 'reveal' : 'settle';
+      results.dataset.wipeEdge = revealEdge[16][0].toFixed(2);
       if (progress < 1) fieldFrame = requestAnimationFrame(frame);
       else finishFieldTransition();
     }
