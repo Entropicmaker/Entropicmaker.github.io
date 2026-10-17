@@ -1,4 +1,4 @@
-// v007: one article feed, a shared right-to-left wipe, and the preserved FIELD JOURNAL entry.
+// v008: a curved, two-tone inversion wave connects the article feed to the entry animation.
 (() => {
   const screen = document.getElementById('geo-design');
   if (!screen) return;
@@ -331,8 +331,9 @@
     cancelAnimationFrame(fieldFrame);
     fieldFrame = 0;
     if (!fieldTransition) return;
-    const { incoming, outgoing } = fieldTransition;
+    const { incoming, outgoing, waves } = fieldTransition;
     outgoing.remove();
+    waves.forEach((wave) => wave.remove());
     incoming.style.removeProperty('clip-path');
     incoming.inert = false;
     results.style.removeProperty('height');
@@ -341,6 +342,40 @@
     results.dataset.switchPhase = '100';
     fieldTransition = null;
     if (announce) status.textContent = `${fields[selected].name}，${fields[selected].count}篇文章`;
+  }
+  function fieldWave(panel, tone, height) {
+    // These copies only carry the moving color treatment; the real article stays in place.
+    const wave = panel.cloneNode(true);
+    wave.className = `geo-field-wave geo-field-wave--${tone}`;
+    wave.removeAttribute('data-field');
+    wave.setAttribute('aria-hidden', 'true');
+    wave.setAttribute('data-pagefind-ignore', '');
+    wave.inert = true;
+    wave.style.height = height + 'px';
+    wave.style.clipPath = 'inset(0 0 0 100%)';
+    return wave;
+  }
+  function fieldWaveGeometry(width, height) {
+    const bow = Math.min(width * 0.18, 120);
+    const tilt = Math.min(width * 0.11, 78);
+    const overscan = bow + tilt + 2;
+    const boundary = (progress) => {
+      const x = width + overscan - (width + overscan * 2) * ease(progress);
+      return Array.from({ length: 33 }, (_, i) => {
+        const y = i / 32;
+        // A broad arc, with its lower end slightly ahead, echoes the entry's expanding circle.
+        return [x + bow * (4 * (y - 0.5) ** 2 - 1) + tilt * (0.5 - y), y * height];
+      });
+    };
+    const polygon = (points) =>
+      `polygon(${points.map(([x, y]) => `${x.toFixed(2)}px ${y.toFixed(2)}px`).join(',')})`;
+    return {
+      boundary,
+      left: (edge) => polygon([[-1, -1], ...edge, [-1, height + 1]]),
+      right: (edge) =>
+        polygon([[width + 1, -1], [width + 1, height + 1], ...edge.slice().reverse()]),
+      between: (leading, trailing) => polygon([...leading, ...trailing.slice().reverse()])
+    };
   }
   function selectField(index, motion = true) {
     if (!Number.isInteger(index) || !fields[index]) return;
@@ -375,25 +410,36 @@
     incoming.style.clipPath = 'inset(0 0 0 100%)';
     results.replaceChildren(incoming, outgoing);
     const nextHeight = incoming.getBoundingClientRect().height;
+    const waveHeight = Math.max(oldHeight, nextHeight);
+    const geometry = fieldWaveGeometry(results.getBoundingClientRect().width, waveHeight);
+    const waves = [
+      fieldWave(outgoing, 'inverse', waveHeight),
+      fieldWave(incoming, 'moss', waveHeight)
+    ];
+    results.append(...waves);
     results.style.height = oldHeight + 'px';
     results.classList.add('is-switching');
     results.setAttribute('aria-busy', 'true');
     results.dataset.wipeDirection = 'right-to-left';
+    results.dataset.wipeMotion = 'curved-inversion';
     results.dataset.switchPhase = '0';
-    fieldTransition = { incoming, outgoing, revision };
+    fieldTransition = { incoming, outgoing, waves, revision };
     const start = performance.now();
     function frame(now) {
       if (fieldTransition?.revision !== revision) return;
       const elapsed = now - start;
-      const progress = clamp(elapsed / 420);
-      // A shared edge erases the old pixels and reveals the new pixels from right to left.
-      const reveal = 1 - Math.pow(1 - clamp((elapsed - 20) / 320), 3);
-      const edge = 100 * (1 - reveal);
-      incoming.style.clipPath = `inset(0 0 0 ${edge}%)`;
-      outgoing.style.clipPath = `inset(0 ${100 - edge}% 0 0)`;
+      const progress = clamp(elapsed / 580);
+      // Two short, delayed color fronts share the same arc, then settle into the homepage palette.
+      const leading = geometry.boundary(clamp(elapsed / 400));
+      const middle = geometry.boundary(clamp((elapsed - 55) / 400));
+      const trailing = geometry.boundary(clamp((elapsed - 110) / 400));
+      outgoing.style.clipPath = geometry.left(leading);
+      waves[0].style.clipPath = geometry.between(leading, middle);
+      waves[1].style.clipPath = geometry.between(middle, trailing);
+      incoming.style.clipPath = geometry.right(trailing);
       results.style.height = oldHeight + (nextHeight - oldHeight) * ease(progress) + 'px';
       results.dataset.switchPhase = String(Math.round(progress * 100));
-      results.dataset.wipeEdge = edge.toFixed(2);
+      results.dataset.wipeEdge = trailing[16][0].toFixed(2);
       if (progress < 1) fieldFrame = requestAnimationFrame(frame);
       else finishFieldTransition();
     }

@@ -64,7 +64,7 @@
       "recordedDate": "2026-10-15"
     }
   ],
-  "productionVersion": "v007",
+  "productionVersion": "v008",
   "productionReleases": [
     {
       "id": "v005",
@@ -167,6 +167,76 @@
         {
           "file": "v007-home-mobile.jpg",
           "sha256": "77ad2578b014c08ee95568beeefa34a7523ddcf01f21ed61bacb73e97189bac1"
+        }
+      ]
+    },
+    {
+      "id": "v008",
+      "parent": "v007",
+      "tag": "blog-v008-20261017",
+      "file": "v008-content-wave-source.tar.gz",
+      "name": "内容坐标双色反色弧面",
+      "recordedDate": "2026-10-17",
+      "sha256": "d9ca2cdeb47b03f0c19b397f14e3b2d23aa7713b5f0aae44e3339c19a3d1e2c3",
+      "bytes": 21596,
+      "sourceFiles": [
+        {
+          "path": "src/pages/index.astro",
+          "sha256": "9d080a57facd9b84a27597c7c778797f0a9fa2e7b16820c08263e14734462f77"
+        },
+        {
+          "path": "src/components/CoordinateHome.astro",
+          "sha256": "f8d5ff0ae640004d35aa2132004d3b1b3c7d755d5ac7c669fd7eeabe51ac36ea"
+        },
+        {
+          "path": "src/components/HomeFeed.astro",
+          "sha256": "85b830a3e7ee015df37d43d94086aeef2443b3eb8417b1025d7bed24da5a091d"
+        },
+        {
+          "path": "src/components/Header.astro",
+          "sha256": "0cf6c203a920a8037ada37aab6e0917d74281c088c6a393a1ba63e2a7a4c8c4f"
+        },
+        {
+          "path": "src/components/Footer.astro",
+          "sha256": "fcbcb6f17802611fe9d345ee448397869c2ec57952fee655ff83ec3d3bfbafa7"
+        },
+        {
+          "path": "src/layouts/BaseLayout.astro",
+          "sha256": "1abf9c7da99e92d7528e1a57164bd775a1027f3ba644caae3961132697fa48a8"
+        },
+        {
+          "path": "src/scripts/coordinate-home.js",
+          "sha256": "97dd2176d535f717407699d5ee0d6b713feb9a428ff748b8bff92f3de1320e0c"
+        },
+        {
+          "path": "src/styles/coordinate-home.css",
+          "sha256": "dcf5af085817c264b989e213ca52246a587ec18e683ab8a8ed6e7420815b9bbe"
+        },
+        {
+          "path": "src/utils/home.ts",
+          "sha256": "c47821e8df85496d97c62ffae28857c977783013d52026cdf31bfb05f353cda4"
+        },
+        {
+          "path": "src/data/site.ts",
+          "sha256": "7bc283775d618d09273d6f16f3e949fc53cb4ac265e0d20849dc1e11bb834d0a"
+        },
+        {
+          "path": "src/data/ecosystem.ts",
+          "sha256": "ee32c51df6874ff5ece5d90ad961a4fd7bec1d4b9138f29980d8733242083d23"
+        },
+        {
+          "path": "public/site.webmanifest",
+          "sha256": "8bc1c5e12dabaa78f379c76ce57902702ffac7138055740a542dfbc37044b5b6"
+        }
+      ],
+      "previews": [
+        {
+          "file": "v008-content-sweep.png",
+          "sha256": "4b699b45eac9ec6108713622d184b12a60a94b6b33d4d035b0f456483f7174f5"
+        },
+        {
+          "file": "v008-content-sweep-mobile.png",
+          "sha256": "620c2076fe2ee38d7d143d8727f23cdd9499e6b88553a8033ec4c27b4f043dc3"
         }
       ]
     }

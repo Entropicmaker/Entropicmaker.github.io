@@ -304,6 +304,7 @@
   position: relative;
   min-width: 0;
   overflow-anchor: none;
+  isolation: isolate;
 }
 .geo-results.is-switching {
   overflow: clip;
@@ -318,6 +319,39 @@
   z-index: 2;
   background: var(--bg);
   pointer-events: none;
+}
+.geo-field-wave {
+  --bg: #173b33;
+  --text: #e3ece1;
+  --muted: #c0d2c0;
+  --green: #e3ece1;
+  --ocean: #e3ece1;
+  --line: #64846c;
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 3;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  pointer-events: none;
+}
+.geo-field-wave--moss {
+  --bg: #5b7f65;
+  --muted: #e3ece1;
+  --line: #91ab94;
+  z-index: 4;
+}
+:root[data-theme='dark'] .geo-field-wave--inverse {
+  --bg: #e3ece1;
+  --text: #173b33;
+  --muted: #385b44;
+  --green: #385b44;
+  --ocean: #173b33;
+  --line: #a6bba6;
+}
+.geo-results.is-switching > .geo-panel,
+.geo-field-wave {
+  will-change: clip-path;
 }
 .geo-feed-heading {
   display: flex;
