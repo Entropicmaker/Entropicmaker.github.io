@@ -1,4 +1,4 @@
-// v009: cover the old text completely, then reveal the new text with a second wipe.
+// v010: a moss lead, a graphic cover and a quick release retain the cover-before-reveal order.
 (() => {
   const screen = document.getElementById('geo-design');
   if (!screen) return;
@@ -346,24 +346,43 @@
     if (announce) status.textContent = `${fields[selected].name}，${fields[selected].count}篇文章`;
   }
   function fieldVeil(tone, height) {
-    // Blank planes cover text; they never contain inverted or duplicated article content.
+    // The planes carry geometry only, never inverted or duplicated article content.
     const veil = document.createElement('div');
     veil.className = `geo-field-veil geo-field-veil--${tone}`;
     veil.setAttribute('aria-hidden', 'true');
     veil.inert = true;
     veil.style.height = height + 'px';
     veil.style.clipPath = 'inset(0 0 0 100%)';
+    if (tone === 'cover') {
+      const graphic = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      graphic.classList.add('geo-field-graphic');
+      graphic.setAttribute('viewBox', '0 0 900 600');
+      graphic.setAttribute('aria-hidden', 'true');
+      graphic.innerHTML = `
+        <path class="geo-cover-orbit" d="M88 610C176 148 588-76 992 78"/>
+        <path class="geo-cover-orbit" d="M272 680C212 310 474 4 906-28"/>
+        <path class="geo-cover-guide" d="M310 80H720M500 340H940"/>
+        <path class="geo-cover-route" d="M525 66C590 45 670 30 752 26"/>
+        <path class="geo-cover-streak" d="M142 274H260M318 274H348M270 420H350"/>`;
+      veil.append(graphic);
+    }
     return veil;
   }
   function fieldWaveGeometry(width, height) {
-    const bow = Math.min(width * 0.05, 34);
-    const tilt = Math.min(width * 0.09, 60);
-    const overscan = bow + tilt + 2;
-    const boundary = (progress) => {
-      const x = width + overscan - (width + overscan * 2) * ease(progress);
+    const baseBow = Math.min(width * 0.025, 20);
+    const bowTension = Math.min(width * 0.06, 52);
+    const baseTilt = Math.min(width * 0.05, 40);
+    const tiltTension = Math.min(width * 0.08, 66);
+    const overscan = baseBow + bowTension + baseTilt + tiltTension + 2;
+    const boundary = (progress, release = false) => {
+      const travel = 1 - Math.pow(1 - clamp(progress), release ? 3 : 4);
+      const tension = Math.sin(Math.PI * travel);
+      const bow = (baseBow + bowTension * tension) * (release ? -0.55 : 1);
+      const tilt = baseTilt + tiltTension * tension;
+      const x = width + overscan - (width + overscan * 2) * travel;
       return Array.from({ length: 33 }, (_, i) => {
         const y = i / 32;
-        // A restrained, slightly slanted edge keeps the motion directional without a bulky ribbon.
+        // The cut leans and bends in flight, then relaxes as it clears the content.
         return [x + bow * (4 * (y - 0.5) ** 2 - 1) + tilt * (0.5 - y), y * height];
       });
     };
@@ -412,13 +431,18 @@
     const nextHeight = incoming.getBoundingClientRect().height;
     const waveHeight = Math.max(oldHeight, nextHeight);
     const geometry = fieldWaveGeometry(results.getBoundingClientRect().width, waveHeight);
-    const veils = [fieldVeil('cover', waveHeight), fieldVeil('reveal', waveHeight)];
+    const veils = [
+      fieldVeil('lead', waveHeight),
+      fieldVeil('cover', waveHeight),
+      fieldVeil('reveal', waveHeight)
+    ];
+    const graphic = veils[1].querySelector('.geo-field-graphic');
     results.append(...veils);
     results.style.height = oldHeight + 'px';
     results.classList.add('is-switching');
     results.setAttribute('aria-busy', 'true');
     results.dataset.wipeDirection = 'right-to-left';
-    results.dataset.wipeMotion = 'cover-then-reveal';
+    results.dataset.wipeMotion = 'kinetic-cover-reveal';
     results.dataset.switchPhase = '0';
     results.dataset.wipeStage = 'cover';
     fieldTransition = { incoming, outgoing, veils, revision };
@@ -426,21 +450,26 @@
     function frame(now) {
       if (fieldTransition?.revision !== revision) return;
       const elapsed = now - start;
-      const progress = clamp(elapsed / 620);
-      const cover = clamp(elapsed / 240);
-      const reveal = clamp((elapsed - 285) / 285);
+      const progress = clamp(elapsed / 600);
+      const lead = clamp(elapsed / 190);
+      const cover = clamp((elapsed - 24) / 190);
+      const reveal = clamp((elapsed - 260) / 270);
+      const leadEdge = geometry.boundary(lead);
       const coverEdge = geometry.boundary(cover);
-      const revealEdge = geometry.boundary(reveal);
-      // The reveal cannot begin until the old text is fully covered, including a short blank beat.
-      outgoing.style.clipPath = geometry.left(coverEdge);
-      outgoing.hidden = cover === 1;
-      veils[0].style.clipPath = geometry.right(coverEdge);
-      veils[1].style.clipPath = geometry.right(revealEdge);
+      const revealEdge = geometry.boundary(reveal, true);
+      // The green lead erases the old text; only after both cover planes land does the release begin.
+      outgoing.style.clipPath = geometry.left(leadEdge);
+      outgoing.hidden = lead === 1;
+      veils[0].style.clipPath = geometry.right(leadEdge);
+      veils[1].style.clipPath = geometry.right(coverEdge);
+      veils[2].style.clipPath = geometry.right(revealEdge);
       incoming.style.clipPath = geometry.right(revealEdge);
+      const graphicLag = Math.pow(1 - clamp((elapsed - 38) / 210), 3);
+      graphic.style.transform = `translate(${36 * graphicLag}px,${-5 * graphicLag}px) rotate(${-3 * graphicLag}deg)`;
       results.style.height = oldHeight + (nextHeight - oldHeight) * ease(reveal) + 'px';
       results.dataset.switchPhase = String(Math.round(progress * 100));
       results.dataset.wipeStage =
-        elapsed < 240 ? 'cover' : elapsed < 285 ? 'hold' : elapsed < 570 ? 'reveal' : 'settle';
+        elapsed < 214 ? 'cover' : elapsed < 260 ? 'hold' : elapsed < 530 ? 'reveal' : 'settle';
       results.dataset.wipeEdge = revealEdge[16][0].toFixed(2);
       if (progress < 1) fieldFrame = requestAnimationFrame(frame);
       else finishFieldTransition();

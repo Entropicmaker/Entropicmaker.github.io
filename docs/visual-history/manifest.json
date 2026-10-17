@@ -64,7 +64,7 @@
       "recordedDate": "2026-10-15"
     }
   ],
-  "productionVersion": "v009",
+  "productionVersion": "v010",
   "productionReleases": [
     {
       "id": "v005",
@@ -313,6 +313,74 @@
           "sha256": "23f117afa31e9c48a2e7577ca010672ea142c28b01c06506fe2917e9ffec814b"
         }
       ]
+    },
+    {
+      "id": "v010",
+      "parent": "v009",
+      "tag": "blog-v010-20261017",
+      "name": "双色追随与轨迹切换",
+      "file": "v010-kinetic-cover-source.tar.gz",
+      "recordedDate": "2026-10-17",
+      "sha256": "2f12c566501c3268ba5906963acf6e85f3eea9288fd4af19c3d7c8f618bee274",
+      "bytes": 22170,
+      "sourceFiles": [
+        {
+          "path": "src/pages/index.astro",
+          "sha256": "9d080a57facd9b84a27597c7c778797f0a9fa2e7b16820c08263e14734462f77"
+        },
+        {
+          "path": "src/components/CoordinateHome.astro",
+          "sha256": "29e6aa084f0ac7057d89afea5c2616b43ef5ea89e5649a8a392b552d4e2e9882"
+        },
+        {
+          "path": "src/components/HomeFeed.astro",
+          "sha256": "85b830a3e7ee015df37d43d94086aeef2443b3eb8417b1025d7bed24da5a091d"
+        },
+        {
+          "path": "src/components/Header.astro",
+          "sha256": "0cf6c203a920a8037ada37aab6e0917d74281c088c6a393a1ba63e2a7a4c8c4f"
+        },
+        {
+          "path": "src/components/Footer.astro",
+          "sha256": "fcbcb6f17802611fe9d345ee448397869c2ec57952fee655ff83ec3d3bfbafa7"
+        },
+        {
+          "path": "src/layouts/BaseLayout.astro",
+          "sha256": "1abf9c7da99e92d7528e1a57164bd775a1027f3ba644caae3961132697fa48a8"
+        },
+        {
+          "path": "src/scripts/coordinate-home.js",
+          "sha256": "46ac399c6963e3e231687b3557c6547e5831ff4e4da245874348f8d541f69ab4"
+        },
+        {
+          "path": "src/styles/coordinate-home.css",
+          "sha256": "3cbf50f3a62c62ec5b050f80e8ce950966b850b3b913dee52b0876c4da3c0dcc"
+        },
+        {
+          "path": "src/utils/home.ts",
+          "sha256": "c47821e8df85496d97c62ffae28857c977783013d52026cdf31bfb05f353cda4"
+        },
+        {
+          "path": "src/data/site.ts",
+          "sha256": "7bc283775d618d09273d6f16f3e949fc53cb4ac265e0d20849dc1e11bb834d0a"
+        },
+        {
+          "path": "src/data/ecosystem.ts",
+          "sha256": "ee32c51df6874ff5ece5d90ad961a4fd7bec1d4b9138f29980d8733242083d23"
+        },
+        {
+          "path": "public/site.webmanifest",
+          "sha256": "8bc1c5e12dabaa78f379c76ce57902702ffac7138055740a542dfbc37044b5b6"
+        }
+      ],
+      "validation": {
+        "typecheck": "passed",
+        "build": "passed",
+        "motionModel": "passed",
+        "browserVisualReview": "pending_permission",
+        "checksFile": "v010-motion-check.json",
+        "checksSha256": "e195339e2d728f3bb7b833900b813fd73f90eae335f524c98193a76535fd6baa"
+      }
     }
   ]
 }

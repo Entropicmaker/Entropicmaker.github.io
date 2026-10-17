@@ -321,21 +321,62 @@
   pointer-events: none;
 }
 .geo-panel.geo-incoming {
-  z-index: 5;
+  z-index: 6;
 }
 .geo-field-veil {
   position: absolute;
   inset: 0 0 auto;
   z-index: 3;
+  overflow: hidden;
   background: #173b33;
   pointer-events: none;
 }
+.geo-field-veil--lead {
+  background: #5b7f65;
+}
+.geo-field-veil--cover {
+  z-index: 4;
+}
 .geo-field-veil--reveal {
   background: var(--bg);
-  z-index: 4;
+  z-index: 5;
+}
+.geo-field-graphic {
+  position: absolute;
+  top: -8px;
+  right: -60px;
+  width: max(100%, 460px);
+  max-width: none;
+  height: auto;
+  fill: none;
+  stroke: #b7cfc6;
+  stroke-width: 1.2;
+  transform-origin: 75% 20%;
+  will-change: transform;
+}
+.geo-cover-orbit {
+  opacity: 0.42;
+}
+.geo-cover-guide {
+  opacity: 0.2;
+}
+.geo-cover-route {
+  stroke: #d3a47d;
+  stroke-width: 2.6;
+}
+.geo-cover-streak {
+  stroke: #e3ece1;
+  stroke-width: 1.8;
+  opacity: 0.68;
+}
+:root[data-theme='dark'] .geo-field-veil--lead {
+  background: #e3ece1;
 }
 :root[data-theme='dark'] .geo-field-veil--cover {
   background: #5b7f65;
+}
+:root[data-theme='dark'] .geo-field-graphic {
+  stroke: #e3ece1;
 }
 .geo-results.is-switching > .geo-panel,
 .geo-field-veil {

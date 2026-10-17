@@ -1,0 +1,26 @@
+{
+  "modelChecks": [
+    {
+      "width": 856,
+      "frames": 36,
+      "blankFrames": 5,
+      "graphicPoses": 14,
+      "coverBeforeReveal": true,
+      "monotonic": true,
+      "clean": true
+    },
+    {
+      "width": 292,
+      "frames": 36,
+      "blankFrames": 5,
+      "graphicPoses": 14,
+      "coverBeforeReveal": true,
+      "monotonic": true,
+      "clean": true
+    }
+  ],
+  "rapidSelection": true,
+  "cancelCleanup": true,
+  "reducedMotion": true,
+  "note": "Executes the actual motion functions in a DOM model; does not replace browser visual QA."
+}
