@@ -3,14 +3,13 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CoordinateHome from '../components/CoordinateHome.astro';
 import '../styles/coordinate-home.css';
-import PostCard from '../components/PostCard.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import { projects } from '../data/projects';
 import { getAllTags, getPublishedPosts, tagToSlug } from '../utils/posts';
 import { withBase } from '../utils/site';
 
 const posts = getPublishedPosts(await getCollection('posts'));
-const tags = getAllTags(posts).slice(0, 12);
+const tags = getAllTags(posts).slice(0, 6);
+const selectedProjects = projects.filter((project) => project.href).slice(0, 2);
 ---
 
 <BaseLayout title="Linzii的地理小站" bodyClass="home-journal">
@@ -40,51 +39,65 @@ const tags = getAllTags(posts).slice(0, 12);
   </Fragment>
   <CoordinateHome posts={posts} />
 
-  <section class="section shell" aria-labelledby="latest-title">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">Recent Notes</p>
-        <h2 id="latest-title">最新文章</h2>
-      </div>
-      <a href={withBase('/posts/')}>查看全部文章 →</a>
-    </div>
-    <div class="post-grid">
-      {posts.slice(0, 4).map((post) => <PostCard post={post} />)}
-    </div>
-  </section>
-
-  <section class="section shell" aria-labelledby="projects-title">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">From Question To Practice</p>
-        <h2 id="projects-title">近期项目</h2>
-      </div>
-      <a href={withBase('/projects/')}>查看项目档案 →</a>
-    </div>
-    <div class="project-grid">
-      {projects.map((project) => <ProjectCard project={project} />)}
-    </div>
-  </section>
-
-  <section class="section shell" aria-labelledby="tags-title">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">Index By Topic</p>
-        <h2 id="tags-title">热门标签</h2>
-      </div>
-      <a href={withBase('/tags/')}>全部标签 →</a>
-    </div>
-    <div class="tag-cloud">
-      {
-        tags.map((tag) => (
-          <a
-            href={withBase(`/tags/${tagToSlug(tag.name)}/`)}
-            style={`--tag-weight: ${Math.min(tag.count, 4)}`}
-          >
-            {tag.name} <small>{tag.count}</small>
-          </a>
-        ))
-      }
-    </div>
-  </section>
+  {
+    selectedProjects.length > 0 && (
+      <section class="home-section shell" aria-labelledby="projects-title">
+        <div class="home-section-heading">
+          <>
+            <h2 id="projects-title">项目精选</h2>
+            <a href={withBase('/projects/')}>
+              项目档案 <span aria-hidden="true">↗</span>
+            </a>
+          </>
+        </div>
+        <div class="home-projects">
+          {selectedProjects.map((project, index) => (
+            <article class="home-project">
+              <div>
+                <p class="home-project-meta">
+                  <span class="geo-mono">PROJECT {String(index + 1).padStart(2, '0')}</span>
+                  <span class="home-project-status">{project.status}</span>
+                </p>
+                <h3>
+                  <a href={project.href} target="_blank" rel="noopener noreferrer">
+                    {project.title} <span aria-hidden="true">↗</span>
+                  </a>
+                </h3>
+                <p class="home-project-description">{project.description}</p>
+              </div>
+              <div class="home-project-detail">
+                <p>{project.outcome}</p>
+                <span class="home-project-stack">{project.stack.join(' / ')}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )
+  }
+  {
+    tags.length > 0 && (
+      <nav class="home-topics shell" aria-label="主题索引">
+        <>
+          <h2>主题索引</h2>
+          <div>
+            {tags.map((tag) => (
+              <a href={withBase(`/tags/${tagToSlug(tag.name)}/`)}>
+                {tag.name}
+                <small>{tag.count}</small>
+              </a>
+            ))}
+            <a class="home-all-topics" href={withBase('/tags/')}>
+              全部主题 ↗
+            </a>
+          </div>
+        </>
+      </nav>
+    )
+  }
+  <p class="home-personal-note shell">
+    尽量多更新，没更新就是在吃双层吉士汉堡。<a href={withBase('/about/')}
+      >关于 Linzii <span aria-hidden="true">↗</span></a
+    >
+  </p>
 </BaseLayout>

@@ -1,4 +1,4 @@
-// v006 retains the approved FIELD JOURNAL composition with a stable entry exit.
+// v007: one article feed, a shared right-to-left wipe, and the preserved FIELD JOURNAL entry.
 (() => {
   const screen = document.getElementById('geo-design');
   if (!screen) return;
@@ -313,207 +313,97 @@
   }
   let running = false;
   let selected = 0;
-  let displayed = 0,
-    fieldFrame = 0,
-    fieldRevision = 0,
-    artState = null;
-  let fieldAnimations = [];
+  let fieldFrame = 0;
+  let fieldRevision = 0;
+  let fieldTransition = null;
   const art = screen.querySelector('.geo-art');
-  const feature = screen.querySelector('.geo-feature');
-  const echo = document.createElement('span');
-  echo.className = 'geo-field-echo';
-  echo.setAttribute('aria-hidden', 'true');
-  echo.hidden = true;
-  feature.append(echo);
-  const wordSegmenter =
-    typeof Intl.Segmenter === 'function'
-      ? new Intl.Segmenter('zh-CN', { granularity: 'word' })
-      : null;
+  const results = screen.querySelector('.geo-results');
+  const status = screen.querySelector('.geo-filter-status');
+  const views = Array.from(screen.querySelectorAll('template[data-home-view]'));
   function drawArtwork() {
-    if (!art) return;
     paintObservatory(art, {
       dark: getComputedStyle(screen).backgroundColor === 'rgb(14, 24, 26)',
-      index: displayed,
-      inverted: feature.classList.contains('is-reversed'),
-      annotation: screen.classList.contains('geo-terminal'),
-      ...(artState || {})
+      index: 0
     });
   }
-  const artObserver = new ResizeObserver(() => drawArtwork());
-  if (art) artObserver.observe(art);
+  new ResizeObserver(drawArtwork).observe(art);
+  function finishFieldTransition(announce = true) {
+    cancelAnimationFrame(fieldFrame);
+    fieldFrame = 0;
+    if (!fieldTransition) return;
+    const { incoming, outgoing } = fieldTransition;
+    outgoing.remove();
+    incoming.style.removeProperty('clip-path');
+    incoming.inert = false;
+    results.style.removeProperty('height');
+    results.classList.remove('is-switching');
+    results.setAttribute('aria-busy', 'false');
+    results.dataset.switchPhase = '100';
+    fieldTransition = null;
+    if (announce) status.textContent = `${fields[selected].name}，${fields[selected].count}篇文章`;
+  }
   function selectField(index, motion = true) {
     if (!Number.isInteger(index) || !fields[index]) return;
-    if (motion && index === selected && index === displayed) return;
-    const revision = ++fieldRevision;
-    cancelAnimationFrame(fieldFrame);
-    fieldAnimations.forEach((animation) => animation && animation.cancel());
-    fieldAnimations = [];
-    screen
-      .querySelectorAll(
-        '.geo-number,.geo-feature-title,.geo-word,.geo-description,.geo-date,.geo-collection,.geo-shape'
-      )
-      .forEach((element) => element.getAnimations().forEach((animation) => animation.cancel()));
-    artState = null;
-    echo.hidden = true;
-    const field = fields[index];
-    const sourceIndex = displayed;
-    selected = index;
-    const number = String(index + 1).padStart(2, '0');
-    const title = screen.querySelector('.geo-feature-title');
-    const description = screen.querySelector('.geo-description');
-    const date = screen.querySelector('.geo-date');
-    const labels = Array.from(screen.querySelectorAll('.geo-collection'));
-    const numbers = Array.from(screen.querySelectorAll('.geo-number'));
-    screen
-      .querySelectorAll('[data-category]')
-      .forEach((button) =>
-        button.setAttribute('aria-pressed', String(Number(button.dataset.category) === index))
-      );
-    const commit = () => {
-      displayed = index;
-      labels.forEach((label) => (label.textContent = 'FIELD ' + number + ' / ' + field.code));
-      title.textContent = field.title;
-      title.setAttribute('aria-label', field.title);
-      title.href = field.href;
-      const categoryLink = screen.querySelector('.geo-category-link');
-      categoryLink.href = field.categoryHref;
-      categoryLink.textContent = '进入' + field.name + ' ↗';
-      description.textContent = field.description;
-      date.textContent = field.date + ' / ' + field.name;
-      numbers.forEach((element) => (element.textContent = number));
-    };
-    if (!motion || reduced()) {
-      commit();
-      drawArtwork();
+    if (index === selected) {
+      if (!motion) finishFieldTransition(false);
       return;
     }
-    const keep = (animation) => {
-      if (animation) fieldAnimations.push(animation);
-      return animation;
-    };
-    const outgoing = [title, description, date, ...labels, ...numbers].map((element) =>
-      keep(
-        animate(
-          element,
-          [
-            { opacity: 1, transform: 'translate(0,0) scale(1)' },
-            { opacity: 0, transform: 'translate(-7px,-5px) scale(.98)' }
-          ],
-          { duration: 105, easing: 'cubic-bezier(.55,0,1,.45)', fill: 'forwards' }
-        )
-      )
-    );
-    echo.textContent = ['GEO.', 'CODE.', 'GEO/CODE.', 'DAILY.'][index];
-    echo.hidden = false;
-    keep(
-      animate(
-        echo,
-        [
-          { opacity: 0, transform: 'translate(18px,10px) rotate(-7deg) scale(1.2)', offset: 0 },
-          { opacity: 0.16, transform: 'translate(0,0) rotate(-3deg) scale(1)', offset: 0.32 },
-          {
-            opacity: 0.13,
-            transform: 'translate(-4px,-3px) rotate(-2deg) scale(.98)',
-            offset: 0.64
-          },
-          { opacity: 0, transform: 'translate(-12px,-7px) rotate(0) scale(.94)', offset: 1 }
-        ],
-        { duration: 610, easing: 'linear', fill: 'both' }
-      )
-    );
-    const direction = index >= sourceIndex ? 1 : -1;
-    const bounds = art.getBoundingClientRect(),
-      baseRadius = Math.min(bounds.width, bounds.height) * 0.35;
-    let committed = false;
+    finishFieldTransition(false);
+    const revision = ++fieldRevision;
+    const outgoing = results.querySelector('.geo-panel');
+    const oldHeight = outgoing.getBoundingClientRect().height;
+    const incoming = views[index].content.firstElementChild.cloneNode(true);
+    selected = index;
+    screen.querySelectorAll('.geo-filter-controls [data-category]').forEach((button) => {
+      button.setAttribute('aria-pressed', String(Number(button.dataset.category) === index));
+    });
+    if (outgoing.contains(document.activeElement)) {
+      screen
+        .querySelector(`.geo-filter-controls [data-category="${index}"]`)
+        .focus({ preventScroll: true });
+    }
+    status.textContent = '';
+    if (!motion || reduced()) {
+      results.replaceChildren(incoming);
+      status.textContent = `${fields[index].name}，${fields[index].count}篇文章`;
+      return;
+    }
+    outgoing.classList.add('geo-outgoing');
+    outgoing.setAttribute('aria-hidden', 'true');
+    outgoing.inert = true;
+    incoming.inert = true;
+    incoming.style.clipPath = 'inset(0 0 0 100%)';
+    results.replaceChildren(incoming, outgoing);
+    const nextHeight = incoming.getBoundingClientRect().height;
+    results.style.height = oldHeight + 'px';
+    results.classList.add('is-switching');
+    results.setAttribute('aria-busy', 'true');
+    results.dataset.wipeDirection = 'right-to-left';
+    results.dataset.switchPhase = '0';
+    fieldTransition = { incoming, outgoing, revision };
     const start = performance.now();
     function frame(now) {
-      if (revision !== fieldRevision) return;
-      const elapsed = now - start,
-        p = clamp(elapsed / 650),
-        pulse = Math.sin(Math.PI * p);
-      const lagPulse = Math.sin(Math.PI * clamp((elapsed - 80) / 570));
-      if (!committed && elapsed >= 105) {
-        outgoing.forEach((animation) => animation && animation.cancel());
-        commit();
-        committed = true;
-        const words = wordSegmenter
-          ? Array.from(wordSegmenter.segment(field.title), (part) => part.segment)
-          : Array.from(field.title);
-        title.textContent = '';
-        words.forEach((word, i) => {
-          if (/^\s+$/.test(word)) {
-            title.append(document.createTextNode(word));
-            return;
-          }
-          const span = document.createElement('span');
-          span.className = 'geo-word';
-          span.textContent = word;
-          span.setAttribute('aria-hidden', 'true');
-          title.append(span);
-          keep(
-            animate(
-              span,
-              [
-                { opacity: 0, transform: 'translate(7px,14px) rotate(-3deg) skewX(-5deg)' },
-                { opacity: 1, transform: 'translate(0,0) rotate(0) skewX(0)' }
-              ],
-              { duration: 330, delay: Math.min(i * 14, 84), fill: 'both' }
-            )
-          );
-        });
-        [description, date, ...labels].forEach((element, i) =>
-          keep(
-            animate(
-              element,
-              [
-                { opacity: 0, transform: 'translateY(7px)' },
-                { opacity: 1, transform: 'translateY(0)' }
-              ],
-              { duration: 290, delay: 65 + i * 20, fill: 'both' }
-            )
-          )
-        );
-        numbers.forEach((element) =>
-          keep(
-            animate(
-              element,
-              [
-                { opacity: 0, transform: 'translateY(65%) rotate(-9deg) scale(1.15)' },
-                { opacity: 1, transform: 'translateY(0) rotate(0) scale(1)' }
-              ],
-              { duration: 360, fill: 'both' }
-            )
-          )
-        );
-      }
-      artState = {
-        index: sourceIndex + (index - sourceIndex) * ease(p),
-        radius: baseRadius * (1 + 0.13 * pulse),
-        turn: direction * 0.22 * pulse,
-        ringTurn: -direction * 0.28 * lagPulse,
-        markTurn: direction * 0.22 * lagPulse,
-        accent: 0.55 * pulse
-      };
-      drawArtwork();
-      feature.dataset.switchPhase = String(Math.round(p * 100));
-      if (p < 1) fieldFrame = requestAnimationFrame(frame);
-      else {
-        if (!committed) commit();
-        artState = null;
-        echo.hidden = true;
-        drawArtwork();
-        fieldAnimations.forEach((animation) => animation && animation.cancel());
-        fieldAnimations = [];
-      }
+      if (fieldTransition?.revision !== revision) return;
+      const elapsed = now - start;
+      const progress = clamp(elapsed / 420);
+      // A shared edge erases the old pixels and reveals the new pixels from right to left.
+      const reveal = 1 - Math.pow(1 - clamp((elapsed - 20) / 320), 3);
+      const edge = 100 * (1 - reveal);
+      incoming.style.clipPath = `inset(0 0 0 ${edge}%)`;
+      outgoing.style.clipPath = `inset(0 ${100 - edge}% 0 0)`;
+      results.style.height = oldHeight + (nextHeight - oldHeight) * ease(progress) + 'px';
+      results.dataset.switchPhase = String(Math.round(progress * 100));
+      results.dataset.wipeEdge = edge.toFixed(2);
+      if (progress < 1) fieldFrame = requestAnimationFrame(frame);
+      else finishFieldTransition();
     }
     fieldFrame = requestAnimationFrame(frame);
   }
-  screen.querySelectorAll('[data-category]').forEach((button) =>
-    button.addEventListener('click', () => {
-      const index = Number(button.dataset.category);
-      selectField(index);
-    })
-  );
+  screen.addEventListener('click', (event) => {
+    const button =
+      event.target instanceof Element ? event.target.closest('button[data-category]') : null;
+    if (button && screen.contains(button)) selectField(Number(button.dataset.category));
+  });
   async function playEntry() {
     if (running) return;
     if (reduced()) return;
@@ -523,7 +413,9 @@
       document.querySelector('.skip-link'),
       document.querySelector('.site-header'),
       document.querySelector('.site-footer'),
-      ...document.querySelectorAll('main > .section')
+      ...document.querySelectorAll(
+        'main > .home-section, main > .home-topics, main > .home-personal-note'
+      )
     ].filter(Boolean);
     inactive.forEach((element) => (element.inert = true));
     selectField(selected, false);
@@ -797,7 +689,7 @@
           orbitTurn,
           markTurn,
           phase: ease(p / 0.16),
-          index: selected,
+          index: 0,
           entry: true,
           entryBlend: 1 - ease((p - 0.67) / 0.17),
           accent,
@@ -813,7 +705,6 @@
             break;
           } else break;
         }
-        const isReversed = screen.querySelector('.geo-feature').classList.contains('is-reversed');
         const render = (canvas, front, palette) => {
           const ink = palette.dark
             ? palette.ink
@@ -827,7 +718,7 @@
             ink,
             silhouette: palette.home ? 0 : silhouette,
             focus: palette.home ? 0 : focus,
-            inverted: palette.home && isReversed
+            inverted: false
           });
         };
         applyPalette(layer, previous);
@@ -926,7 +817,7 @@
     }
   }
 
-  screen.querySelector('.geo-filters').hidden = false;
+  screen.querySelector('.geo-filter-controls').hidden = false;
   document.addEventListener('keydown', (event) => {
     if (running && (event.key === 'Escape' || event.key === 'Tab')) {
       event.preventDefault();
@@ -935,6 +826,7 @@
   });
   window.addEventListener('resize', () => {
     if (running) stopEntry();
+    finishFieldTransition(false);
   });
   window.addEventListener(
     'wheel',
@@ -958,6 +850,7 @@
   });
   new MutationObserver(() => {
     if (running) stopEntry();
+    finishFieldTransition(false);
     drawArtwork();
   }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   drawArtwork();
@@ -983,5 +876,6 @@
   } else delete document.documentElement.dataset.homeEntry;
   window.addEventListener('pagehide', () => {
     stopEntry();
+    finishFieldTransition(false);
   });
 })();

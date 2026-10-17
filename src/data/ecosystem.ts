@@ -17,7 +17,7 @@ export interface LingeoSite {
 export const lingeoSites: LingeoSite[] = [
   {
     id: 'blog',
-    name: '选择性失忆',
+    name: 'Linzii的地理小站',
     descriptor: 'LingeoCS 主站 · 研究与知识博客',
     description: '自然地理、遥感、GIS、空间数据工程与 GeoAI 的长期笔记。',
     href: 'https://lingeocs.com/',

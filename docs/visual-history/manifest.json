@@ -64,7 +64,7 @@
       "recordedDate": "2026-10-15"
     }
   ],
-  "productionVersion": "v006",
+  "productionVersion": "v007",
   "productionReleases": [
     {
       "id": "v005",
@@ -93,6 +93,80 @@
         {
           "path": "src/styles/coordinate-home.css",
           "sha256": "9d4173297ba9a5927e397f0c989310dd7716d33ffded5c87494b08319733150b"
+        }
+      ]
+    },
+    {
+      "id": "v007",
+      "parent": "v006",
+      "tag": "blog-v007-20261017",
+      "file": "v007-homepage-source.tar.gz",
+      "name": "首页结构重整与右向左擦出",
+      "recordedDate": "2026-10-17",
+      "sha256": "617d2be5aa8593364dc5c6accf961b0794376dd0609efe0a88be778126c78aeb",
+      "bytes": 20752,
+      "sourceFiles": [
+        {
+          "path": "src/pages/index.astro",
+          "sha256": "9d080a57facd9b84a27597c7c778797f0a9fa2e7b16820c08263e14734462f77"
+        },
+        {
+          "path": "src/components/CoordinateHome.astro",
+          "sha256": "bb88cf791995b43559ef793873c9a87cbc8ad8677bd5db5004b4d725d453aa96"
+        },
+        {
+          "path": "src/components/HomeFeed.astro",
+          "sha256": "85b830a3e7ee015df37d43d94086aeef2443b3eb8417b1025d7bed24da5a091d"
+        },
+        {
+          "path": "src/components/Header.astro",
+          "sha256": "0cf6c203a920a8037ada37aab6e0917d74281c088c6a393a1ba63e2a7a4c8c4f"
+        },
+        {
+          "path": "src/components/Footer.astro",
+          "sha256": "fcbcb6f17802611fe9d345ee448397869c2ec57952fee655ff83ec3d3bfbafa7"
+        },
+        {
+          "path": "src/layouts/BaseLayout.astro",
+          "sha256": "1abf9c7da99e92d7528e1a57164bd775a1027f3ba644caae3961132697fa48a8"
+        },
+        {
+          "path": "src/scripts/coordinate-home.js",
+          "sha256": "4982692feb3f145092910d177a5a3deb37d9ce8af4fc743fbc94a958715f4cd1"
+        },
+        {
+          "path": "src/styles/coordinate-home.css",
+          "sha256": "689f632f12b2c27af6e71521b2106570484a02995dfa9fb50cf2d92b97fb710e"
+        },
+        {
+          "path": "src/utils/home.ts",
+          "sha256": "c47821e8df85496d97c62ffae28857c977783013d52026cdf31bfb05f353cda4"
+        },
+        {
+          "path": "src/data/site.ts",
+          "sha256": "7bc283775d618d09273d6f16f3e949fc53cb4ac265e0d20849dc1e11bb834d0a"
+        },
+        {
+          "path": "src/data/ecosystem.ts",
+          "sha256": "ee32c51df6874ff5ece5d90ad961a4fd7bec1d4b9138f29980d8733242083d23"
+        },
+        {
+          "path": "public/site.webmanifest",
+          "sha256": "8bc1c5e12dabaa78f379c76ce57902702ffac7138055740a542dfbc37044b5b6"
+        }
+      ],
+      "previews": [
+        {
+          "file": "v007-home-desktop.jpg",
+          "sha256": "742b921394092a4dbfb5d8a92719c8d498eeaf99fcc1539e8e018ccf09872038"
+        },
+        {
+          "file": "v007-home-full.jpg",
+          "sha256": "524bc8df5cd554c1a64a950059a3f006bd97f6a901ff4bf9cf28de4e87267818"
+        },
+        {
+          "file": "v007-home-mobile.jpg",
+          "sha256": "77ad2578b014c08ee95568beeefa34a7523ddcf01f21ed61bacb73e97189bac1"
         }
       ]
     }

@@ -1,0 +1,79 @@
+---
+import type { HomeField } from '../utils/home';
+import { withBase } from '../utils/site';
+
+interface Props {
+  field: HomeField;
+}
+const { field } = Astro.props;
+const [lead, ...remaining] = field.articles;
+---
+
+<div class="geo-panel" data-field={field.id}>
+  <div class="geo-feed-heading">
+    <p class="geo-feed-label">
+      <span class="geo-mono">{field.code}</span><strong>{field.name}</strong>
+    </p>
+    <span class="geo-feed-count">{field.count} 篇</span>
+  </div>
+  <p class="geo-feed-description">{field.description}</p>
+  {
+    lead ? (
+      <>
+        <article class="geo-lead geo-post" data-post-id={lead.id}>
+          <p class="geo-post-meta">
+            <>
+              <span class="geo-post-kind">{lead.featured ? '精选阅读' : '最近发布'}</span>
+              <span>{lead.category}</span>
+              <time datetime={lead.datetime}>{lead.date}</time>
+              <span>{lead.readingTime} 分钟</span>
+            </>
+          </p>
+          <h3 class="geo-post-title">
+            <a href={lead.href}>
+              {lead.title}
+              <span class="geo-title-arrow" aria-hidden="true">
+                ↗
+              </span>
+            </a>
+          </h3>
+          <p class="geo-post-summary">{lead.description}</p>
+        </article>
+        {remaining.length > 0 && (
+          <div class="geo-post-list">
+            {remaining.map((post) => (
+              <article class="geo-post geo-post-row" data-post-id={post.id}>
+                <p class="geo-post-meta">
+                  <time datetime={post.datetime}>{post.date}</time>
+                  <span>{post.category}</span>
+                  <span>{post.readingTime} 分钟</span>
+                </p>
+                <h3 class="geo-post-title">
+                  <a href={post.href}>{post.title}</a>
+                </h3>
+                <p class="geo-post-summary">{post.description}</p>
+              </article>
+            ))}
+          </div>
+        )}
+        {field.count > field.articles.length && (
+          <a class="geo-more" href={field.href}>
+            查看全部 {field.count} 篇文章 <span aria-hidden="true">↗</span>
+          </a>
+        )}
+      </>
+    ) : (
+      <div class="geo-empty">
+        <span class="geo-mono">FIELD {field.number} / IN PROGRESS</span>
+        <h3>这里的记录还在整理中</h3>
+        <p>{field.name}暂时还没有发布文章。</p>
+        {field.id !== 'all' && (
+          <button class="geo-return-all" type="button" data-category="0">
+            返回全部记录 <span aria-hidden="true">↗</span>
+          </button>
+        )}
+        <a href={withBase('/posts/')}>浏览文章索引</a>
+      </div>
+    )
+  }
+</div>

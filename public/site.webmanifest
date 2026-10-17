@@ -1,9 +1,9 @@
 {
-  "name": "选择性失忆的博客",
-  "short_name": "选择性失忆",
+  "name": "Linzii的地理小站",
+  "short_name": "Linzii",
   "lang": "zh-CN",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f5f3ed",
-  "theme_color": "#123d4a"
+  "background_color": "#f1f4f1",
+  "theme_color": "#173b33"
 }

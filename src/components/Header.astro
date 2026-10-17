@@ -7,7 +7,10 @@ const currentPath = Astro.url.pathname;
 const activeNavigationHref = navigation
   .filter((item) => currentPath.startsWith(withBase(item.href)))
   .sort((a, b) => withBase(b.href).length - withBase(a.href).length)[0]?.href;
-const isActive = (href: string) => href === activeNavigationHref;
+const isActive = (href: string) =>
+  href === activeNavigationHref ||
+  (href === '/posts/' &&
+    ['/categories/', '/tags/'].some((path) => currentPath.startsWith(withBase(path))));
 ---
 
 <header class="site-header">
@@ -55,6 +58,8 @@ const isActive = (href: string) => href === activeNavigationHref;
         </a>
       ))
     }
+    <a href={withBase('/categories/')}>分类</a>
+    <a href={withBase('/tags/')}>标签</a>
     <a
       href={withBase('/search/')}
       aria-current={currentPath.startsWith(withBase('/search/')) ? 'page' : undefined}>搜索</a

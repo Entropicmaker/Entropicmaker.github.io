@@ -56,7 +56,7 @@ const ogImage = absoluteUrl(image ?? '/og.png', Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:alt" content="选择性失忆的博客" />
+    <meta property="og:image:alt" content={siteConfig.name} />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>
       (() => {
