@@ -33,7 +33,7 @@ const first = fields[0];
 <div
   id="geo-design"
   class="geo-screen"
-  data-design-version="v005"
+  data-design-version="v006"
   data-fields={JSON.stringify(fields)}
 >
   <div class="geo-content shell">
@@ -41,15 +41,13 @@ const first = fields[0];
       <p class="geo-eyebrow">
         <span class="geo-dot"></span>PERSONAL COORDINATES / {new Date().getFullYear()}
       </p>
-      <button class="geo-replay" type="button" hidden
-        >重播入场 <span aria-hidden="true">↻</span></button
-      >
     </div>
     <section class="geo-hero" aria-labelledby="home-title">
       <div>
         <h1 id="home-title" class="geo-headline" tabindex="-1" aria-label="Linzii的地理小站">
           <span class="geo-text-window"><span>Linzii的</span></span><span class="geo-text-window"
-            ><span><em>地理</em>小站</span></span>
+            ><span><em>地理</em>小站</span></span
+          >
         </h1>
         <p class="geo-subtitle">尽量多更新，没更新就是在吃双层吉士汉堡</p>
         <p class="geo-title-label">GEOGRAPHY · CODE · EVERYDAY</p>
@@ -64,7 +62,8 @@ const first = fields[0];
     <section class="geo-coordinates" aria-labelledby="coordinates-title">
       <div class="geo-section-label">
         <h2 id="coordinates-title">四个内容坐标</h2><a href={withBase('/categories/')}
-          >分类总览 <span aria-hidden="true">↗</span></a>
+          >分类总览 <span aria-hidden="true">↗</span></a
+        >
       </div>
       <div class="geo-filters" aria-label="选择内容坐标" hidden>
         {
@@ -96,7 +95,8 @@ const first = fields[0];
           <div class="geo-feature-bottom">
             <span class="geo-date">{first.date} / {first.name}</span><a
               class="geo-category-link"
-              href={first.categoryHref}>进入地理科学 <span aria-hidden="true">↗</span></a>
+              href={first.categoryHref}>进入地理科学 <span aria-hidden="true">↗</span></a
+            >
           </div>
         </div>
         <div class="geo-number-window" aria-hidden="true"><span class="geo-number">01</span></div>
@@ -104,12 +104,12 @@ const first = fields[0];
     </section>
     <div class="geo-rule" aria-hidden="true"></div>
   </div>
-  <p class="sr-only geo-motion-status" role="status" data-pagefind-ignore></p>
   <div
     class="geo-entry"
     role="dialog"
     aria-modal="true"
     aria-label="Linzii的地理小站入场动画"
+    tabindex="-1"
     hidden
     data-pagefind-ignore
   >
@@ -119,7 +119,8 @@ const first = fields[0];
       </div><canvas class="geo-entry-front"></canvas>
       <div class="geo-entry-identity">
         <span class="geo-entry-kicker"><span>GEOGRAPHY / COMPUTING / EVERYDAY</span></span><strong
-          class="geo-entry-title"><span>Linzii的</span><span>地理小站</span></strong>
+          class="geo-entry-title"><span>Linzii的</span><span>地理小站</span></strong
+        >
       </div>
     </div>
     <div class="geo-entry-inverse" aria-hidden="true">
@@ -128,10 +129,10 @@ const first = fields[0];
       </div><canvas class="geo-entry-front"></canvas>
       <div class="geo-entry-identity">
         <span class="geo-entry-kicker"><span>GEOGRAPHY / COMPUTING / EVERYDAY</span></span><strong
-          class="geo-entry-title"><span>Linzii的</span><span>地理小站</span></strong>
+          class="geo-entry-title"><span>Linzii的</span><span>地理小站</span></strong
+        >
       </div>
     </div>
-    <button class="geo-skip" type="button">跳过动画 <span aria-hidden="true">↗</span></button>
   </div>
 </div>
 

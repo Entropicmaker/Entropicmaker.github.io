@@ -1,12 +1,10 @@
-// Production adaptation of the approved v005 FIELD JOURNAL composition.
+// v006 retains the approved FIELD JOURNAL composition with a stable entry exit.
 (() => {
   const screen = document.getElementById('geo-design');
   if (!screen) return;
   const fields = JSON.parse(screen.dataset.fields);
   const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const settings = { entryDuration: 2800, inversion: true };
-  const replay = screen.querySelector('.geo-replay');
-  const status = screen.querySelector('.geo-motion-status');
   let stopEntry = () => {};
   function animate(el, frames, options) {
     if (!el || reduced()) return null;
@@ -516,10 +514,9 @@
       selectField(index);
     })
   );
-  async function playEntry(manual = false) {
+  async function playEntry() {
     if (running) return;
     if (reduced()) return;
-    if (manual) window.scrollTo({ top: 0, behavior: 'instant' });
     const previousFocus = document.activeElement;
     const inactive = [
       screen.querySelector('.geo-content'),
@@ -531,27 +528,14 @@
     inactive.forEach((element) => (element.inert = true));
     selectField(selected, false);
     running = true;
-    replay.disabled = true;
     const layer = screen.querySelector('.geo-entry');
+    const identities = Array.from(layer.querySelectorAll('.geo-entry-identity'));
     layer.hidden = false;
     delete document.documentElement.dataset.homeEntry;
-    const skip = layer.querySelector('.geo-skip');
-    skip.focus({ preventScroll: true });
-    status.textContent = '';
+    layer.focus({ preventScroll: true });
     const duration = settings.entryDuration;
     const count = [];
-    layer.querySelectorAll('.geo-entry-identity').forEach((identity) => {
-      count.push(
-        animate(
-          identity,
-          [
-            { opacity: 1, transform: 'translateY(0)', offset: 0 },
-            { opacity: 1, transform: 'translateY(0)', offset: 0.87 },
-            { opacity: 0, transform: 'translateY(-6px)', offset: 1 }
-          ],
-          { duration: duration * 0.82, easing: 'linear', fill: 'both' }
-        )
-      );
+    identities.forEach((identity) => {
       count.push(
         animate(
           identity.querySelector('.geo-entry-kicker > span'),
@@ -770,6 +754,7 @@
       stopEntry = () => {
         stopped = true;
         cancelAnimationFrame(entryFrame);
+        identities.forEach((identity) => (identity.style.opacity = '0'));
         count.forEach((animation) => animation?.cancel());
         resolve();
       };
@@ -777,6 +762,12 @@
         if (stopped) return;
         const p = clamp((now - start) / duration),
           pose = samplePose(p);
+        // Keep both color layers on one clock. CSS also remains invisible after cleanup.
+        const identityExit = clamp((p / 0.82 - 0.87) / 0.13);
+        identities.forEach((identity) => {
+          identity.style.opacity = String(1 - identityExit);
+          identity.style.transform = `translateY(${-6 * identityExit}px)`;
+        });
         const radius = Math.min(screenBox.width, sceneHeight) * pose.r;
         const drift = Math.sin(Math.PI * clamp(p / 0.84)) * (1 - ease((p - 0.69) / 0.15));
         const laggedPhase = clamp(p - 80 / duration);
@@ -913,26 +904,34 @@
     } finally {
       stopped = true;
       cancelAnimationFrame(entryFrame);
+      const restoreFocus = document.activeElement === layer;
       layer.hidden = true;
+      identities.forEach((identity) => {
+        identity.style.removeProperty('opacity');
+        identity.style.removeProperty('transform');
+      });
       count.filter(Boolean).forEach((animation) => animation.cancel());
       inactive.forEach((element) => (element.inert = false));
-      replay.disabled = false;
       running = false;
       stopEntry = () => {};
-      if (document.activeElement === skip) {
-        const focus = manual ? previousFocus : document.querySelector('#home-title');
+      if (restoreFocus) {
+        const focus =
+          previousFocus instanceof HTMLElement &&
+          previousFocus !== document.body &&
+          previousFocus.isConnected
+            ? previousFocus
+            : document.querySelector('#home-title');
         focus?.focus({ preventScroll: true });
       }
-      status.textContent = '';
     }
   }
 
-  replay.hidden = reduced();
   screen.querySelector('.geo-filters').hidden = false;
-  replay.addEventListener('click', () => playEntry(true));
-  screen.querySelector('.geo-skip').addEventListener('click', () => stopEntry());
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && running) stopEntry();
+    if (running && (event.key === 'Escape' || event.key === 'Tab')) {
+      event.preventDefault();
+      stopEntry();
+    }
   });
   window.addEventListener('resize', () => {
     if (running) stopEntry();
@@ -952,7 +951,6 @@
     { passive: true }
   );
   window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', () => {
-    replay.hidden = reduced();
     if (reduced()) {
       stopEntry();
       selectField(selected, false);

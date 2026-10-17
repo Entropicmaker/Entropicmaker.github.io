@@ -63,5 +63,38 @@
       "bytes": 68367,
       "recordedDate": "2026-10-15"
     }
+  ],
+  "productionVersion": "v006",
+  "productionReleases": [
+    {
+      "id": "v005",
+      "tag": "blog-v005-20261015",
+      "commit": "e284c1dd06e488181c5fca93dc60bf4863a8c7d6",
+      "recordedDate": "2026-10-15"
+    },
+    {
+      "id": "v006",
+      "parent": "v005",
+      "tag": "blog-v006-20261017",
+      "file": "v006-entry-exit-source.tar.gz",
+      "name": "入场淡出修复与按钮移除",
+      "recordedDate": "2026-10-17",
+      "sha256": "8bd2d15d83f7ad40c7ae618b43c05f08038143aa09872d6b84e2082b662f6dd6",
+      "bytes": 14626,
+      "sourceFiles": [
+        {
+          "path": "src/components/CoordinateHome.astro",
+          "sha256": "7f07ce76b87add5697b8f3069605f464eb2054f9e0a94345c268d3ee1871adea"
+        },
+        {
+          "path": "src/scripts/coordinate-home.js",
+          "sha256": "04c7403460ef2a75d7e0860eb301fc184b18255afd9702d15bf5d398f4db9c8f"
+        },
+        {
+          "path": "src/styles/coordinate-home.css",
+          "sha256": "9d4173297ba9a5927e397f0c989310dd7716d33ffded5c87494b08319733150b"
+        }
+      ]
+    }
   ]
 }
