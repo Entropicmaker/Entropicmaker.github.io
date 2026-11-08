@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import {
   formatDate,
-  getCategory,
+  getPostSlug,
   getPostUrl,
   getPublishedPosts,
   groupPostsByYear
@@ -13,11 +13,7 @@ import { withBase } from '../../utils/site';
 const groups = groupPostsByYear(getPublishedPosts(await getCollection('posts')));
 ---
 
-<PageLayout
-  title="文章归档"
-  description="按发表年份回看知识积累的轨迹。"
-  eyebrow="Chronological Atlas"
->
+<PageLayout title="归档" description="按发表年份回看知识积累的轨迹。">
   {
     groups.map(([year, posts]) => (
       <section class="archive-year" aria-labelledby={`year-${year}`}>
@@ -27,12 +23,15 @@ const groups = groupPostsByYear(getPublishedPosts(await getCollection('posts')))
         </header>
         <ol class="archive-list">
           {posts.map((post) => (
-            <li>
+            <li id={`post-${getPostSlug(post)}`}>
               <time datetime={post.data.pubDate.toISOString()}>
                 {formatDate(post.data.pubDate).slice(5)}
               </time>
-              <a href={withBase(getPostUrl(post))}>{post.data.title}</a>
-              <span>{getCategory(post.data.category).name}</span>
+              <a
+                href={`${withBase(getPostUrl(post))}?from=${encodeURIComponent(`${Astro.url.pathname}#post-${getPostSlug(post)}`)}`}
+              >
+                {post.data.title}
+              </a>
             </li>
           ))}
         </ol>

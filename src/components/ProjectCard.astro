@@ -1,39 +1,25 @@
 ---
 import type { Project } from '../data/projects';
-
 interface Props {
   project: Project;
 }
-
 const { project } = Astro.props;
 ---
 
-<article class="project-card">
-  <div class="project-card-head">
-    <span class="project-index" aria-hidden="true">⌁</span>
-    <span class="status-badge">{project.status}</span>
-  </div>
-  <p class="eyebrow">{project.category}</p>
-  <div class="project-title-line">
-    <h3>{project.title}</h3>
-    <span class="project-year">{project.year}</span>
-  </div>
+<section class="project-entry">
+  <h2>
+    {
+      project.href ? (
+        <a href={project.href} target="_blank" rel="noopener noreferrer">
+          {project.title} ↗
+        </a>
+      ) : (
+        project.title
+      )
+    }
+  </h2>
+  <p class="entry-meta">{project.year} · {project.status} · {project.category}</p>
   <p>{project.description}</p>
-  <p class="project-outcome"><strong>阶段结果</strong>{project.outcome}</p>
-  <ul class="tech-list" aria-label="项目技术栈">
-    {project.stack.map((item) => <li>{item}</li>)}
-  </ul>
-  {
-    project.href && (
-      <a
-        class="project-card-link"
-        href={project.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`访问${project.title}`}
-      >
-        访问项目 <span aria-hidden="true">↗</span>
-      </a>
-    )
-  }
-</article>
+  <p>{project.outcome}</p>
+  <p class="entry-meta">{project.stack.join(' / ')}</p>
+</section>

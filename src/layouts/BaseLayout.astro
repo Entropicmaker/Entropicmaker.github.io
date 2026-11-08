@@ -32,12 +32,12 @@ const ogImage = absoluteUrl(image ?? '/og.png', Astro.site);
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#12343b" />
+    <meta name="theme-color" content="#f1f4f1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -58,23 +58,12 @@ const ogImage = absoluteUrl(image ?? '/og.png', Astro.site);
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:alt" content={siteConfig.name} />
     <meta name="twitter:card" content="summary_large_image" />
-    <script is:inline>
-      (() => {
-        const preferred = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        let saved;
-        try {
-          saved = localStorage.getItem('theme');
-        } catch {}
-        document.documentElement.dataset.theme =
-          saved === 'light' || saved === 'dark' ? saved : preferred;
-      })();
-    </script>
     <slot name="head" />
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main-content">跳到主要内容</a>
     <Header />
-    <main id="main-content" data-pagefind-body>
+    <main id="main-content" data-pagefind-body={article || undefined}>
       <slot />
     </main>
     <Footer />

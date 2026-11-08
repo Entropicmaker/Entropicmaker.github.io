@@ -1,25 +1,17 @@
 ---
 import { navigation, siteConfig } from '../data/site';
 import { withBase } from '../utils/site';
-import SiteSwitcher from './SiteSwitcher.astro';
-
 const currentPath = Astro.url.pathname;
-const activeNavigationHref = navigation
-  .filter((item) => currentPath.startsWith(withBase(item.href)))
-  .sort((a, b) => withBase(b.href).length - withBase(a.href).length)[0]?.href;
 const isActive = (href: string) =>
-  href === activeNavigationHref ||
-  (href === '/posts/' &&
-    ['/categories/', '/tags/'].some((path) => currentPath.startsWith(withBase(path))));
+  currentPath.startsWith(withBase(href)) ||
+  (href === '/posts/' && currentPath.startsWith(withBase('/tags/')));
 ---
 
-<header class="site-header">
+<header class="site-header" data-pagefind-ignore>
   <div class="shell header-inner">
-    <a class="brand" href={withBase('/')} aria-label={`${siteConfig.name}首页`}>
-      <span class="brand-mark" aria-hidden="true">⌖</span>
-      <span>{siteConfig.name}</span>
-    </a>
-    <nav class="desktop-nav" aria-label="主导航">
+    <a class="brand" href={withBase('/')} aria-label={`${siteConfig.name}首页`}>{siteConfig.name}</a
+    >
+    <nav class="site-nav" aria-label="主导航">
       {
         navigation.map((item) => (
           <a href={withBase(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
@@ -27,91 +19,9 @@ const isActive = (href: string) =>
           </a>
         ))
       }
-    </nav>
-    <div class="desktop-site-switcher">
-      <SiteSwitcher current="blog" />
-    </div>
-    <div class="header-actions">
-      <a class="icon-button search-button" href={withBase('/search/')} aria-label="搜索文章">
-        <span aria-hidden="true">⌕</span>
-      </a>
-      <button class="icon-button" id="theme-toggle" type="button" aria-label="切换深浅色模式">
-        <span class="theme-icon" aria-hidden="true">◐</span>
-      </button>
-      <button
-        class="icon-button menu-button"
-        id="menu-toggle"
-        type="button"
-        aria-label="打开导航菜单"
-        aria-expanded="false"
-        aria-controls="mobile-nav"
+      <a href={withBase('/search/')} aria-current={isActive('/search/') ? 'page' : undefined}
+        >搜索</a
       >
-        <span aria-hidden="true">☰</span>
-      </button>
-    </div>
+    </nav>
   </div>
-  <nav class="mobile-nav shell" id="mobile-nav" aria-label="移动端导航" hidden>
-    {
-      navigation.map((item) => (
-        <a href={withBase(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
-          {item.label}
-        </a>
-      ))
-    }
-    <a href={withBase('/categories/')}>分类</a>
-    <a href={withBase('/tags/')}>标签</a>
-    <a
-      href={withBase('/search/')}
-      aria-current={currentPath.startsWith(withBase('/search/')) ? 'page' : undefined}>搜索</a
-    >
-    <SiteSwitcher current="blog" mobile />
-  </nav>
 </header>
-
-<script>
-  const themeButton = document.querySelector<HTMLButtonElement>('#theme-toggle');
-  themeButton?.addEventListener('click', () => {
-    const root = document.documentElement;
-    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    root.dataset.theme = next;
-    try {
-      localStorage.setItem('theme', next);
-    } catch {}
-    themeButton.setAttribute('aria-label', next === 'dark' ? '切换到浅色模式' : '切换到深色模式');
-  });
-
-  const menuButton = document.querySelector<HTMLButtonElement>('#menu-toggle');
-  const mobileNav = document.querySelector<HTMLElement>('#mobile-nav');
-  menuButton?.addEventListener('click', () => {
-    if (!mobileNav) return;
-    const willOpen = mobileNav.hidden;
-    mobileNav.hidden = !willOpen;
-    menuButton.setAttribute('aria-expanded', String(willOpen));
-    menuButton.setAttribute('aria-label', willOpen ? '关闭导航菜单' : '打开导航菜单');
-  });
-
-  const siteSwitchers = Array.from(document.querySelectorAll<HTMLDetailsElement>('.site-switcher'));
-  siteSwitchers.forEach((switcher) => {
-    switcher.addEventListener('toggle', () => {
-      if (!switcher.open) return;
-      siteSwitchers.forEach((other) => {
-        if (other !== switcher) other.open = false;
-      });
-    });
-  });
-
-  document.addEventListener('pointerdown', (event) => {
-    siteSwitchers.forEach((switcher) => {
-      if (!switcher.contains(event.target as Node)) switcher.open = false;
-    });
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape') return;
-    siteSwitchers.forEach((switcher) => {
-      if (!switcher.open) return;
-      switcher.open = false;
-      switcher.querySelector<HTMLElement>('summary')?.focus();
-    });
-  });
-</script>

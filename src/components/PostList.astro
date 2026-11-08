@@ -1,0 +1,25 @@
+---
+import { formatDate, getPostSlug, getPostUrl, type Post } from '../utils/posts';
+import { withBase } from '../utils/site';
+interface Props {
+  posts: Post[];
+}
+const { posts } = Astro.props;
+---
+
+<ul class="post-list">
+  {
+    posts.map((post) => {
+      const id = `post-${getPostSlug(post)}`;
+      const from = `${Astro.url.pathname}#${id}`;
+      return (
+        <li id={id}>
+          <a href={`${withBase(getPostUrl(post))}?from=${encodeURIComponent(from)}`}>
+            {post.data.title}
+          </a>
+          <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+        </li>
+      );
+    })
+  }
+</ul>

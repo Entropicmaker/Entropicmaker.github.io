@@ -1,3 +1,5 @@
+> 历史记录：此文件属于 v007。当前 v011 已按用户新要求改为分组目录，实施依据见 [READABILITY_REDESIGN.md](READABILITY_REDESIGN.md)。
+
 # 首页结构重整与内容坐标动效修改方案
 
 日期：2026-10-17

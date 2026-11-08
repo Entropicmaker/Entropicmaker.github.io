@@ -1,0 +1,40 @@
+# v012 · 原主站配色与分组目录
+
+更新：2026-11-09。用户已授权本地重构；尚未提交、推送或发布。现在修改的是 Astro 正式源码，旧的蓝白静态示意已弃用，仅保留为历史记录。
+
+## 结构依据
+
+参考 [Yanyan’s Wiki](https://jyywiki.cn/) 的首页分区、[课程目录](https://jyywiki.cn/OS/2026/)与正文关系：目录直接列内容，标题表示层级，链接进入正文。此次借鉴内容组织，不复制它的蓝白配色或品牌。
+
+恢复原主站浅色设计作为全站默认：灰绿底、深青正文与文章标题、“地理”二字用苔绿强调、暖棕标点，配合原首页的淡绿色径向背景。导航未选中为灰青、当前栏目为深青。原色彩变量继续保留；页面不再自动跟随系统或旧缓存切成深色。取消大标题开场、筛选切换动画、装饰图形、悬浮导航、顶部主题按钮以及重复摘要。
+
+## 页面与导航
+
+- 首页和文章页共用 `ArticleIndex.astro`；四个主题是目录分组，下面直接显示真实文章标题与日期。
+- 点击地理科学只定位 `#geography`，没有分类展示页、全部筛选或二次进入按钮。
+- 旧 `/categories/` 跳至 `/posts/`；旧 `/categories/geography/` 等链接跳至文章目录的对应分组。无 JavaScript 时仍有 meta refresh 与普通链接。
+- 点击文章标题直接打开完整 Markdown / MDX 内容。首页、文章目录、归档和标签的文章链接记录原条目位置；搜索记录关键词。
+- 正文上下各有一个明确的返回链接；直接打开正文时回到文章目录对应条目。浏览器前进／后退使用原生历史。
+- 项目、归档、留言、关于、搜索、标签与 404 全部使用同一页头、阅读宽度与标题尺寸。
+- 标签只作为辅助索引，通过文章页和正文访问。没有重复分类导航。
+
+## 排版与功能
+
+正文宽度最多 760px；手机左右 20px。页面标题 24–28px，分组 21px，正文 16–17px，行高 1.85–1.95。日期次要显示，手机放在标题下方。长表格、公式和代码仅在自身区域滚动。
+
+文章目录默认折叠。构建时清除与文章标题相同的首个一级标题，其他正文一级标题和其下级顺次降一级，保持全文内容和层级。原始 Markdown / MDX 文件未改写。课件、Mermaid、公式和 RSS 保留。
+
+Pagefind 仅索引公开文章，避免搜索结果充满重复的分类与标签页。包含中文的查询使用构建时导出的公开文章文本进行字面检索，避免中文分词的漏报和误报；英文查询继续使用 Pagefind，零结果或索引加载失败时也使用文本兜底。
+
+## 维护与恢复
+
+- 首页：`src/pages/index.astro`。
+- 分组目录：`src/components/ArticleIndex.astro` 与 `PostList.astro`。
+- 全站布局：`src/layouts/PageLayout.astro`、`Header.astro`、`Footer.astro`。
+- 正文：`src/pages/posts/[...slug].astro`。
+- 主题与排版：`src/styles/global.css`；课件与关系图：`article-widgets.css`。
+- 检查：`npm run check`、`node --test tests/reading-navigation.test.mjs`、`npm run build`。
+
+v011 之前快照：`docs/visual-history/pre-v011-20261109-source.tar.gz`。v011 与 v012 都另存完整源码快照。交付版本与校验记录见 `VISUAL_VERSIONS.md`、`visual-history/manifest.json`。旧版快照均保留。
+
+两站互链移除与 03教程 继续保留；CodeVision 本轮不做额外改版，未上传 Linote。

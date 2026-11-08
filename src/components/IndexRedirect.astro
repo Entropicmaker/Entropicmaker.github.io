@@ -1,0 +1,23 @@
+---
+interface Props {
+  href: string;
+  label: string;
+}
+const { href, label } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href={new URL(href, Astro.site ?? Astro.url)} />
+    <meta http-equiv="refresh" content={`0;url=${href}`} />
+    <title>{label}</title>
+    <script is:inline define:vars={{ href }}>
+      window.location.replace(href);
+    </script>
+  </head>
+  <body><p><a href={href}>前往{label}</a></p></body>
+</html>

@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Linzii的地理小站</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #fff;
+        --ink: #202731;
+        --muted: #626b77;
+        --link: #384a9e;
+        --line: #e1e5eb;
+        --code: #f4f6f8;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color-scheme: dark;
+          --paper: #171c22;
+          --ink: #e4e8ed;
+          --muted: #a8b0ba;
+          --link: #a8b9ff;
+          --line: #343c47;
+          --code: #222a34;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-padding-top: 24px;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          17px/1.85 -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          'PingFang SC',
+          'Microsoft YaHei',
+          sans-serif;
+      }
+      a {
+        color: var(--link);
+        text-decoration: none;
+        text-underline-offset: 4px;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      :focus-visible {
+        outline: 2px solid var(--link);
+        outline-offset: 4px;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .skip {
+        position: absolute;
+        left: 16px;
+        top: -70px;
+      }
+      .skip:focus {
+        top: 10px;
+        z-index: 2;
+        padding: 8px;
+        background: var(--paper);
+      }
+      .site-header {
+        border-bottom: 1px solid var(--line);
+      }
+      .header-inner {
+        width: min(1120px, calc(100% - 48px));
+        min-height: 64px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        gap: 38px;
+      }
+      .brand {
+        flex-shrink: 0;
+        color: var(--ink);
+        font-size: 18px;
+        font-weight: 650;
+      }
+      .site-nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 24px;
+      }
+      .site-nav a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .site-nav a[aria-current] {
+        color: var(--ink);
+        text-decoration: underline;
+        text-underline-offset: 7px;
+      }
+      main {
+        width: min(760px, calc(100% - 48px));
+        min-height: 70vh;
+        padding: 48px 0 72px;
+        margin: auto;
+      }
+      main:focus {
+        outline: none;
+      }
+      h1,
+      h2,
+      h3 {
+        color: var(--ink);
+        font-weight: 650;
+        line-height: 1.5;
+      }
+      h1 {
+        margin: 0 0 20px;
+        font-size: 28px;
+        letter-spacing: -0.015em;
+      }
+      h2 {
+        margin: 32px 0 12px;
+        font-size: 22px;
+      }
+      h3 {
+        margin: 24px 0 10px;
+        font-size: 19px;
+      }
+      p {
+        margin: 12px 0;
+      }
+      .intro {
+        margin-bottom: 30px;
+      }
+      ul,
+      ol {
+        padding-left: 1.4em;
+      }
+      li {
+        padding-left: 3px;
+      }
+      li::marker {
+        color: #adb4bf;
+      }
+      .note-list {
+        margin: 10px 0 24px;
+      }
+      .note-list li {
+        margin: 12px 0;
+      }
+      .note-list a {
+        font-weight: 500;
+      }
+      .note-list time {
+        margin-left: 12px;
+        color: var(--muted);
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      .note-list p {
+        margin: 4px 0 0;
+        font-size: 15px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+      .topic-list {
+        margin-top: 10px;
+      }
+      .topic-list li {
+        margin: 6px 0;
+      }
+      .section-link {
+        margin-top: 16px;
+        font-size: 14px;
+      }
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 24px;
+        margin: -2px 0 24px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--line);
+      }
+      .filters a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        font-size: 15px;
+        color: var(--muted);
+      }
+      .filters a[aria-current] {
+        color: var(--link);
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 6px;
+      }
+      .tag-filter {
+        font-size: 14px;
+        color: var(--muted);
+        margin: 0 0 24px;
+      }
+      .tag-filter a {
+        margin-left: 12px;
+      }
+      .empty {
+        margin: 24px 0;
+        color: var(--muted);
+      }
+      .archive h2 {
+        font-size: 21px;
+      }
+      .archive li {
+        margin: 10px 0;
+      }
+      .archive time {
+        display: inline-block;
+        min-width: 68px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .project {
+        margin: 30px 0;
+      }
+      .project h2 {
+        margin: 0 0 10px;
+      }
+      .project .meta {
+        margin-top: 10px;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.8;
+      }
+      .messages {
+        list-style: none;
+        padding: 0;
+        margin: 26px 0;
+      }
+      .messages li {
+        margin: 0 0 30px;
+        padding: 0;
+      }
+      .messages p {
+        margin-top: 6px;
+      }
+      .back {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        margin: -10px 0 20px;
+        font-size: 14px;
+      }
+      .article-title {
+        font-size: 30px;
+        line-height: 1.5;
+      }
+      .article-meta {
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .article-summary {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 16px;
+      }
+      .toc {
+        margin: 26px 0;
+        padding: 12px 0;
+        border-block: 1px solid var(--line);
+        font-size: 14px;
+      }
+      .toc summary {
+        cursor: pointer;
+        min-height: 28px;
+      }
+      .toc a {
+        display: block;
+        padding: 8px 0;
+      }
+      .reading {
+        overflow-wrap: anywhere;
+        line-height: 1.95;
+      }
+      .reading h2 {
+        margin-top: 36px;
+        font-size: 23px;
+      }
+      .reading h3 {
+        font-size: 20px;
+      }
+      .reading li {
+        margin: 8px 0;
+      }
+      .reading blockquote {
+        margin: 22px 0;
+        padding-left: 20px;
+        border-left: 2px solid var(--line);
+      }
+      .reading table {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow: auto;
+        border-collapse: collapse;
+        font-size: 15px;
+      }
+      .reading th,
+      .reading td {
+        border: 1px solid var(--line);
+        padding: 8px 12px;
+      }
+      .reading th:first-child,
+      .reading td:first-child {
+        white-space: nowrap;
+      }
+      .reading pre {
+        max-width: 100%;
+        overflow: auto;
+        background: var(--code);
+        padding: 16px;
+        font:
+          14px/1.8 ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+      }
+      .reading code {
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 0.88em;
+      }
+      .reading img {
+        max-width: 100%;
+        height: auto;
+      }
+      .article-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        margin: 32px 0 12px;
+        font-size: 13px;
+      }
+      .search-form {
+        display: flex;
+        gap: 10px;
+        margin: 24px 0 16px;
+      }
+      .search-form input {
+        min-width: 0;
+        flex: 1;
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        background: var(--paper);
+        color: var(--ink);
+      }
+      .search-form button {
+        min-height: 44px;
+        padding: 8px 18px;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        background: var(--code);
+        color: var(--ink);
+      }
+      .search-status {
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .about a {
+        overflow-wrap: anywhere;
+      }
+      @media (max-width: 700px) {
+        .header-inner {
+          display: block;
+          padding: 14px 0 8px;
+        }
+        .site-nav {
+          margin-top: 6px;
+          gap: 2px 22px;
+        }
+        main {
+          padding-top: 30px;
+        }
+      }
+      @media (max-width: 400px) {
+        .header-inner,
+        main {
+          width: calc(100% - 40px);
+        }
+        .site-nav {
+          gap: 2px 21px;
+        }
+        h1 {
+          font-size: 26px;
+        }
+        .article-title {
+          font-size: 27px;
+        }
+        .filters {
+          gap: 2px 18px;
+        }
+        .note-list time {
+          display: block;
+          margin: 2px 0 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#main">跳到正文</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#/">Linzii的地理小站</a>
+        <nav class="site-nav" aria-label="主导航">
+          <a href="#/posts" data-nav="posts">文章</a
+          ><a href="#/projects" data-nav="projects">项目</a
+          ><a href="#/archive" data-nav="archive">归档</a
+          ><a href="#/messages" data-nav="messages">留言</a
+          ><a href="#/about" data-nav="about">关于</a><a href="#/search" data-nav="search">搜索</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main" tabindex="-1"></main>
+    <script id="site-data" type="application/json">
+      {
+        "projects": [
+          {
+            "title": "城市热岛效应空间分析",
+            "description": "融合 Landsat 地表温度、土地覆盖与人口数据，分析城市热岛的空间分异。",
+            "status": "研究复盘",
+            "year": "2026",
+            "stack": ["Google Earth Engine", "QGIS", "Python"],
+            "category": "遥感 × 城市地理",
+            "outcome": "完成温度反演、分区统计与可复现地图表达流程。"
+          },
+          {
+            "title": "基于 Python 的地理数据处理工具",
+            "description": "把坐标转换、格式检查、字段清洗等重复操作封装成轻量命令行工具。",
+            "status": "持续迭代",
+            "year": "2026",
+            "stack": ["Python", "GeoPandas", "Rasterio"],
+            "category": "空间数据工程",
+            "outcome": "建立批处理、日志记录与异常数据报告机制。"
+          },
+          {
+            "title": "交通网络最短路径可视化",
+            "description": "从道路网络建模出发，对比 Dijkstra 与 A* 算法，并交互展示路径结果。",
+            "status": "课程项目",
+            "year": "2025",
+            "stack": ["NetworkX", "OSMnx", "Matplotlib"],
+            "category": "算法 × 地理网络",
+            "outcome": "实现路网清洗、权重设计、路径计算与结果可视化。"
+          }
+        ],
+        "messages": [
+          { "date": "2026-08-16", "content": "双层吉士汉堡被小皇堡打败了。。。" },
+          {
+            "date": "2026-08-10",
+            "content": "最有效的记忆方法是提问与重复，产生心流感觉的要点是：合适的任务难度、清晰的目标与及时反馈、 消除干扰、挣扎阶段和固定物理触发条件"
+          },
+          { "date": "2026-07-31", "content": "ai要用在辅助性的任务上而不是最核心的判断上" },
+          {
+            "date": "2026-07-31",
+            "content": "如果维护学习系统比学习本身还累，那就说明系统有问题该做减法了"
+          }
+        ],
+        "siteConfig": {
+          "name": "Linzii的地理小站",
+          "shortName": "Linzii",
+          "title": "Linzii的地理小站",
+          "description": "地理专业学生，关注遥感、GIS、空间数据工程和GeoAI",
+          "author": "选择性失忆",
+          "email": "163517493+Entropicmaker@users.noreply.github.com",
+          "github": "https://github.com/Entropicmaker",
+          "intro": "地理专业学生，关注遥感、GIS、空间数据工程和GeoAI",
+          "about": "地理专业学生，关注遥感、GIS、空间数据工程和GeoAI"
+        },
+        "categories": [
+          {
+            "id": "geography",
+            "name": "地理科学",
+            "shortName": "地理",
+            "index": "01",
+            "description": "从自然过程到空间分析，理解地表系统与地理数据。",
+            "subcategories": [
+              "自然地理",
+              "GIS 与空间分析",
+              "遥感与制图",
+              "地理数据与研究方法",
+              "课程与读书笔记"
+            ]
+          },
+          {
+            "id": "computer-science",
+            "name": "计算机科学",
+            "shortName": "计算",
+            "index": "02",
+            "description": "用编程、算法与工程工具构建可靠的数据工作流。",
+            "subcategories": [
+              "编程基础与工具",
+              "算法与数据结构",
+              "数据分析与可视化",
+              "Web 开发",
+              "开发笔记与踩坑"
+            ]
+          },
+          {
+            "id": "geocomputing",
+            "name": "交叉研究 / 地理计算",
+            "shortName": "交叉",
+            "index": "03",
+            "description": "让空间问题与计算方法相遇，探索 GeoAI 与空间数据工程。",
+            "subcategories": ["地理计算", "GeoAI / 机器学习", "空间数据工程", "项目复盘"]
+          },
+          {
+            "id": "daily",
+            "name": "日常",
+            "shortName": "日常",
+            "index": "04",
+            "description": "记录阅读、学习与生活中的片段，保留当时的想法和长期积累的轨迹。",
+            "subcategories": ["阅读记录", "学习日志", "生活随笔", "建站日记"]
+          }
+        ],
+        "posts": [
+          {
+            "title": "光合作用、Vcmax 与遥感：零基础学习课件",
+            "description": "41 页零基础课件完整呈现——从叶片里的光反应与卡尔文循环，到 Vcmax25 的温度标准化与 A–Cᵢ 曲线，再到遥感反射率、SIF 与模型反演，最后回到这组论文的定位、理解检查与来源。",
+            "category": "geography",
+            "tags": ["光合作用", "Vcmax", "遥感", "SIF", "课件"],
+            "pubDate": "2026-09-15",
+            "slug": "photosynthesis-vcmax-courseware",
+            "content": "<p>这份课件是为「叶片光合能力如何被遥感看见」这条线索准备的入门材料，共 41 页，假设读者没有植物生理与遥感的背景知识。它不追求把论文读完，而是先搭一条能走通的因果链：<strong>叶片里发生了什么 → 怎样描述叶片的能力 → 卫星能提供什么线索 → 再回到论文里看它们各自解决了哪一段<\/strong>。<\/p>\n<p>每一页都带着来源署名，公式与曲线在标注为教学示意的地方不用于定量判读。课件原稿是 PowerPoint；这里把全部 41 页按原样搬到网页上，可以逐页翻阅，也可以点开单页看原图。<\/p>\n<h2 id=\"_1\">课件全文<\/h2>\n<h2 id=\"_2\">这份课件的四段结构<\/h2>\n<p>课件的第 2 页给出了它自己的阅读顺序，四段各有明确的任务：<\/p>\n<table>\n<thead>\n<tr>\n<th>段落<\/th>\n<th>页码<\/th>\n<th>要解决的问题<\/th>\n<\/tr>\n<\/thead>\n<tbody>\n<tr>\n<td>一、叶片里面发生了什么<\/td>\n<td>第 3–9 页<\/td>\n<td>认识原料、光反应与碳固定，理解 Rubisco 与气孔的位置<\/td>\n<\/tr>\n<tr>\n<td>二、怎样描述叶片的能力<\/td>\n<td>第 10–17 页<\/td>\n<td>理解 Vcmax25、A–Cᵢ 曲线，以及温度效应与长期适应的区别<\/td>\n<\/tr>\n<tr>\n<td>三、卫星怎样提供线索<\/td>\n<td>第 18–28 页<\/td>\n<td>理解反射率、叶绿素、SIF 与模型推断各自能约束什么<\/td>\n<\/tr>\n<tr>\n<td>四、重新进入这组论文<\/td>\n<td>第 29–41 页<\/td>\n<td>论文定位、理解检查、术语速查与完整来源<\/td>\n<\/tr>\n<\/tbody>\n<\/table>\n<p>如果只想先建立直觉，可以按顺序读到第 17 页；如果关心遥感，第三段的第 20 页提醒了一件容易被忽略的事——<strong>「叶片绿」「叶片多」「叶片厚」是三种不同的信息<\/strong>，它们对应不同的遥感信号，不能互相替代。<\/p>\n<p>第 34–35 页是一组理解检查，第 36–38 页是术语速查表，第 39–41 页列出了全部教材图与论文来源。<\/p>\n<h2 id=\"_3\">关于图像与授权<\/h2>\n<p>这份课件混合了三类图像，使用前值得分清：<\/p>\n<ul>\n<li><strong>教材插图<\/strong>（第 3–7 页）来自 OpenStax <em>Biology 2e<\/em> 的 §8.1–§8.3，采用 <strong>CC BY-NC-SA 4.0<\/strong> 协议。署名已随页保留。该协议要求<strong>非商业使用<\/strong>并以<strong>相同方式共享<\/strong>；本站为无广告、无赞助的个人笔记站，符合非商业条件。若你希望转载，请一并保留署名并以相同协议发布。<\/li>\n<li><strong>AI 辅助教学示意图<\/strong>（第 1、18、21 页等）在页脚已明确标注为示意，箭头宽度与分子符号不代表定量比例，也不用于结构判读。<\/li>\n<li><strong>教学模拟曲线<\/strong>（第 14 页的 A–Cᵢ 曲线）是对模型的示意，不是论文观测数据。<\/li>\n<\/ul>\n<p>课件文字与页面编排由我整理；涉及上述第三方素材的部分请遵循其原始协议。<\/p>",
+            "headings": [
+              { "id": "_1", "text": "课件全文" },
+              { "id": "_2", "text": "这份课件的四段结构" },
+              { "id": "_3", "text": "关于图像与授权" }
+            ],
+            "searchText": "\n\n这份课件是为「叶片光合能力如何被遥感看见」这条线索准备的入门材料，共 41 页，假设读者没有植物生理与遥感的背景知识。它不追求把论文读完，而是先搭一条能走通的因果链：**叶片里发生了什么 → 怎样描述叶片的能力 → 卫星能提供什么线索 → 再回到论文里看它们各自解决了哪一段**。\n\n每一页都带着来源署名，公式与曲线在标注为教学示意的地方不用于定量判读。课件原稿是 PowerPoint；这里把全部 41 页按原样搬到网页上，可以逐页翻阅，也可以点开单页看原图。\n\n## 课件全文\n\n\n\n## 这份课件的四段结构\n\n课件的第 2 页给出了它自己的阅读顺序，四段各有明确的任务：\n\n| 段落 | 页码 | 要解决的问题 |\n| --- | --- | --- |\n| 一、叶片里面发生了什么 | 第 3–9 页 | 认识原料、光反应与碳固定，理解 Rubisco 与气孔的位置 |\n| 二、怎样描述叶片的能力 | 第 10–17 页 | 理解 Vcmax25、A–Cᵢ 曲线，以及温度效应与长期适应的区别 |\n| 三、卫星怎样提供线索 | 第 18–28 页 | 理解反射率、叶绿素、SIF 与模型推断各自能约束什么 |\n| 四、重新进入这组论文 | 第 29–41 页 | 论文定位、理解检查、术语速查与完整来源 |\n\n如果只想先建立直觉，可以按顺序读到第 17 页；如果关心遥感，第三段的第 20 页提醒了一件容易被忽略的事——**「叶片绿」「叶片多」「叶片厚」是三种不同的信息**，它们对应不同的遥感信号，不能互相替代。\n\n第 34–35 页是一组理解检查，第 36–38 页是术语速查表，第 39–41 页列出了全部教材图与论文来源。\n\n## 关于图像与授权\n\n这份课件混合了三类图像，使用前值得分清：\n\n- **教材插图**（第 3–7 页）来自 OpenStax *Biology 2e* 的 §8.1–§8.3，采用 **CC BY-NC-SA 4.0** 协议。署名已随页保留。该协议要求**非商业使用**并以**相同方式共享**；本站为无广告、无赞助的个人笔记站，符合非商业条件。若你希望转载，请一并保留署名并以相同协议发布。\n- **AI 辅助教学示意图**（第 1、18、21 页等）在页脚已明确标注为示意，箭头宽度与分子符号不代表定量比例，也不用于结构判读。\n- **教学模拟曲线**（第 14 页的 A–Cᵢ 曲线）是对模型的示意，不是论文观测数据。\n\n课件文字与页面编排由我整理；涉及上述第三方素材的部分请遵循其原始协议。\n\n## 阅读建议\n\n课件本身写得相当克制——它反复标注\"这里做了教学简化\"、\"此处不表示定量比例\"、\"不是 2026 年前沿综述\"。这类自我限定对入门材料来说是好事：它给的是**一条能走通的路径和一个可以继续提问的框架**，而不是一组可以照抄的结论。真正要动手做反演或做参数比较时，仍然需要回到原始论文核对公式、温度响应函数与空间尺度。\n\n配套的术语整理见 [26暑期论文名词解释](/posts/26-summer-paper-glossary/)。\n"
+          },
+          {
+            "title": "26暑期论文名词解释",
+            "description": "按照基础光合机制、叶片资源与生化组分、冠层遥感观测、参数反演与模型扩展整理的论文名词解释。",
+            "category": "geography",
+            "tags": ["光合作用", "Vcmax", "SIF", "遥感", "论文阅读"],
+            "pubDate": "2026-09-02",
+            "slug": "26-summer-paper-glossary",
+            "content": "<h1 id=\"26\">26暑期论文名词解释<\/h1>\n<blockquote>\n<p>本文按照“基础光合机制 → 叶片资源与生化组分 → 冠层和遥感观测 → 参数反演与模型扩展”的顺序整理。解释依据当前 Vault 中的论文笔记以及 26暑期论文的英文原文。不同论文的具体公式、参数设置、温度响应函数和空间尺度仍应分别核对，不能因为名称相同就直接比较数值。<\/p>\n<\/blockquote>\n<h2 id=\"_1\">一、先看完整概念链<\/h2>\n<pre><code class=\"language-mermaid\">flowchart TD\n    C3[C3 光合作用途径] --&gt; FVCB[FvCB 光合作用模型]\n    N[N_area：单位叶面积氮] --&gt; NA[光合氮分配]\n    NA --&gt; CHL[Chl_Leaf / LCC：叶绿素]\n    NA --&gt; RUB[Rubisco]\n    NA --&gt; ETC[电子传递系统]\n    CHL --&gt; CR[Chl-Rub 关系]\n    CR --&gt; RUB\n    RUB --&gt; VC[V_cmax / V_cmax25]\n    ETC --&gt; JM[J_max / J_max25]\n    FVCB --&gt; VC\n    FVCB --&gt; JM\n    PAR[PAR] --&gt; APAR[APAR]\n    APAR --&gt; ETC\n    APAR --&gt; SIF[SIF]\n    CHL --&gt; SIF\n    LAI[LAI 与聚集指数] --&gt; RS[冠层遥感校正]\n    SIF --&gt; RS\n    CHL --&gt; LCCP[LCC 遥感产品]\n    RS --&gt; SIFGPP[SIF 推算 GPP]\n    VC --&gt; BEPS[BEPS 模拟 GPP]\n    SIFGPP --&gt; ENKF[EnKF 数据同化]\n    BEPS --&gt; ENKF\n    LCCP --&gt; ENKF\n    ENKF --&gt; VCMAP[时空连续 V_cmax]\n    LUNA[LUNA 氮分配模型] --&gt; VC\n    EOT[EOT 环境最优性理论] --&gt; VC\n    VCMAP --&gt; TBM[TBM]\n    TBM --&gt; ESM[ESM]\n<\/code><\/pre>\n<p>可以把整组论文压缩成四个问题：<\/p>\n<ol>\n<li><strong>植物的光合能力由什么生理过程决定？<\/strong>——FvCB、Rubisco、RuBP、$V_{cmax}$ 和 $J_{max}$。<\/li>\n<li><strong>为什么相同叶氮不一定产生相同光合能力？<\/strong>——氮分配、PNUE、fLNR、叶绿素和叶龄。<\/li>\n<li><strong>怎样从叶片测量扩展到全球连续观测？<\/strong>——A–$C_i$、LCC、APAR、SIF、LAI 和辐射传输。<\/li>\n<li><strong>怎样把遥感信号转成模型需要的 $V_{cmax}$？<\/strong>——GPP、BEPS、数据同化、EnKF、LUNA 和 EOT。<\/li>\n<\/ol>\n<hr />\n<h1 id=\"_2\">第一层：基础光合机制<\/h1>\n<h2 id=\"1-c3-c4\">1. C3 与 C4 光合途径<\/h2>\n<p><strong>C3 植物<\/strong>和<strong>C4 植物<\/strong>采用不同的 CO₂ 固定策略。本组论文使用的 FvCB 模型、LUNA 和 Liu-2023 全球反演主要针对 C3 植物或 C3 生物群系。<\/p>\n<ul>\n<li><strong>C3 植物<\/strong>：Rubisco直接参与最初的 CO₂ 羧化，$V_{cmax}$ 和 $J_{max}$ 是描述其光合能力的关键参数。<\/li>\n<li><strong>C4 植物<\/strong>：具有额外的 CO₂ 浓缩机制，不能未经调整就直接套用 C3 模型和参数关系。<\/li>\n<\/ul>\n<p><strong>为什么必须先区分<\/strong>：如果一项产品只覆盖 C3 生物群系，就不能把它自动用于玉米等典型 C4 植物。论文中的 SIF–GPP 关系、最优性参数和 $V_{cmax}$ 反演范围也可能因此受限。<\/p>\n<p><strong>关联<\/strong>：C3/C4 → 决定采用哪套光合作用模型 → 决定 $V_{cmax}$、$J_{max}$ 和遥感反演关系是否适用。<\/p>\n<p>主要论文：[[26暑期/Ali-2016_LUNA]]、[[26暑期/Smith-2019_环境优化光合能力]]、[[26暑期/Liu-2023_C3生物群系光合能力]]。<\/p>\n<hr />\n<h2 id=\"2-fvcb\">2. FvCB 模型：整组论文共同的生理框架<\/h2>\n<p><strong>全称<\/strong>：Farquhar–von Caemmerer–Berry photosynthesis model，也常简称 Farquhar 模型。<\/p>\n<p><strong>定义<\/strong>：FvCB 模型用叶片生物化学过程解释 C3 光合作用。在本组论文的简化理解中，光合速率主要受两类能力中的较弱一端限制：<\/p>\n<ol>\n<li><strong>Rubisco 羧化限制<\/strong>：主要由 $V_{cmax}$ 表示；<\/li>\n<li><strong>RuBP 再生/电子传递限制<\/strong>：主要由 $J_{max}$ 表示。<\/li>\n<\/ol>\n<p>因此，$V_{cmax}$ 和 $J_{max}$ 不是两个互不相关的指标，而是 FvCB 模型中两种潜在限制过程的能力参数。<\/p>\n<p><strong>为什么它贯穿所有论文<\/strong>：<\/p>\n<ul>\n<li>叶片实验用它拟合 A–$C_i$ 曲线；<\/li>\n<li>LUNA预测其中的 $V_{cmax25}$ 和 $J_{max25}$；<\/li>\n<li>BEPS把它从叶片扩展到冠层；<\/li>\n<li>SIF和LCC研究最终仍要把遥感信号转换为这个框架中的光合能力参数。<\/li>\n<\/ul>\n<p><strong>一句话理解<\/strong>：FvCB 是“总框架”，Rubisco、RuBP、$V_{cmax}$ 和 $J_{max}$ 是框架中的关键部件。<\/p>\n<p>主要论文：10篇论文均涉及这一框架，尤其是[[26暑期/Croft-2017_叶绿素与光合能力]]、[[26暑期/Lu-2020_叶绿素与Rubisco]]和[[26暑期/Liu-2023_C3生物群系光合能力]]。<\/p>\n<hr />",
+            "headings": [
+              { "id": "26", "text": "26暑期论文名词解释" },
+              { "id": "_2", "text": "第一层：基础光合机制" }
+            ],
+            "searchText": "\n# 26暑期论文名词解释\n\n> 本文按照“基础光合机制 → 叶片资源与生化组分 → 冠层和遥感观测 → 参数反演与模型扩展”的顺序整理。解释依据当前 Vault 中的论文笔记以及 26暑期论文的英文原文。不同论文的具体公式、参数设置、温度响应函数和空间尺度仍应分别核对，不能因为名称相同就直接比较数值。\n\n## 一、先看完整概念链\n\n```mermaid\nflowchart TD\n    C3[C3 光合作用途径] --> FVCB[FvCB 光合作用模型]\n    N[N_area：单位叶面积氮] --> NA[光合氮分配]\n    NA --> CHL[Chl_Leaf / LCC：叶绿素]\n    NA --> RUB[Rubisco]\n    NA --> ETC[电子传递系统]\n    CHL --> CR[Chl-Rub 关系]\n    CR --> RUB\n    RUB --> VC[V_cmax / V_cmax25]\n    ETC --> JM[J_max / J_max25]\n    FVCB --> VC\n    FVCB --> JM\n    PAR[PAR] --> APAR[APAR]\n    APAR --> ETC\n    APAR --> SIF[SIF]\n    CHL --> SIF\n    LAI[LAI 与聚集指数] --> RS[冠层遥感校正]\n    SIF --> RS\n    CHL --> LCCP[LCC 遥感产品]\n    RS --> SIFGPP[SIF 推算 GPP]\n    VC --> BEPS[BEPS 模拟 GPP]\n    SIFGPP --> ENKF[EnKF 数据同化]\n    BEPS --> ENKF\n    LCCP --> ENKF\n    ENKF --> VCMAP[时空连续 V_cmax]\n    LUNA[LUNA 氮分配模型] --> VC\n    EOT[EOT 环境最优性理论] --> VC\n    VCMAP --> TBM[TBM]\n    TBM --> ESM[ESM]\n```\n\n可以把整组论文压缩成四个问题：\n\n1. **植物的光合能力由什么生理过程决定？**——FvCB、Rubisco、RuBP、$V_{cmax}$ 和 $J_{max}$。\n2. **为什么相同叶氮不一定产生相同光合能力？**——氮分配、PNUE、fLNR、叶绿素和叶龄。\n3. **怎样从叶片测量扩展到全球连续观测？**——A–$C_i$、LCC、APAR、SIF、LAI 和辐射传输。\n4. **怎样把遥感信号转成模型需要的 $V_{cmax}$？**——GPP、BEPS、数据同化、EnKF、LUNA 和 EOT。\n\n---\n\n# 第一层：基础光合机制\n\n## 1. C3 与 C4 光合途径\n\n**C3 植物**和**C4 植物**采用不同的 CO₂ 固定策略。本组论文使用的 FvCB 模型、LUNA 和 Liu-2023 全球反演主要针对 C3 植物或 C3 生物群系。\n\n- **C3 植物**：Rubisco直接参与最初的 CO₂ 羧化，$V_{cmax}$ 和 $J_{max}$ 是描述其光合能力的关键参数。\n- **C4 植物**：具有额外的 CO₂ 浓缩机制，不能未经调整就直接套用 C3 模型和参数关系。\n\n**为什么必须先区分**：如果一项产品只覆盖 C3 生物群系，就不能把它自动用于玉米等典型 C4 植物。论文中的 SIF–GPP 关系、最优性参数和 $V_{cmax}$ 反演范围也可能因此受限。\n\n**关联**：C3/C4 → 决定采用哪套光合作用模型 → 决定 $V_{cmax}$、$J_{max}$ 和遥感反演关系是否适用。\n\n主要论文：[[26暑期/Ali-2016_LUNA]]、[[26暑期/Smith-2019_环境优化光合能力]]、[[26暑期/Liu-2023_C3生物群系光合能力]]。\n\n---\n\n## 2. FvCB 模型：整组论文共同的生理框架\n\n**全称**：Farquhar–von Caemmerer–Berry photosynthesis model，也常简称 Farquhar 模型。\n\n**定义**：FvCB 模型用叶片生物化学过程解释 C3 光合作用。在本组论文的简化理解中，光合速率主要受两类能力中的较弱一端限制：\n\n1. **Rubisco 羧化限制**：主要由 $V_{cmax}$ 表示；\n2. **RuBP 再生/电子传递限制**：主要由 $J_{max}$ 表示。\n\n因此，$V_{cmax}$ 和 $J_{max}$ 不是两个互不相关的指标，而是 FvCB 模型中两种潜在限制过程的能力参数。\n\n**为什么它贯穿所有论文**：\n\n- 叶片实验用它拟合 A–$C_i$ 曲线；\n- LUNA预测其中的 $V_{cmax25}$ 和 $J_{max25}$；\n- BEPS把它从叶片扩展到冠层；\n- SIF和LCC研究最终仍要把遥感信号转换为这个框架中的光合能力参数。\n\n**一句话理解**：FvCB 是“总框架”，Rubisco、RuBP、$V_{cmax}$ 和 $J_{max}$ 是框架中的关键部件。\n\n主要论文：10篇论文均涉及这一框架，尤其是[[26暑期/Croft-2017_叶绿素与光合能力]]、[[26暑期/Lu-2020_叶绿素与Rubisco]]和[[26暑期/Liu-2023_C3生物群系光合能力]]。\n\n---\n\n## 3. RuBP 与 Calvin–Benson 循环\n\n**RuBP 全称**：ribulose-1,5-bisphosphate，核酮糖-1,5-二磷酸。\n\n**定义**：RuBP 是 Rubisco 进行羧化反应时使用的受体分子。Rubisco把 CO₂ 加到 RuBP 上，碳由此进入后续同化过程。\n\n**RuBP 再生为什么重要**：RuBP在反应中被消耗后需要重新生成。再生过程依赖光反应提供的能量和还原力，因此受到电子传递能力以及 $J_{max}$ 的约束。\n\n可以这样记：\n\n> Rubisco决定“加工 RuBP 和 CO₂ 的能力”，电子传递决定“为 RuBP 再生提供能量的能力”。\n\n当 Rubisco 一端较弱时，光合主要表现为羧化限制；当 RuBP 再生一端较弱时，光合主要表现为电子传递限制。\n\n**关联**：RuBP把“Rubisco–$V_{cmax}$”与“电子传递–$J_{max}$”两条线连接起来。\n\n---\n\n## 4. Rubisco：羧化反应的关键酶\n\n**全称**：ribulose-1,5-bisphosphate carboxylase/oxygenase，核酮糖-1,5-二磷酸羧化酶/加氧酶。\n\n**定义**：Rubisco催化 RuBP 的羧化，是 C3 光合作用固定 CO₂ 的关键酶。因为 Rubisco 蛋白包含大量叶氮，它也是光合氮分配的重要去向。\n\n**Rubisco含量不等于 $V_{cmax}$**：Rubisco含量提供羧化能力的物质基础，但实际 $V_{cmax}$ 还与催化周转率、活化状态、温度和参数拟合方法有关。因此，两片叶子即使 Rubisco 含量相同，也不保证实测 $V_{cmax}$ 完全相同。\n\n**关联**：\n\n- 氮分配 → Rubisco含量；\n- Rubisco含量与活性 → $V_{cmax}$；\n- 叶绿素与Rubisco的协调关系 → Chl-Rub模型。\n\n主要论文：[[26暑期/Lu-2020_叶绿素与Rubisco]]、[[26暑期/Xu-2012_氮分配机制模型]]。\n\n---\n\n## 5. $V_{cmax}$ 与 $V_{cmax25}$：最大羧化能力\n\n**英文**：maximum carboxylation rate。\n\n**定义**：$V_{cmax}$ 是描述 Rubisco 最大羧化能力的光合参数。在 FvCB 模型中，它控制 Rubisco 限制状态下叶片能够达到的潜在羧化速率。\n\n**它不是实际净光合速率**：$V_{cmax}$ 是能力参数；实际 CO₂ 吸收还受光照、气孔、水分、温度、胞间 CO₂、电子传递和呼吸等因素影响。\n\n### $V_{cmax}$ 与 $V_{cmax25}$ 的区别\n\n- $V_{cmax}$：对应实际叶温或模型温度，随温度即时变化；\n- $V_{cmax25}$：把 $V_{cmax}$ 统一换算到 25°C，便于跨地点和时间比较；\n- 不同论文可能使用不同温度响应函数，所以同名 $V_{cmax25}$ 仍需核对标准化方法。\n\n### 本组论文中的四种来源\n\n1. A–$C_i$ 气体交换曲线拟合；\n2. LCC、叶氮或 Chl-Rub 关系估计；\n3. SIF、BEPS 与 EnKF 数据同化反演；\n4. LUNA或环境最优性理论预测。\n\n相关概念：[[Vcmax与Vcmax25]]。\n\n---\n\n## 6. $J_{max}$ 与 $J_{max25}$：最大电子传递能力\n\n**英文**：maximum electron transport rate。\n\n**定义**：$J_{max}$ 表示光合电子传递系统的最大能力，关系到光反应提供 ATP、NADPH 以及支持 RuBP 再生的能力。\n\n### 与 $V_{cmax}$ 的区别\n\n- $V_{cmax}$：羧化端能够处理多少 CO₂；\n- $J_{max}$：光驱动的电子传递端能够提供多少能量与 RuBP 再生能力。\n\n两端需要协调。如果 Rubisco 投资很高但电子传递不足，增加 Rubisco 不能等比例增加光合；反过来也一样。因此，Xu-2012 和 LUNA 都同时模拟羧化氮和电子传递氮。\n\n**$J_{max25}$**是标准化到25°C的电子传递能力；Ali-2015有时写作 $J_{25}$。\n\n主要论文：[[26暑期/Xu-2012_氮分配机制模型]]、[[26暑期/Ali-2015_全球环境控制]]、[[26暑期/Ali-2016_LUNA]]。\n\n---\n\n## 7. 温度响应函数、热驯化与长期适应\n\n### 温度响应函数（TRF）\n\n温度响应函数描述 $V_{cmax}$ 和 $J_{max}$ 如何随叶温即时变化，也是把观测值标准化到25°C的数学基础。\n\n### 热驯化（acclimation）\n\n热驯化指同一植物个体在一定时间内改变光合装置，使其能力适应生长环境。它不是测量时温度造成的瞬时变化，而是植物生理状态本身发生了调整。\n\n### 长期适应（adaptation）\n\n长期适应涉及种群或物种在更长时间尺度上的差异。Smith-2019把驯化和适应共同作为植物光合能力接近当地环境最优状态的解释。\n\n**为什么要区分**：\n\n- 瞬时温度效应：同一套生化装置在不同温度下反应速度不同；\n- 驯化/适应效应：生化装置的数量、配置或最优策略发生变化。\n\n主要论文：[[26暑期/Ali-2015_全球环境控制]]、[[26暑期/Ali-2016_LUNA]]、[[26暑期/Smith-2019_环境优化光合能力]]。\n\n---\n\n## 8. A–$C_i$ 曲线与一点法\n\n**A**：叶片净 CO₂ 同化速率。  \n**$C_i$**：叶片胞间 CO₂ 浓度。\n\n**A–$C_i$ 曲线**：在控制光照和温度的条件下，逐步改变叶室 CO₂ 浓度，记录 $A$ 随 $C_i$ 的变化，再用 FvCB 模型拟合 $V_{cmax}$ 和 $J_{max}$。\n\n**为什么它是“地面真值”的主要来源**：全球 $V_{cmax}$ 数据库中的许多记录来自这种气体交换测量，遥感产品和理论模型最终也常用这些数据验证。\n\n**一点法**：只使用一个或少数气体交换状态快速估计 $V_{cmax}$。它提高测量效率，但比完整曲线更依赖假设。\n\n**关联链**：气体交换观测 → A–$C_i$ 曲线 → FvCB拟合 → $V_{cmax}/J_{max}$ → 遥感或模型产品验证。\n\n主要论文：[[26暑期/Croft-2017_叶绿素与光合能力]]、[[26暑期/Lu-2020_叶绿素与Rubisco]]、[[26暑期/Wang-2020_针叶林叶绿素与叶龄]]、[[26暑期/Liu-2023_C3生物群系光合能力]]。\n\n---\n\n# 第二层：叶片氮、叶绿素与代理变量\n\n## 9. $N_{area}$：单位叶面积氮含量\n\n**英文**：area-based leaf nitrogen content，也写作 $N_a$ 或 LNCa。\n\n**定义**：$N_{area}$ 表示单位叶面积上的总叶氮。因为 $V_{cmax}$ 和 $J_{max}$ 也按叶面积表示，$N_{area}$ 经常被用于解释光合能力。\n\n**为什么“氮多”不一定“光合能力强”**：总叶氮包含结构氮、储存氮、呼吸相关氮、光捕获氮、电子传递氮和羧化氮。相同总量若分配方式不同，$V_{cmax}$ 和 $J_{max}$ 就可能不同。\n\n**关联**：\n\n- $N_{area}$ 是资源总量；\n- PNUE描述单位资源产生的能力；\n- fLNR描述其中分给Rubisco的比例；\n- LUNA描述氮在多个功能池之间的最优分配。\n\n相关概念：[[光合氮分配]]。\n\n---\n\n## 10. PNUE、$NUE_{c,25}$ 与 $NUE_{j,25}$：光合氮利用效率\n\n**PNUE**：photosynthetic nitrogen use efficiency，光合氮利用效率。\n\nAli-2015把光合能力拆成“叶氮总量 × 单位氮产生的能力”来理解：\n\n- **$NUE_{c,25}$**：单位叶氮所支持的 $V_{cmax25}$；\n- **$NUE_{j,25}$**：单位叶氮所支持的 $J_{25}$。\n\n**它解决什么问题**：两个地点的 $N_{area}$ 相近，但光照、日长、温度和湿度不同，单位氮的用途和效率可能不同，因此光合能力仍可能相差很大。\n\n**Ali-2015的核心逻辑**：环境因子对光合能力的影响，较大一部分是通过改变氮利用效率体现，而不只是通过改变叶氮总量。\n\n**关联链**：环境 → 氮分配/利用效率 → $V_{cmax25}$、$J_{25}$。\n\n主要论文：[[26暑期/Ali-2015_全球环境控制]]。\n\n---\n\n## 11. fLNR / FLNR：分配给 Rubisco 的叶氮比例\n\n**英文**：fraction of leaf nitrogen in Rubisco。\n\n**定义**：fLNR表示总叶氮中有多大比例被配置到 Rubisco。它比总叶氮更接近羧化过程的氮投入。\n\n在 Lu-2020 的半机制模型中，逻辑是：\n\n$$\n\\text{总叶氮}\\times fLNR \\rightarrow \\text{Rubisco氮}\\rightarrow \\text{Rubisco含量}\\rightarrow V_{cmax25}\n$$\n\n**与 $V_{cmax25}/LCC$ 的联系**：Liu-2023讨论不同生物群系的 $V_{cmax25}/LCC$ 比值，可把它理解为光捕获投资与羧化投资相对关系的综合信号，但不能直接把该比值当成实测 fLNR。\n\n主要论文：[[26暑期/Lu-2020_叶绿素与Rubisco]]、[[26暑期/Liu-2023_C3生物群系光合能力]]。\n\n---\n\n## 12. $Chl_{Leaf}$ 与 LCC：叶片叶绿素含量\n\n**$Chl_{Leaf}$**和**LCC（Leaf Chlorophyll Content）**在本组论文中指向同一底层变量：叶片叶绿素含量。区别主要在表达方式、测量手段和尺度。\n\n### $Chl_{Leaf}$\n\n更常出现在叶片实测研究中，强调单位叶面积上的叶绿素，例如 Croft-2017 和 Wang-2020。\n\n### LCC\n\n既可表示叶片直接测量值，也常表示由卫星反射率和辐射传输模型反演得到的叶绿素产品，例如 Chen-2022 和 Liu-2023。\n\n### 为什么叶绿素能成为光合能力代理\n\n叶绿素负责光捕获；植物对光捕获、电子传递和羧化过程的投资需要协调。因此，叶绿素可能与 Rubisco、$V_{cmax}$ 和 $J_{max}$ 同步变化。\n\n### 不能忽略的边界\n\n- LCC不是Rubisco，也不是 $V_{cmax}$；\n- LCC–$V_{cmax}$ 关系会随物种、叶龄、环境和生物群系变化；\n- 遥感LCC还受LAI、冠层结构和辐射传输模型影响。\n\n相关概念：[[叶绿素含量（LCC）]]。\n\n---\n\n## 13. Chl-Rub：叶绿素–Rubisco关系\n\nChl-Rub不是一种物质，而是 chlorophyll–Rubisco relationship 的简写。\n\n其基本形式可理解为：\n\n$$\n\\text{Rubisco}=a\\times\\text{Chl}+b\n$$\n\n如果特定植被中的斜率和截距相对稳定，就可以沿着以下路径估计光合能力：\n\n> 叶绿素测量/遥感LCC → 估计Rubisco → 结合Rubisco催化周转率 → 估计 $V_{cmax25}$。\n\n**为什么比 Chl–$V_{cmax}$ 直接回归更有机制含义**：它在叶绿素和 $V_{cmax}$ 之间明确加入了负责羧化的 Rubisco。\n\n**局限**：系数会受物种、叶龄、生育阶段、氮分配和Rubisco活化状态影响，不能跨生态系统无条件照搬。\n\n主要论文：[[26暑期/Lu-2020_叶绿素与Rubisco]]、[[26暑期/Croft-2017_叶绿素与光合能力]]。\n\n---\n\n## 14. LMA 与 SLA：叶片结构投入\n\n**LMA**：leaf mass per area，单位叶面积质量。  \n**SLA**：specific leaf area，单位叶质量对应的叶面积。\n\n在单位和定义一致时，两者大体呈倒数关系。LMA较高通常表示单位叶面积投入了更多干物质，但不能由此直接推出 $V_{cmax}$ 一定更高。\n\n**为什么在这组论文中出现**：LMA影响按质量和按面积表达的叶氮转换，也用于比较叶片结构投入、氮含量和最优光合能力。\n\n**关联**：LMA/SLA属于叶片结构性状；$N_{area}$、LCC和 $V_{cmax}$ 属于资源、生化或功能性状。阅读时不要混为同一类指标。\n\n---\n\n## 15. 叶龄、MAB 与 DOY\n\n**MAB**：month after budding，萌芽后的月份。  \n**DOY**：day of year，一年中的第几天。\n\n它们都是描述叶片发育和季节进程的时间变量。\n\n**为什么叶龄重要**：随着叶片展开、成熟和衰老，叶绿素、Rubisco活性、氮分配、$V_{cmax}$ 和 $J_{max}$ 都可能发生变化。Wang-2020发现叶绿素和MAB共同用于预测针叶林 $V_{cmax25}$，说明仅使用总叶氮会漏掉叶片发育信息。\n\n**关联**：叶龄 → 氮重新分配和叶绿素变化 → $V_{cmax25}/J_{max25}$ 季节变化。\n\n主要论文：[[26暑期/Wang-2020_针叶林叶绿素与叶龄]]、[[26暑期/Lu-2020_叶绿素与Rubisco]]。\n\n---\n\n# 第三层：光环境、冠层与遥感观测\n\n## 16. PAR 与 APAR\n\n**PAR**：Photosynthetically Active Radiation，光合有效辐射。  \n**APAR**：Absorbed Photosynthetically Active Radiation，被植被实际吸收的光合有效辐射。\n\nPAR描述可用于光合作用的入射光；APAR进一步考虑其中有多少被叶片或冠层吸收。\n\n**为什么APAR更接近光合过程**：同样的入射PAR，在LAI、叶片角度、聚集状态和叶绿素不同的冠层中，实际吸收量可能不同。\n\n**与SIF的关系**：叶绿素吸收光后，能量主要流向光化学反应、热耗散和荧光发射。SIF的大小因而同时受到APAR和荧光产率影响。\n\n**与 $V_{cmax}$ 的关系**：Liu-2023发现 $V_{cmax}$ 的空间和季节变化与气温和APAR相关，但APAR不是 $V_{cmax}$ 的直接测量值。\n\n相关概念：[[吸收光合有效辐射（APAR）]]。\n\n---\n\n## 17. LAI 与冠层聚集指数 CI\n\n**LAI**：Leaf Area Index，单位地表面积上的叶面积总量。  \n**CI**：Clumping Index，冠层聚集指数，描述叶片是否随机分布或形成聚集。\n\n**为什么二者影响遥感**：卫星看到的是冠层整体信号，而不是一片孤立叶片。LAI和CI共同影响：\n\n- 向阳叶和阴叶比例；\n- 光在冠层中的吸收与多次散射；\n- SIF从冠层逃逸到传感器的概率；\n- 从冠层反射率反演叶片LCC的结果。\n\n**常见误区**：LAI较大不等于卫星一定看到更高LCC，也不等于单叶 $V_{cmax}$ 更高。LAI描述叶面积数量，LCC和 $V_{cmax}$ 描述叶片生化或生理状态。\n\n主要论文：[[26暑期/He-2019_SIF反演光合能力]]、[[26暑期/Chen-2022_全球光合能力数据集]]、[[26暑期/Liu-2023_C3生物群系光合能力]]。\n\n---\n\n## 18. SIF：太阳诱导叶绿素荧光\n\n**全称**：Solar-Induced Chlorophyll Fluorescence。\n\n**定义**：叶绿素吸收太阳光后，会将一小部分能量以约650–800 nm荧光重新发射。卫星可以观测这一微弱信号。\n\n**为什么SIF与光合作用相关**：SIF和光化学反应共享叶绿素吸收的光能，因此SIF包含光吸收和光合活动信息。\n\n**为什么SIF不等于GPP或 $V_{cmax}$**：SIF还受APAR、荧光产率、热耗散、冠层结构、观测角度、云和逃逸概率影响。SIF没有与 $V_{cmax}$ 建立简单、普遍适用的一一对应关系。\n\n**三篇论文的方法演进**：\n\n1. He-2019：校正冠层与观测几何，用SIF约束BEPS并更新 $V_{cmax}$；\n2. Chen-2022：比较SIF、LCC和SIF+LCC三类全球产品；\n3. Liu-2023：让SIF提供动态光合信息，让LCC提供季节预报约束。\n\n相关概念：[[太阳诱导叶绿素荧光（SIF）]]。\n\n---\n\n## 19. $SIF_{total}$ 与逃逸比\n\n卫星观测到的SIF不是冠层发射的全部荧光。部分荧光会被叶片再次吸收或被冠层遮挡，只有一部分能够“逃逸”并到达传感器。\n\n**逃逸比（escape ratio）**：观测到的SIF占冠层总发射SIF的比例。  \n**$SIF_{total}$**：经逃逸比校正后估计的冠层总SIF发射。\n\nLiu-2023的处理链是：\n\n> TROPOMI观测SIF → 逃逸比校正 → $SIF_{total}$ → 非线性SIF–GPP关系 → SIF估算GPP。\n\n**意义**：它解释了为什么不能把卫星像元中的原始SIF数值直接与不同冠层、角度或传感器条件下的光合作用进行简单比较。\n\n主要论文：[[26暑期/Liu-2023_C3生物群系光合能力]]。\n\n---\n\n## 20. 辐射传输模型：4-Scale、SAIL 与 PROSPECT\n\n辐射传输模型描述光如何在叶片和冠层中被吸收、反射和透射，是把卫星反射率转换为叶片LCC的重要桥梁。\n\n### 4-Scale\n\n几何光学冠层模型，主要用于森林、灌丛等空间结构较异质、叶片或树冠明显聚集的冠层。\n\n### SAIL\n\n把冠层近似为较均匀的介质，常用于作物和草地等相对均匀冠层。\n\n### PROSPECT\n\n叶片尺度辐射传输模型。论文中先把冠层反射率转换到叶片反射率，再由PROSPECT反演叶绿素含量。\n\n**Liu-2023的LCC链条**：\n\n> MERIS冠层反射率 → 4-Scale/SAIL → 叶片反射率 → PROSPECT → LCC。\n\n**局限**：模型参数、PFT分类、LAI和冠层结构误差都会传递到LCC，再进一步影响 $V_{cmax}$ 反演。\n\n---\n\n## 21. GOME-2、TROPOMI、MERIS 与 MODIS\n\n这些名称是传感器或卫星数据产品，不是光合生理变量。\n\n| 数据源 | 在这组论文中的主要用途 | 需要注意的特点 |\n| --- | --- | --- |\n| GOME-2 | 提供多年SIF，用于He-2019和Chen-2022的全球 $V_{cmax}$ 产品 | 时间序列较长，但空间分辨率较粗 |\n| TROPOMI | 提供较高空间分辨率、近每日覆盖的SIF | Liu-2023用于日尺度0.1°反演 |\n| MERIS | 提供多光谱反射率，用于反演LCC | LCC与SIF年份可能不一致 |\n| MODIS | 提供LAI、土地覆盖、BRDF和聚集指数等辅助信息 | 影响PFT分类和冠层校正 |\n\n**关联**：传感器提供原始观测 → 辐射传输/几何校正 → LCC或SIF产品 → GPP与 $V_{cmax}$ 反演。\n\n---\n\n# 第四层：碳通量、最优性理论与数据同化\n\n## 22. GPP 与 NPP\n\n**GPP**：Gross Primary Productivity，总初级生产力，表示植被通过光合作用固定的总碳。  \n**NPP**：Net Primary Productivity，净初级生产力，通常指GPP扣除植物自身呼吸消耗后形成的净生产。\n\n**为什么GPP是关键中间变量**：SIF与 $V_{cmax}$ 没有直接一一对应关系，但SIF与光合生产力关系更紧密；BEPS也能从 $V_{cmax}$ 模拟GPP。因此，GPP成为连接观测与参数的桥梁：\n\n$$\nSIF\\rightarrow GPP_{obs}\n$$\n\n$$\nV_{cmax}\\rightarrow BEPS\\rightarrow GPP_{model}\n$$\n\n数据同化通过比较两类GPP来更新 $V_{cmax}$。\n\n**不要混淆**：$V_{cmax}$是叶片能力参数；GPP是一定空间和时间范围内的碳通量结果。\n\n---\n\n## 23. PFT：植物功能型\n\n**全称**：Plant Functional Type。标准缩写是 **PFT**；原文件最初写作“PTF”属于字母顺序错误。\n\n**定义**：把功能、结构或生活史相近的植物归为一组，使全球模型不必逐一模拟所有物种。常见分类包括常绿针叶林、落叶阔叶林、草地、作物等；具体类别依数据产品或模型而定。\n\n**传统用法**：给每个PFT指定固定的 $V_{cmax25}$、$J_{max25}$ 或其他参数。\n\n**这组论文指出的问题**：同一PFT内部仍存在明显空间、季节和物种差异。把PFT平均值当作永不变化的常数会遗漏环境、叶龄、管理和氮分配信息。\n\n**正确理解**：PFT是必要的分类框架；真正的问题是“分类之后是否仍允许参数动态变化”。\n\n---\n\n## 24. LUNA：最优叶片氮分配模型\n\n**全称**：Leaf Utilization of Nitrogen for Assimilation。\n\n**定义**：LUNA是Ali-2016建立的全球尺度机制模型。它以最优性假设为基础，在光捕获、电子传递、羧化和呼吸等过程之间分配叶氮，并预测 $V_{cmax25}$ 和 $J_{max25}$。\n\n### 输入、过程与输出\n\n- **输入/约束**：叶氮、温度、辐射、湿度、CO₂和日长等；\n- **内部过程**：计算氮在不同功能池之间的配置；\n- **主要输出**：$V_{cmax25}$、$J_{max25}$及相关光合结果。\n\n### 与 Xu-2012 的联系\n\nXu-2012先建立了完整氮分配框架；LUNA在此基础上增加更多环境约束、全球观测校准和未来情景模拟。\n\n### 与PFT固定参数的区别\n\nPFT查表法直接给出参数；LUNA允许环境改变最优氮分配，从而改变参数。\n\n**局限**：LUNA模拟的是假设下的最优策略，并不等于直接观测了真实氮分配。\n\n主要论文：[[26暑期/Xu-2012_氮分配机制模型]]、[[26暑期/Ali-2016_LUNA]]。\n\n---\n\n## 25. EOT：生态最优性理论\n\n**全称**：Ecological Optimality Theory。在Chen-2022中，EOT用于生成独立的全球 $V_{cmax}$ 理论产品，与SIF和LCC产品比较。\n\nSmith-2019使用的理论框架包含两个主要部分。\n\n### 光合协调理论（coordination theory）\n\n植物倾向于协调电子传递能力与羧化能力，使平均环境下两类限制不过度失衡。它解释为什么 $J_{max}$ 和 $V_{cmax}$ 会随光照和环境共同调整。\n\n### 最小成本理论（least-cost theory）\n\n植物在维持光合作用时，需要权衡羧化投入和水分运输/气孔开放成本，并倾向于以较低综合成本获得一定碳收益。\n\n### VPD：饱和水汽压差\n\nVPD表示空气的干燥需求，是最小成本理论的重要环境输入。它不同于相对湿度：VPD更直接反映叶片蒸腾和气孔开放所面对的水分压力。\n\n### EOT与遥感方法的区别\n\n- EOT：由光照、温度、VPD、气压和CO₂等环境变量预测最优 $V_{cmax}$；\n- SIF/LCC：由卫星观测提供实际空间信息；\n- 二者一致处可用于互相验证，差异可能包含灌溉、土壤、叶氮或遥感误差等信息。\n\n主要论文：[[26暑期/Smith-2019_环境优化光合能力]]、[[26暑期/Chen-2022_全球光合能力数据集]]。\n\n---\n\n## 26. BEPS：从叶片光合到冠层GPP\n\n**全称**：Boreal Ecosystem Productivity Simulator。\n\n**定义**：BEPS是过程模型。它使用FvCB叶片光合作用，并通过向阳叶/阴叶的“两叶法”扩展到冠层尺度，模拟GPP和相关碳通量。\n\n### 在反演链中的角色\n\n1. 给BEPS输入候选 $V_{cmax}$、气象、LAI、聚集指数、PFT和土壤等数据；\n2. BEPS输出模拟GPP；\n3. 将模拟GPP与SIF推算的GPP比较；\n4. EnKF根据差异更新 $V_{cmax}$。\n\n**一句话理解**：BEPS是把“待估的叶片能力参数”转换成“可以与SIF观测比较的冠层碳通量”的桥梁。\n\n主要论文：[[26暑期/He-2019_SIF反演光合能力]]、[[26暑期/Liu-2023_C3生物群系光合能力]]。\n\n---\n\n## 27. 数据同化：把模型与观测合并\n\n**英文**：Data Assimilation。\n\n**定义**：数据同化不是把观测直接代入一个经验公式，而是在考虑模型和观测误差的前提下，用新观测不断修正模型状态或参数。\n\n### 五个必须认识的词\n\n- **先验值/背景值（prior/background）**：看到当前观测之前，对 $V_{cmax}$ 的已有估计；\n- **时间预报函数（temporal forecast function）**：把前一天的后验值推进到下一天；\n- **观测值（observation）**：本组研究中主要是由SIF估算的GPP；\n- **后验值（posterior/analysis）**：融合模型和观测后更新的 $V_{cmax}$；\n- **误差协方差**：表示参数、模型和观测的不确定性及其共同变化。\n\n### Liu-2023的关键改进\n\n早期方法没有可靠的 $V_{cmax}$ 时间预报函数。Liu-2023利用LCC季节变化建立预报函数，使两次SIF观测之间的 $V_{cmax}$ 不再被默认视为不变。\n\n相关概念：[[EnKF数据同化]]。\n\n---\n\n## 28. EnKF：集合卡尔曼滤波\n\n**全称**：Ensemble Kalman Filter。\n\n**定义**：EnKF用一组可能的参数值表示不确定性，而不是只保存一个 $V_{cmax}$ 数值。每个集合成员进入BEPS产生一套GPP模拟，再依据SIF观测和误差设定共同更新。\n\n### 简化流程\n\n1. 生成多组带扰动的 $V_{cmax}$ 先验集合；\n2. 每组参数通过BEPS得到模拟GPP；\n3. 将模拟GPP与SIF估算GPP比较；\n4. 根据卡尔曼增益调整每个集合成员；\n5. 得到后验 $V_{cmax}$，并通过时间预报函数进入下一天。\n\n### 它为什么比简单回归更适合这里\n\n- 可以显式考虑观测误差和模型误差；\n- 能让参数随时间更新；\n- 可以在SIF缺测时依靠预报函数维持时间连续性。\n\n**局限**：结果仍依赖BEPS结构、先验值、误差设置、集合规模以及SIF–GPP转换关系。\n\n主要论文：[[26暑期/He-2019_SIF反演光合能力]]、[[26暑期/Chen-2022_全球光合能力数据集]]、[[26暑期/Liu-2023_C3生物群系光合能力]]。\n\n---\n\n## 29. TBMs：陆地生物圈模型\n\n**全称**：Terrestrial Biosphere Models，也常译作陆地生态系统模型。\n\n**定义**：TBMs模拟陆地植被和土壤中的光合作用、GPP、呼吸、蒸散、物候及碳库变化。\n\n### $V_{cmax}$为什么重要\n\n许多TBM使用FvCB方案，$V_{cmax}$是控制C3植物羧化能力的关键参数。参数偏差会传递到GPP、碳通量和水分交换。\n\n### 本组论文提供的改进路径\n\n- LUNA：动态氮分配；\n- EOT：环境最优性预测；\n- LCC/Chl-Rub：生化代理；\n- SIF+BEPS+EnKF：遥感动态反演。\n\n**与ESM关系**：TBM可独立运行，也可成为ESM中的陆地生物圈模块。\n\n---\n\n## 30. ESMs：地球系统模型\n\n**全称**：Earth System Models。\n\n**定义**：ESMs耦合大气、海洋、陆地、冰冻圈和碳循环等系统，用于模拟历史气候、未来情景以及气候–碳循环反馈。\n\n### 从叶片参数到地球系统的传递链\n\n$$\nV_{cmax},J_{max}\n\\rightarrow \\text{叶片光合作用}\n\\rightarrow GPP\n\\rightarrow \\text{陆地碳汇}\n\\rightarrow \\text{大气CO}_2\n\\rightarrow \\text{气候反馈}\n$$\n\n因此，一个看似微小的叶片参数经过全球网格和多年积分后，可能显著影响ESM结果。\n\n**本组论文的共同问题意识**：只按PFT固定光合能力参数，会遗漏环境适应、氮分配、叶龄以及季节变化。\n\n主要论文：[[26暑期/Ali-2015_全球环境控制]]、[[26暑期/Ali-2016_LUNA]]、[[26暑期/Smith-2019_环境优化光合能力]]。\n\n---\n\n# 第五层：阅读方法和结果时会遇到的辅助名词\n\n## 31. 叶肉导度与“表观 $V_{cmax}$”\n\n**叶肉导度（$g_m$）**描述CO₂从胞间空气到叶绿体羧化位置的传输能力。如果A–$C_i$拟合只使用胞间CO₂而未考虑叶肉内部阻力，估计的 $V_{cmax}$ 可能是“表观值”，不完全等于以叶绿体CO₂为基础的生化能力。\n\n**意义**：不同论文是否考虑 $g_m$，会影响 $V_{cmax}$ 的可比性。Lu-2020明确提醒其拟合未考虑叶肉导度。\n\n---\n\n## 32. SPAD\n\nSPAD是便携式叶绿素仪的相对读数。它能快速、无损地指示叶片叶绿素水平，但不是带有统一物理单位的真实叶绿素含量。\n\n使用时通常需要：\n\n> SPAD读数 → 用实验提取叶绿素进行标定 → 转换为叶绿素含量。\n\n主要论文：[[26暑期/Lu-2020_叶绿素与Rubisco]]。\n\n---\n\n## 33. $R^2$、RMSE 与 rRMSE\n\n**$R^2$**：决定系数，描述模型或关系解释了多少观测变异。高 $R^2$ 不等于误差一定小，也不证明因果关系。\n\n**RMSE**：均方根误差，表示预测值与观测值的典型偏差大小，保留原变量单位。\n\n**rRMSE**：相对RMSE，把RMSE相对于观测均值或其他基准进行标准化，便于跨数据集比较；具体定义必须核对论文。\n\n**阅读原则**：至少同时看 $R^2$ 和RMSE。一个产品可能很好地捕捉空间排序，却存在整体高估或低估。\n\n---\n\n## 34. 三类论文特有的统计与参数估计方法\n\n### 线性混合效应模型\n\nAli-2015使用。它在估计环境和叶氮关系时，同时处理不同研究、物种或数据来源造成的分组差异。\n\n### 随机森林回归\n\nWang-2020使用。它用于比较叶绿素、叶龄、叶氮等变量对 $V_{cmax25}$ 的预测重要性。变量重要性表示预测贡献，不自动等于因果作用。\n\n### DREAM(ZS)\n\nAli-2016使用的贝叶斯/MCMC参数估计算法，用全球观测校准LUNA难以直接测量的参数，并形成后验分布。\n\n---\n\n# 六、建议按这个顺序学习\n\n## 第一遍：只抓主线\n\n1. C3/C4；\n2. FvCB；\n3. RuBP、Rubisco、$V_{cmax}$、$J_{max}$；\n4. $N_{area}$、PNUE、fLNR；\n5. $Chl_{Leaf}$/LCC与Chl-Rub；\n6. A–$C_i$曲线。\n\n## 第二遍：理解遥感链\n\n1. PAR/APAR；\n2. LAI与聚集指数；\n3. SIF与 $SIF_{total}$；\n4. 4-Scale、SAIL、PROSPECT；\n5. GOME-2、TROPOMI、MERIS、MODIS。\n\n## 第三遍：理解反演和模型链\n\n1. GPP/NPP；\n2. PFT；\n3. BEPS；\n4. 数据同化与EnKF；\n5. LUNA与EOT；\n6. TBM与ESM。\n\n## 最后用五句话记住\n\n1. **FvCB把C3光合作用拆成Rubisco羧化端和电子传递/RuBP再生端，分别由 $V_{cmax}$ 和 $J_{max}$ 表征。**\n2. **$N_{area}$是资源总量，PNUE和fLNR说明资源如何被利用或分配；这比“总氮越多，光合越强”更接近机制。**\n3. **叶绿素负责吸光，Rubisco负责羧化；LCC和Chl-Rub把可遥感色素信息连接到 $V_{cmax}$。**\n4. **SIF提供动态光合信号，BEPS把候选 $V_{cmax}$ 转成GPP，EnKF再用SIF估算GPP更新 $V_{cmax}$。**\n5. **LUNA从氮分配预测光合能力，EOT从环境最优性预测光合能力，TBM和ESM则把这些叶片过程扩展到全球碳循环。**\n"
+          },
+          {
+            "title": "How to Read a Paper",
+            "description": "对 S. Keshav《How to Read a Paper》的阅读笔记，记录三遍阅读法、文献综述流程及个人判断。",
+            "category": "daily",
+            "tags": ["论文阅读", "三遍阅读法", "文献综述", "研究方法"],
+            "pubDate": "2026-07-29",
+            "slug": "how-to-read-a-paper",
+            "content": "<h2 id=\"_1\">基本信息<\/h2>\n<table>\n<thead>\n<tr>\n<th>项目<\/th>\n<th>内容<\/th>\n<\/tr>\n<\/thead>\n<tbody>\n<tr>\n<td>作者<\/td>\n<td>S. Keshav<\/td>\n<\/tr>\n<tr>\n<td>年份<\/td>\n<td>2007<\/td>\n<\/tr>\n<tr>\n<td>来源<\/td>\n<td>ACM SIGCOMM Computer Communication Review，第 37 卷第 3 期<\/td>\n<\/tr>\n<tr>\n<td>Citekey<\/td>\n<td>信息不足<\/td>\n<\/tr>\n<\/tbody>\n<\/table>\n<h2 id=\"_2\">一句话摘要<\/h2>\n<blockquote>\n<p>本文以三遍阅读法组织研究论文阅读，并将其扩展为文献综述的检索与筛选流程。<\/p>\n<\/blockquote>\n<h2 id=\"_3\">研究问题<\/h2>\n<ul>\n<li><strong>研究对象<\/strong>：研究人员阅读学术论文的过程。<\/li>\n<li><strong>核心问题<\/strong>：如何在不同理解需求下高效阅读研究论文。<\/li>\n<li><strong>研究情境/范围<\/strong>：论文评审、跟踪领域进展与陌生领域文献综述。<\/li>\n<\/ul>",
+            "headings": [
+              { "id": "_1", "text": "基本信息" },
+              { "id": "_2", "text": "一句话摘要" },
+              { "id": "_3", "text": "研究问题" }
+            ],
+            "searchText": "\n\n## 基本信息\n\n| 项目        | 内容                                                           |\n| --------- | ------------------------------------------------------------ |\n| 作者        | S. Keshav                                                    |\n| 年份        | 2007                                                         |\n| 来源        | ACM SIGCOMM Computer Communication Review，第 37 卷第 3 期             |\n| Citekey   | 信息不足                                                         |\n\n## 一句话摘要\n\n> 本文以三遍阅读法组织研究论文阅读，并将其扩展为文献综述的检索与筛选流程。\n\n## 研究问题\n\n- **研究对象**：研究人员阅读学术论文的过程。\n- **核心问题**：如何在不同理解需求下高效阅读研究论文。\n- **研究情境/范围**：论文评审、跟踪领域进展与陌生领域文献综述。\n\n## 研究方法\n\n- **方法类型**：理论 / 经验性方法指导\n- **总体思路**：以由浅入深的三遍阅读替代从头至尾的一次性通读。\n- **分析单位**：单篇研究论文与一组待综述论文。\n- **关键变量或概念**：第一遍概览、第二遍内容把握、第三遍虚拟复现。\n- **识别/推断逻辑**：不同阅读遍次对应不同理解深度和时间投入。\n- **具体步骤**：第一遍阅读题目、摘要、引言、层级标题、结论和参考文献；第二遍关注图表、记录要点并标记待读参考文献；第三遍按作者假设虚拟复现工作并质疑各项假设。\n- **方法优势**：可先判断论文价值与所需阅读深度，再投入细节阅读。\n- **方法局限**：基于作者经验性建议；缺少可供验证的比较数据。\n\n## 数据来源\n\n- **数据类型**：作者对论文阅读、评审和背景研究的经验陈述。\n- **样本来源**：信息不足；正文未报告实证样本。\n- **时间范围**：作者称该方法已使用约十五年，需人工核对。\n- **样本量/案例数**：信息不足。\n- **数据局限**：全文缓存未提供实验数据、统计分析或系统性案例证据。\n\n## 研究结论\n\n### 主要发现 1\n\n- **发现**：三遍阅读分别服务于概览、内容把握和深入理解，可据此决定是否继续投入阅读时间。\n\t- 第一遍用来筛选你是否要把这篇论文继续读下去 *5c：category、context、correctness、contributions、clarity*\n\t- 第二遍读不下去的话说明有几个可能：是你的陌生领域；论文写得很差；你太累了，这时候可以选择调查完背景再继续阅读、硬读或者直接放弃\n\t- 第三遍在复现过程中你可以获得新的工具，对未来工作的新的想法\n- **原文依据**：作者在“三遍方法”部分说明各遍次的不同目标。\n- **页码**：PDF 第 1 页。\n\n### 主要发现 2\n\n- **发现**：文献综述可从少量近期论文出发，沿综述、共同引文、关键作者和顶级会议迭代扩展。\n- **原文依据**：作者在“Doing a Literature Survey”部分给出三步检索与筛选流程。\n- **页码**：PDF 第 2 页。\n\n## 我的判断\n\n- **最有启发的点**：将阅读深度与任务目标、时间成本显式匹配。\n- **可借鉴的方法**：先用第一遍建立筛选标准，再按需要进入第二、三遍。*对于目前初学阶段的我来说做到第二遍然后ai再精读完对比总结是效率最高的办法，但是肯定是要自己学着去复现论文的*\n- **可继续追问的问题**：该流程对不同学科、不同论文类型的适用边界是什么？在不同任务下我都要做到什么程度？\n- **与我的研究关联**：可作为论文精读和构建文献综述初始集合的操作框架。\n\n## 关联概念\n\n- 三遍阅读法\n- 文献综述\n\n## 相关论文\n\n- 信息不足\n"
+          },
+          {
+            "title": "度假日志",
+            "description": "一篇关于鹰角 FES、明日方舟夏活与上海假期的个人记录。",
+            "category": "daily",
+            "tags": ["度假日志", "鹰角 FES", "明日方舟", "生活记录"],
+            "pubDate": "2026-07-29",
+            "slug": "vacation-diary",
+            "content": "<h2 id=\"fes\">鹰角fes<\/h2>\n<p>我现在还在上海度假，窗外伴着雷声滚滚，脑子里还想着鹰角fes的事。<\/p>\n<p>真好啊，每个同好都很友善每个展台布景也都很有意思，玩了快7年的游戏第一次从线上到线下特别展感觉真的特别好，不经意间就拍了5卷的67中画幅胶卷，真的很想马上赶回福州去冲洗啊。<\/p>\n<h2 id=\"_1\">夏活<\/h2>\n<p>我觉得更有意思的是这次明日方舟的夏活。可以说我心中的夏活top就是这次和23年的火山旅梦：不仅仅是因为二者主题都很轻松有种夏日轻松又梦幻的感觉，还因为这两年夏活都在我人生比较重要的记忆点上。<\/p>\n<p>23年我正值高一转高二的暑假，当上了下一届的电视台副台长，却又没进入到重点班中。<\/p>\n<p>我当时不知道这些意味着什么，但是那个夏天我时常在傍晚粉红彩霞出没时和父母一起出门到江边骑行运动，听着的就是火山旅梦的ost，那是我这辈子忘记不了的为数不多的温馨回忆。<\/p>\n<p>在那之后我很明显错过了也做错了太多，这些就不提及了。<\/p>\n<p>而今年在夏活前瞻的最后听到熟悉的秋绪旋律响起的时候，我就会又想起20年刚开始玩明日方舟，反复在自己的小mp3中听春弦、夏浪、秋绪这些歌的感觉，当时还有所谓的四季曲，每首歌的气息也都不一样不是公式化的曲目演唱，还有让我印象深刻的是铃兰的ep。<\/p>\n<p>总之我被异洁ep完全吸引住了，其中的夏曲活力气息让我难以忘怀。<\/p>\n<p>而在参加鹰角fes和看完夏活剧情后，就很难说清楚那种感受，像是已经腐朽的树干上又长出了新枝一样，我还想有这种青春活力的体验，我不想因为想象中会遇见的未来、困难而被限制住。<\/p>\n<p>我现在在大一转大二的暑假，当上了下一届的天文部部长，也找到了导师进行学习，我不是很想再被困在初中1年半和高中2年的阴影中独自数着上次“成功”是什么日子，不是很想再去回忆我的创伤和差距都是哪来的。<\/p>\n<p>我只想回想起20年我刚开始打方舟，抽那个抽象的双up5星卡池时，心里的那种好奇和喜悦，不被自我束缚住的感觉。<\/p>\n<h2 id=\"_2\">度假<\/h2>\n<p>我导师说也要给自己放假，我确实需要这么一个假期。<\/p>\n<p>现在是凌晨我也写不出来什么东西了，明天早上去豫园，后天下午搭车回家，既然还在假期中就好好享受吧。<\/p>",
+            "headings": [
+              { "id": "fes", "text": "鹰角fes" },
+              { "id": "_1", "text": "夏活" },
+              { "id": "_2", "text": "度假" }
+            ],
+            "searchText": "\n\n## 鹰角fes\n\n我现在还在上海度假，窗外伴着雷声滚滚，脑子里还想着鹰角fes的事。\n\n真好啊，每个同好都很友善每个展台布景也都很有意思，玩了快7年的游戏第一次从线上到线下特别展感觉真的特别好，不经意间就拍了5卷的67中画幅胶卷，真的很想马上赶回福州去冲洗啊。\n\n## 夏活\n\n我觉得更有意思的是这次明日方舟的夏活。可以说我心中的夏活top就是这次和23年的火山旅梦：不仅仅是因为二者主题都很轻松有种夏日轻松又梦幻的感觉，还因为这两年夏活都在我人生比较重要的记忆点上。\n\n23年我正值高一转高二的暑假，当上了下一届的电视台副台长，却又没进入到重点班中。\n\n我当时不知道这些意味着什么，但是那个夏天我时常在傍晚粉红彩霞出没时和父母一起出门到江边骑行运动，听着的就是火山旅梦的ost，那是我这辈子忘记不了的为数不多的温馨回忆。\n\n在那之后我很明显错过了也做错了太多，这些就不提及了。\n\n而今年在夏活前瞻的最后听到熟悉的秋绪旋律响起的时候，我就会又想起20年刚开始玩明日方舟，反复在自己的小mp3中听春弦、夏浪、秋绪这些歌的感觉，当时还有所谓的四季曲，每首歌的气息也都不一样不是公式化的曲目演唱，还有让我印象深刻的是铃兰的ep。\n\n总之我被异洁ep完全吸引住了，其中的夏曲活力气息让我难以忘怀。\n\n而在参加鹰角fes和看完夏活剧情后，就很难说清楚那种感受，像是已经腐朽的树干上又长出了新枝一样，我还想有这种青春活力的体验，我不想因为想象中会遇见的未来、困难而被限制住。\n\n我现在在大一转大二的暑假，当上了下一届的天文部部长，也找到了导师进行学习，我不是很想再被困在初中1年半和高中2年的阴影中独自数着上次“成功”是什么日子，不是很想再去回忆我的创伤和差距都是哪来的。\n\n我只想回想起20年我刚开始打方舟，抽那个抽象的双up5星卡池时，心里的那种好奇和喜悦，不被自我束缚住的感觉。\n\n## 度假\n\n我导师说也要给自己放假，我确实需要这么一个假期。\n\n现在是凌晨我也写不出来什么东西了，明天早上去豫园，后天下午搭车回家，既然还在假期中就好好享受吧。\n"
+          },
+          {
+            "title": "建站日记 01：这个博客是怎样开始的",
+            "description": "记录个人博客从想法、技术选择到首次上线的过程，也整理目前的完成情况和接下来的写作计划。",
+            "category": "computer-science",
+            "tags": ["建站日记", "Astro", "GitHub Pages", "Markdown"],
+            "pubDate": "2026-07-20",
+            "slug": "blog-diary-01",
+            "content": "<p>这是这个博客的第一篇日常记录。<\/p>\n<p>它不是一篇完整的技术教程，而是一次阶段性整理：这个网站为什么出现，我做了哪些选择，目前完成到了哪里，以及接下来准备怎样使用它。<\/p>\n<h2 id=\"_1\">为什么建立这个博客<\/h2>\n<p>我目前是地理专业学生，在学习过程中，课程笔记、代码片段等文件主要是放在obsidian里整理。但是时间一长文件库内容量一大，我就很难快速找到以前解决过的问题，或者说抓住我学习关注的重点，也不容易看清自己的学习路径。<\/p>\n<p>因此，我想建立一个长期维护的个人博客，主要记录三类内容：<\/p>\n<ol>\n<li>地理科学课程与研究方法的学习笔记；<\/li>\n<li>编程、算法、数据分析和开发工具的使用经验；<\/li>\n<li>地理与计算交叉领域的项目过程和复盘。<\/li>\n<\/ol>\n<p>这个网站首先服务于我自己的知识整理，同时也希望其中一部分内容能为遇到相似问题的人提供参考。<\/p>\n<h2 id=\"_2\">我对网站的基本要求<\/h2>\n<p>以下且听GPT5.6胡扯：\n开始之前，我并不了解完整的网站开发流程，只会一些 Python 基础。为了让网站真正能够长期使用，我给它设定了几个比较实际的要求：<\/p>\n<ul>\n<li>不需要服务器、数据库和后台管理系统；<\/li>\n<li>可以直接用 Markdown 写文章；<\/li>\n<li>能免费部署，并且修改后可以自动更新；<\/li>\n<li>支持分类、标签、归档和本地搜索；<\/li>\n<li>在电脑和手机上都能正常阅读；<\/li>\n<li>项目结构尽量清楚，方便以后逐步学习和维护。<\/li>\n<\/ul>\n<p>这些要求最终决定了网站的技术方案。<\/p>\n<h2 id=\"_3\">最后的技术选择<\/h2>\n<p>网站使用 Astro 和 TypeScript 构建，文章通过 Astro Content Collections 管理。每篇文章都是一个 Markdown 文件，文章标题、发布日期、分类、标签等信息统一写在文件开头。<\/p>\n<p>部署使用 GitHub Pages。代码推送到 GitHub 的 <code>main<\/code> 分支后，GitHub Actions 会自动完成检查、构建和发布。搜索使用 Pagefind 在构建阶段生成索引，不依赖数据库或第三方搜索服务。<\/p>\n<p>目前使用的主要工具如下：<\/p>\n<table>\n<thead>\n<tr>\n<th>用途<\/th>\n<th>工具<\/th>\n<\/tr>\n<\/thead>\n<tbody>\n<tr>\n<td>网站框架<\/td>\n<td>Astro<\/td>\n<\/tr>\n<tr>\n<td>开发语言<\/td>\n<td>TypeScript<\/td>\n<\/tr>\n<tr>\n<td>文章格式<\/td>\n<td>Markdown / MDX<\/td>\n<\/tr>\n<tr>\n<td>内容管理<\/td>\n<td>Astro Content Collections<\/td>\n<\/tr>\n<tr>\n<td>静态搜索<\/td>\n<td>Pagefind<\/td>\n<\/tr>\n<tr>\n<td>代码托管<\/td>\n<td>GitHub<\/td>\n<\/tr>\n<tr>\n<td>自动部署<\/td>\n<td>GitHub Actions + GitHub Pages<\/td>\n<\/tr>\n<tr>\n<td>自定义域名<\/td>\n<td>lingeocs.com<\/td>\n<\/tr>\n<\/tbody>\n<\/table>",
+            "headings": [
+              { "id": "_1", "text": "为什么建立这个博客" },
+              { "id": "_2", "text": "我对网站的基本要求" },
+              { "id": "_3", "text": "最后的技术选择" }
+            ],
+            "searchText": "\n\n这是这个博客的第一篇日常记录。\n\n它不是一篇完整的技术教程，而是一次阶段性整理：这个网站为什么出现，我做了哪些选择，目前完成到了哪里，以及接下来准备怎样使用它。\n\n## 为什么建立这个博客\n\n我目前是地理专业学生，在学习过程中，课程笔记、代码片段等文件主要是放在obsidian里整理。但是时间一长文件库内容量一大，我就很难快速找到以前解决过的问题，或者说抓住我学习关注的重点，也不容易看清自己的学习路径。\n\n因此，我想建立一个长期维护的个人博客，主要记录三类内容：\n\n1. 地理科学课程与研究方法的学习笔记；\n2. 编程、算法、数据分析和开发工具的使用经验；\n3. 地理与计算交叉领域的项目过程和复盘。\n\n这个网站首先服务于我自己的知识整理，同时也希望其中一部分内容能为遇到相似问题的人提供参考。\n\n## 我对网站的基本要求\n\n以下且听GPT5.6胡扯：\n开始之前，我并不了解完整的网站开发流程，只会一些 Python 基础。为了让网站真正能够长期使用，我给它设定了几个比较实际的要求：\n\n- 不需要服务器、数据库和后台管理系统；\n- 可以直接用 Markdown 写文章；\n- 能免费部署，并且修改后可以自动更新；\n- 支持分类、标签、归档和本地搜索；\n- 在电脑和手机上都能正常阅读；\n- 项目结构尽量清楚，方便以后逐步学习和维护。\n\n这些要求最终决定了网站的技术方案。\n\n## 最后的技术选择\n\n网站使用 Astro 和 TypeScript 构建，文章通过 Astro Content Collections 管理。每篇文章都是一个 Markdown 文件，文章标题、发布日期、分类、标签等信息统一写在文件开头。\n\n部署使用 GitHub Pages。代码推送到 GitHub 的 `main` 分支后，GitHub Actions 会自动完成检查、构建和发布。搜索使用 Pagefind 在构建阶段生成索引，不依赖数据库或第三方搜索服务。\n\n目前使用的主要工具如下：\n\n| 用途       | 工具                          |\n| ---------- | ----------------------------- |\n| 网站框架   | Astro                         |\n| 开发语言   | TypeScript                    |\n| 文章格式   | Markdown / MDX                |\n| 内容管理   | Astro Content Collections     |\n| 静态搜索   | Pagefind                      |\n| 代码托管   | GitHub                        |\n| 自动部署   | GitHub Actions + GitHub Pages |\n| 自定义域名 | lingeocs.com                  |\n\n## 第一次建站过程\n\n整个过程大致可以分为几个阶段。\n\n首先是在本地建立 Astro 项目，实现首页、文章、分类、标签、归档、项目、关于和搜索等页面。随后补充深浅色模式、文章目录、阅读进度、代码高亮、数学公式、RSS、sitemap 和自定义 404 页面。\n\n网站能够本地运行后，我建立了 GitHub 仓库，并配置 GitHub Actions。这样每次更新文章后，只需要提交并推送代码，线上网站就会自动重新构建。\n\n之后，我购买了 `lingeocs.com`（小巧思有没有人懂的），在阿里云完成实名认证和 DNS 解析，再把域名绑定到 GitHub Pages。DNS 记录已经正确生效，目前仍在等待 GitHub 完成 HTTPS 证书签发。\n\n为了避免以后忘记操作过程，我还把建站、写文章、发布和排查问题的方法整理成了 Obsidian 文档，主要是能快速调用比如一些预制的提示词来帮我用ai上传或者安全维护之类的。\n\n## 这次真正理解的事情\n\n以前我会把“网站”理解成浏览器里看到的一个页面。实际动手之后，我才开始区分几个不同层次：\n\n- Markdown 文件负责保存内容；\n- Astro 负责把内容和组件构建成静态网页；\n- Git 负责记录每次修改；\n- GitHub 保存代码并运行自动部署；\n- GitHub Pages 提供公开访问；\n- DNS 把域名指向网站所在的位置；\n- HTTPS 证书保证浏览器与网站之间的连接安全。\n\n当这些部分被分开理解后，很多报错也不再只是“网站打不开”，而是可以继续判断它发生在内容、构建、部署、DNS 还是证书环节。\n\n## 目前的状态\n\n现在，网站的基本结构已经完成，自动构建与部署可以正常运行，文章也可以通过 Markdown 管理。站内暂时只有一篇用于检查功能的测试文章，这篇建站日记将成为第一篇正式内容。\n\n网站仍然处于很早的阶段。页面设计、栏目组织和写作方式以后都可能调整，但基本的发布流程已经建立起来了。\n还是感慨下GPT神力，我是区。\n\n## 接下来准备做什么\n\n接下来我准备先完成几件简单的事情：\n\n1. 等待自定义域名的 HTTPS 证书签发完成；\n2. 发布这篇建站日记，并逐步替换测试内容；\n3. 整理第一篇地理或 GIS 学习笔记；\n4. 在实际写作中继续调整分类、标签和页面细节；\n5. 保持备份，避免在文章和 Git 历史中放入敏感信息。\n\n博客不需要一开始就很完整。现阶段最重要的是让写作和发布流程真正运转起来，然后持续积累内容。\n等到我写到第100篇的时候再分享给我的同学朋友吧。\n\n先记录到这里。\n"
+          }
+        ]
+      }
+    </script>
+    <script>
+      const data = JSON.parse(document.querySelector('#site-data').textContent);
+      const main = document.querySelector('main');
+      // A page owns its h1; keep imported note headings under it and rebuild the TOC.
+      for (const post of data.posts) {
+        const fragment = document.createElement('template');
+        fragment.innerHTML = post.content;
+        const first = fragment.content.querySelector('h1,h2,h3');
+        if (first?.textContent.trim() === post.title.trim()) first.remove();
+        const headings = [...fragment.content.querySelectorAll('h1,h2,h3,h4,h5,h6')];
+        if (headings.some((heading) => heading.tagName === 'H1')) {
+          headings.forEach((heading) => {
+            const replacement = document.createElement(
+              'h' + Math.min(6, Number(heading.tagName.slice(1)) + 1)
+            );
+            replacement.id = heading.id;
+            replacement.innerHTML = heading.innerHTML;
+            heading.replaceWith(replacement);
+          });
+        }
+        post.headings = [...fragment.content.querySelectorAll('h2,h3')].map((heading, index) => {
+          heading.id ||= 'section-' + index;
+          return { id: heading.id, text: heading.textContent };
+        });
+        post.content = fragment.innerHTML;
+      }
+
+      const categories = new Map(data.categories.map((c) => [c.id, c]));
+      const knownTags = new Set(data.posts.flatMap((p) => p.tags));
+      const esc = (value) =>
+        String(value ?? '').replace(
+          /[&<>"']/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
+        );
+      const anchor = (route, text, attributes = '') =>
+        `<a href="#${esc(route)}" ${attributes}>${esc(text)}</a>`;
+      const routeUrl = (route) => new URL(route, 'https://preview.invalid');
+      const queryRoute = (path, params = {}) => {
+        const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v));
+        return path + (q.size ? '?' + q.toString() : '');
+      };
+      function normalizeRoute(raw) {
+        const u = routeUrl(raw.startsWith('/') ? raw : '/' + raw);
+        const segments = u.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+        if (segments[0] === 'categories')
+          return queryRoute('/posts', { category: categories.has(segments[1]) ? segments[1] : '' });
+        if (segments[0] === 'tags')
+          return queryRoute('/posts', { tag: knownTags.has(segments[1]) ? segments[1] : '' });
+        return u.pathname.replace(/\/$/, '') + u.search || '/';
+      }
+      function sourceRoute(raw) {
+        try {
+          const value = normalizeRoute(raw || '/posts');
+          const u = routeUrl(value);
+          if (u.pathname === '/') return '/';
+          if (u.pathname === '/archive') return '/archive';
+          if (u.pathname === '/search')
+            return queryRoute('/search', { q: u.searchParams.get('q')?.slice(0, 200) });
+          if (u.pathname === '/posts')
+            return queryRoute('/posts', {
+              category: categories.has(u.searchParams.get('category'))
+                ? u.searchParams.get('category')
+                : '',
+              tag: knownTags.has(u.searchParams.get('tag')) ? u.searchParams.get('tag') : ''
+            });
+        } catch {}
+        return '/posts';
+      }
+      function returnLabel(route) {
+        const u = routeUrl(route);
+        if (u.pathname === '/') return '返回首页';
+        if (u.pathname === '/archive') return '返回归档';
+        if (u.pathname === '/search') return '返回搜索结果';
+        const category = categories.get(u.searchParams.get('category'));
+        if (category) return '返回' + category.name + '文章';
+        if (u.searchParams.has('tag')) return '返回标签筛选结果';
+        return '返回文章列表';
+      }
+      const articleLink = (post, origin) =>
+        anchor(queryRoute('/posts/' + post.slug, { from: origin }), post.title, 'data-post-link');
+      const postList = (posts, origin, { summaries = true } = {}) =>
+        posts.length
+          ? `<ul class="note-list">${posts.map((p) => `<li>${articleLink(p, origin)}<time datetime="${esc(p.pubDate)}">${esc(p.pubDate)}</time>${summaries ? `<p>${esc(p.description)}</p>` : ''}</li>`).join('')}</ul>`
+          : '<p class="empty">这个分类还没有文章。可以选择“全部”继续阅读。</p>';
+      const heading = (text, intro = '') =>
+        `<h1>${esc(text)}</h1>${intro ? `<p class="intro">${esc(intro)}</p>` : ''}`;
+      let currentRoute = '';
+      let previousRoute = '';
+      const scrollPositions = new Map();
+      function readRoute() {
+        try {
+          return normalizeRoute(location.hash.slice(1) || '/');
+        } catch {
+          return '/not-found';
+        }
+      }
+      function render({ restore = false } = {}) {
+        const next = readRoute();
+        if (location.hash !== '#' + next) history.replaceState(history.state, '', '#' + next);
+        const oldRoute = currentRoute;
+        const oldY = window.scrollY;
+        currentRoute = next;
+        const u = routeUrl(next),
+          route = u.pathname,
+          params = u.searchParams;
+        let label = '首页';
+        document.querySelectorAll('[data-nav]').forEach((a) => {
+          const active =
+            route === '/' + a.dataset.nav ||
+            (a.dataset.nav === 'posts' && route.startsWith('/posts/'));
+          a.toggleAttribute('aria-current', active);
+          if (active) a.setAttribute('aria-current', 'page');
+        });
+        if (route === '/') {
+          main.innerHTML =
+            heading('Linzii的地理小站', '地理专业学生，记录遥感、GIS、空间数据工程与日常学习。') +
+            '<h2>最近更新</h2>' +
+            postList(data.posts.slice(0, 5), next, { summaries: false }) +
+            `<h2>内容索引</h2><ul class="topic-list">${data.categories.map((c) => `<li>${anchor(queryRoute('/posts', { category: c.id }), c.name)}</li>`).join('')}</ul>`;
+        } else if (route === '/posts') {
+          label = '文章';
+          const category = categories.has(params.get('category')) ? params.get('category') : '';
+          const tag = knownTags.has(params.get('tag')) ? params.get('tag') : '';
+          const filters = [{ id: '', shortName: '全部' }, ...data.categories];
+          main.innerHTML =
+            heading('文章') +
+            `<nav class="filters" aria-label="文章分类">${filters.map((c) => anchor(queryRoute('/posts', { category: c.id, tag }), c.shortName, c.id === category ? 'aria-current="page"' : '')).join('')}</nav>` +
+            (tag
+              ? `<p class="tag-filter">标签：${esc(tag)} ${anchor(queryRoute('/posts', { category }), '清除标签')}</p>`
+              : '') +
+            postList(
+              data.posts.filter(
+                (p) => (!category || p.category === category) && (!tag || p.tags.includes(tag))
+              ),
+              next
+            );
+        } else if (route.startsWith('/posts/')) {
+          const slug = decodeURIComponent(route.slice(7));
+          const post = data.posts.find((p) => p.slug === slug);
+          const origin = sourceRoute(params.get('from'));
+          if (post) {
+            label = post.title;
+            main.innerHTML =
+              anchor(origin, '← ' + returnLabel(origin), 'class="back" data-return') +
+              `<article><h1 class="article-title">${esc(post.title)}</h1><p class="article-meta"><time datetime="${esc(post.pubDate)}">${esc(post.pubDate)}</time> · ${anchor(queryRoute('/posts', { category: post.category }), categories.get(post.category)?.name || '文章')}</p><p class="article-summary">${esc(post.description)}</p>${post.headings.length ? `<details class="toc"><summary>本文目录</summary>${post.headings.map((h) => `<a href="#${esc(h.id)}" data-section="${esc(h.id)}">${esc(h.text)}</a>`).join('')}</details>` : ''}<div class="reading">${post.content}</div><nav class="article-tags" aria-label="文章标签">${post.tags.map((tag) => anchor(queryRoute('/posts', { tag }), tag)).join('')}</nav></article>`;
+            // Keep links within article excerpts in this same preview and preserve their list origin.
+            main.querySelectorAll('.reading a[href^="/posts/"]').forEach((a) => {
+              const slug = a.getAttribute('href').split('/')[2];
+              const target = data.posts.find((p) => p.slug === slug);
+              if (target) a.href = '#' + queryRoute('/posts/' + slug, { from: origin });
+            });
+            main.querySelector('[data-return]').addEventListener('click', (event) => {
+              if (previousRoute === origin && history.length > 1) {
+                event.preventDefault();
+                history.back();
+              }
+            });
+          } else main.innerHTML = heading('文章未找到') + anchor('/posts', '返回文章列表');
+        } else if (route === '/archive') {
+          label = '归档';
+          const years = [...new Set(data.posts.map((p) => p.pubDate.slice(0, 4)))];
+          main.innerHTML =
+            heading('归档') +
+            `<div class="archive">${years
+              .map(
+                (y) =>
+                  `<h2>${y}</h2><ul>${data.posts
+                    .filter((p) => p.pubDate.startsWith(y))
+                    .map(
+                      (p) => `<li><time>${p.pubDate.slice(5)}</time>${articleLink(p, next)}</li>`
+                    )
+                    .join('')}</ul>`
+              )
+              .join('')}</div>`;
+        } else if (route === '/projects') {
+          label = '项目';
+          main.innerHTML =
+            heading('项目') +
+            data.projects
+              .map(
+                (p) =>
+                  `<section class="project"><h2>${esc(p.title)}</h2><p>${esc(p.description)}</p><p>${esc(p.outcome)}</p><p class="meta">${esc(p.year)} · ${esc(p.status)} · ${esc(p.stack.join(' / '))}</p></section>`
+              )
+              .join('');
+        } else if (route === '/messages') {
+          label = '留言';
+          main.innerHTML =
+            heading('留言') +
+            `<ul class="messages">${data.messages.map((m) => `<li><time class="meta" datetime="${m.date}">${m.date}</time><p>${esc(m.content)}</p></li>`).join('')}</ul>`;
+        } else if (route === '/about') {
+          label = '关于';
+          main.innerHTML =
+            heading('关于') +
+            `<div class="reading about"><p>你好，我是${esc(data.siteConfig.author)}。${esc(data.siteConfig.about)}。</p><p>我希望这里不是资料堆积处，而是一张能够反复返回、持续校正的知识地图。文章会优先说明问题背景、数据条件、方法选择与适用边界。</p><h2>写作原则</h2><ul><li>尽量给出可复现的步骤与关键参数。</li><li>区分事实、经验判断与尚未验证的假设。</li><li>为图片、数据和引用保留清晰来源。</li><li>在更新文章时记录实质性变化。</li></ul><h2>关注方向</h2><p>GIS 与空间分析、遥感数据处理、空间数据工程、地理可视化、GeoAI，以及它们背后的编程与算法基础。</p><h2>联系</h2><ul><li><a href="${esc(data.siteConfig.github)}" target="_blank" rel="noopener">GitHub</a></li><li><a href="mailto:${esc(data.siteConfig.email)}">${esc(data.siteConfig.email)}</a></li></ul></div>`;
+        } else if (route === '/search') {
+          label = '搜索';
+          const query = params.get('q') || '';
+          const hits = query.trim()
+            ? data.posts.filter((p) =>
+                `${p.title} ${p.description} ${p.searchText}`
+                  .toLocaleLowerCase()
+                  .includes(query.trim().toLocaleLowerCase())
+              )
+            : [];
+          main.innerHTML =
+            heading('搜索') +
+            `<form class="search-form" role="search"><input type="search" name="q" aria-label="搜索文章" placeholder="搜索文章" autocomplete="off" value="${esc(query)}"><button type="submit">搜索</button></form><p class="search-status" aria-live="polite">${query.trim() ? `找到 ${hits.length} 篇文章` : '输入关键词查找文章。'}</p>` +
+            (query.trim()
+              ? hits.length
+                ? postList(hits, next)
+                : '<p class="empty">没有找到相关文章，可以换一个关键词。</p>'
+              : '');
+          main.querySelector('form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const q = main.querySelector('input').value.trim();
+            const next = queryRoute('/search', { q });
+            if (location.hash === '#' + next) render();
+            else location.hash = next;
+          });
+        } else {
+          label = '页面未找到';
+          main.innerHTML = heading(label) + anchor('/', '返回首页');
+        }
+        document.title = label + ' · Linzii的地理小站';
+        main.querySelectorAll('[data-section]').forEach((a) =>
+          a.addEventListener('click', (event) => {
+            event.preventDefault();
+            const section = document.getElementById(a.dataset.section);
+            section?.scrollIntoView();
+          })
+        );
+        const sameList = route === '/posts' && oldRoute && routeUrl(oldRoute).pathname === '/posts';
+        const y =
+          restore && scrollPositions.has(next) ? scrollPositions.get(next) : sameList ? oldY : 0;
+        window.scrollTo(0, y);
+      }
+      document.querySelector('.skip').addEventListener('click', (event) => {
+        event.preventDefault();
+        main.focus();
+        main.scrollIntoView();
+      });
+      document.addEventListener('click', (event) => {
+        const a = event.target.closest('a[href^="#/"]');
+        if (a) scrollPositions.set(currentRoute, window.scrollY);
+      });
+      window.addEventListener('hashchange', (event) => {
+        const old = currentRoute;
+        scrollPositions.set(old, scrollPositions.get(old) ?? window.scrollY);
+        previousRoute = old;
+        render({ restore: true });
+        main.focus({ preventScroll: true });
+      });
+      render();
+    </script>
+  </body>
+</html>

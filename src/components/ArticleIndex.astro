@@ -1,0 +1,27 @@
+---
+import { categories } from '../data/categories';
+import type { Post } from '../utils/posts';
+import PostList from './PostList.astro';
+interface Props {
+  posts: Post[];
+}
+const { posts } = Astro.props;
+---
+
+<div class="article-index" id="articles">
+  {
+    categories.map((category) => {
+      const entries = posts.filter((post) => post.data.category === category.id);
+      return (
+        <section class="index-section" id={category.id} aria-labelledby={`heading-${category.id}`}>
+          <h2 id={`heading-${category.id}`}>
+            <a class="section-anchor" href={`#${category.id}`}>
+              {category.name}
+            </a>
+          </h2>
+          {entries.length > 0 ? <PostList posts={entries} /> : <p class="empty-note">暂无文章。</p>}
+        </section>
+      );
+    })
+  }
+</div>

@@ -1,31 +1,9 @@
 ---
 import { siteConfig } from '../data/site';
-import { lingeoSites } from '../data/ecosystem';
 import { withBase } from '../utils/site';
 ---
 
-<footer class="site-footer">
-  <div class="shell footer-grid">
-    <div>
-      <a class="brand footer-brand" href={withBase('/')}>⌖ {siteConfig.name}</a>
-      <p>{siteConfig.intro}</p>
-    </div>
-    <div class="footer-links" aria-label="页脚导航">
-      {
-        lingeoSites
-          .filter((site) => site.id !== 'blog')
-          .map((site) => <a href={site.href}>{site.name} ↗</a>)
-      }
-      <a href={withBase('/rss.xml')}>RSS</a>
-      <a href={withBase('/categories/')}>分类</a>
-      <a href={withBase('/tags/')}>标签</a>
-      <a href={withBase('/archive/')}>归档</a>
-      <a href={withBase('/about/')}>关于</a>
-      <a href={siteConfig.github} rel="me noopener" target="_blank">GitHub</a>
-    </div>
-  </div>
-  <div class="shell footer-bottom">
-    <span>© {new Date().getFullYear()} {siteConfig.author}</span>
-    <span>以 Astro 构建 · 部署于 GitHub Pages</span>
-  </div>
+<footer class="site-footer shell" data-pagefind-ignore>
+  <span>© {new Date().getFullYear()} {siteConfig.author}</span>
+  <a href={withBase('/rss.xml')}>RSS</a>
 </footer>

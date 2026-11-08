@@ -2,9 +2,13 @@
 
 一个面向长期知识积累的中文静态博客，使用 Astro、TypeScript、Markdown / MDX 与 Content Collections 构建。无需数据库或后台，推送到 GitHub 的 `main` 分支后可自动发布到 GitHub Pages。
 
+日常使用请先看 [03教程](03教程/00-从这里开始.md)，平板阅读可使用 [合并版维护手册](03教程/博客维护手册-平板阅读版.md)。2026-11-09 的 v012 已在本地源码完成目录重构与原主站配色恢复，见 [结构与维护说明](docs/READABILITY_REDESIGN.md)。尚未上线；旧静态示意仅保留为历史记录。
+
+博客与 CodeVision Lab 已解除导航和品牌关联，两个仓库继续独立维护、部署；不再维护站群清单。
+
 ## 已实现功能
 
-- 首页、文章、分类、标签、归档、留言、项目、关于、搜索和自定义 404 页面；
+- 首页分组目录、文章、标签、归档、留言、项目、关于、搜索和自定义 404 页面；旧分类地址自动定位到文章目录；
 - “一个主分类 + 可选子分类 + 多标签”的文章模型；
 - 生产环境自动隐藏 `draft: true` 的文章；
 - Pagefind 构建时静态搜索，无数据库和第三方搜索服务；
@@ -75,7 +79,7 @@ flowchart LR
 - 社交分享图：`public/og.png`；
 - 分类说明：`src/data/categories.ts`；
 - 项目卡片：`src/data/projects.ts`；
-- 首页头像占位区：`src/pages/index.astro` 中的 `.avatar-panel`。如换成图片，建议放入 `src/assets/` 并使用 Astro 的 `<Image />` 组件，同时填写准确的 `alt`；
+- 首页与文章分组目录：`src/pages/index.astro`、`src/components/ArticleIndex.astro`；
 - 颜色与排版：`src/styles/global.css` 顶部的 CSS 变量。
 
 GitHub 用户名和仓库名不需要写入多个文件。部署工作流根据 `GITHUB_REPOSITORY_OWNER` 和仓库名自动计算站点地址与子路径；配置自定义域名时，在仓库 **Settings → Secrets and variables → Actions → Variables** 中创建 `SITE_URL`，值为完整的 HTTPS 地址。本地测试特殊路径时可复制 `.env.example` 为 `.env` 并修改：

@@ -7,11 +7,7 @@ import { withBase } from '../../utils/site';
 const tags = getAllTags(getPublishedPosts(await getCollection('posts')));
 ---
 
-<PageLayout
-  title="标签总览"
-  description="标签跨越分类组织内容，适合沿着工具、方法与研究对象继续探索。"
-  eyebrow="Topic Index"
->
+<PageLayout title="标签" description="标签跨越分类组织内容，适合沿着工具、方法与研究对象继续探索。">
   <div class="tag-cloud">
     {
       tags.map((tag) => (

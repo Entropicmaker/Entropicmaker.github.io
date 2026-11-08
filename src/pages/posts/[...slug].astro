@@ -1,40 +1,33 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Breadcrumb from '../../components/Breadcrumb.astro';
 import MermaidRenderer from '../../components/MermaidRenderer.astro';
+import '../../styles/article-widgets.css';
 import {
   formatDate,
   getCategory,
   getPostSlug,
-  getPostUrl,
   getPublishedPosts,
   getReadingTime,
-  getRelatedPosts,
-  tagToSlug,
-  type Post
+  tagToSlug
 } from '../../utils/posts';
 import { withBase } from '../../utils/site';
 
 export async function getStaticPaths() {
-  const posts = getPublishedPosts(await getCollection('posts'));
-  return posts.map((post) => ({ params: { slug: getPostSlug(post) }, props: { post, posts } }));
+  return getPublishedPosts(await getCollection('posts')).map((post) => ({
+    params: { slug: getPostSlug(post) },
+    props: { post }
+  }));
 }
-
 interface Props {
   post: CollectionEntry<'posts'>;
-  posts: Post[];
 }
-
-const { post, posts } = Astro.props;
+const { post } = Astro.props;
 const { Content, headings } = await render(post);
 const category = getCategory(post.data.category);
-const index = posts.findIndex((item) => item.id === post.id);
-const previous = posts[index + 1];
-const next = posts[index - 1];
-const related = getRelatedPosts(post, posts);
-const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const hasMermaid = /```mermaid(?:\s|$)/i.test(post.body ?? '');
+const returnHref = withBase(`/posts/#post-${getPostSlug(post)}`);
 ---
 
 <BaseLayout
@@ -43,58 +36,55 @@ const hasMermaid = /```mermaid(?:\s|$)/i.test(post.body ?? '');
   image={post.data.cover}
   article
 >
-  <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
   <article class="shell article-shell">
-    <Breadcrumb items={[{ label: '文章', href: '/posts/' }, { label: post.data.title }]} />
+    <nav class="breadcrumb" aria-label="文章位置" data-pagefind-ignore>
+      <ol>
+        <li><a href={returnHref} data-return-link>返回文章目录</a></li>
+        <li>
+          <span aria-hidden="true">/</span><a href={withBase(`/posts/#${category.id}`)}
+            >{category.name}</a>
+        </li>
+      </ol>
+    </nav>
     <header class="article-header">
-      <p class="eyebrow">{category.name}{post.data.series ? ` · ${post.data.series}` : ''}</p>
       <h1 data-pagefind-meta="title">{post.data.title}</h1>
-      <p class="article-description">{post.data.description}</p>
-      <div class="article-meta">
-        <span>发布于 {formatDate(post.data.pubDate)}</span>
+      <div class="article-meta" data-pagefind-ignore>
+        <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
         {post.data.updatedDate && <span>更新于 {formatDate(post.data.updatedDate)}</span>}
-        <a href={withBase(`/categories/${category.id}/`)}>{category.name}</a>
-        {post.data.subcategory && <span>{post.data.subcategory}</span>}
-        <span>预计 {getReadingTime(post)} 分钟</span>
+        <span>约 {getReadingTime(post)} 分钟</span>
+        {post.data.series && <span>{post.data.series}</span>}
       </div>
-      {
-        post.data.tags.length > 0 && (
-          <div class="tag-list" aria-label="文章标签">
-            {post.data.tags.map((tag) => (
-              <a href={withBase(`/tags/${tagToSlug(tag)}/`)}>#{tag}</a>
-            ))}
-          </div>
-        )
-      }
+      <p class="article-description">{post.data.description}</p>
     </header>
-
-    <div class="article-layout">
-      <div class="article-content">
-        <Content />
-        {hasMermaid && <MermaidRenderer />}
-      </div>
-      <aside class="article-sidebar" aria-label="文章辅助信息">
-        <section class="article-summary" aria-labelledby="article-summary-title">
-          <h2 id="article-summary-title">文章摘要</h2>
-          <p>{post.data.description}</p>
-        </section>
-        {
-          tocHeadings.length > 0 && (
-            <nav class="toc" aria-label="文章目录">
-              <h2>本文目录</h2>
-              <ol>
-                {tocHeadings.map((heading) => (
-                  <li class={`depth-${heading.depth}`}>
-                    <a href={`#${heading.slug}`}>{heading.text}</a>
-                  </li>
-                ))}
-              </ol>
-            </nav>
-          )
-        }
-      </aside>
+    {
+      tocHeadings.length > 0 && (
+        <details class="article-toc" data-pagefind-ignore>
+          <summary>本文目录</summary>
+          <nav class="toc" aria-label="文章目录">
+            <ol>
+              {tocHeadings.map((heading) => (
+                <li class={`depth-${heading.depth}`}>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </details>
+      )
+    }
+    <div class="article-content">
+      <Content />
+      {hasMermaid && <MermaidRenderer />}
     </div>
-
+    {
+      post.data.tags.length > 0 && (
+        <nav class="article-tags" aria-label="文章标签" data-pagefind-ignore>
+          {post.data.tags.map((tag) => (
+            <a href={withBase(`/tags/${tagToSlug(tag)}/`)}>#{tag}</a>
+          ))}
+        </nav>
+      )
+    }
     {
       post.data.references && post.data.references.length > 0 && (
         <section class="references" aria-labelledby="references-title">
@@ -111,109 +101,19 @@ const hasMermaid = /```mermaid(?:\s|$)/i.test(post.body ?? '');
         </section>
       )
     }
-
-    <nav class="article-footer-nav" aria-label="文章前后导航">
-      {
-        previous ? (
-          <a href={withBase(getPostUrl(previous))}>
-            <small>上一篇</small>
-            {previous.data.title}
-          </a>
-        ) : (
-          <span />
-        )
-      }
-      <a href={withBase('/posts/')}><small>返回</small>文章列表</a>
-      {
-        next ? (
-          <a href={withBase(getPostUrl(next))}>
-            <small>下一篇</small>
-            {next.data.title}
-          </a>
-        ) : (
-          <span />
-        )
-      }
+    <nav class="article-return" aria-label="返回目录" data-pagefind-ignore>
+      <a href={returnHref} data-return-link>返回文章目录</a>
     </nav>
-
-    {
-      related.length > 0 && (
-        <section class="related-posts" aria-labelledby="related-title">
-          <h2 id="related-title">相关文章</h2>
-          <div class="related-posts-grid">
-            {related.map((item) => (
-              <a href={withBase(getPostUrl(item))}>
-                <small>{getCategory(item.data.category).name}</small>
-                {item.data.title}
-              </a>
-            ))}
-          </div>
-        </section>
-      )
-    }
   </article>
 </BaseLayout>
 
 <script>
-  const bar = document.querySelector<HTMLElement>('#reading-progress');
-  const tocLinks = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]'));
-  const tocEntries = tocLinks.flatMap((link) => {
-    const rawId = link.getAttribute('href')?.slice(1);
-    if (!rawId) return [];
-    const heading = document.getElementById(decodeURIComponent(rawId));
-    return heading ? [{ link, heading }] : [];
-  });
-
-  const setActiveTocLink = (activeLink?: HTMLAnchorElement) => {
-    tocLinks.forEach((link) => {
-      const isActive = link === activeLink;
-      link.classList.toggle('is-active', isActive);
-      if (isActive) {
-        link.setAttribute('aria-current', 'location');
-      } else {
-        link.removeAttribute('aria-current');
-      }
+  import { getReturnDestination } from '../../utils/navigation';
+  const destination = getReturnDestination(window.location.href, import.meta.env.BASE_URL);
+  if (destination) {
+    document.querySelectorAll<HTMLAnchorElement>('[data-return-link]').forEach((link) => {
+      link.href = destination.href;
+      link.textContent = destination.label;
     });
-  };
-
-  const updateToc = () => {
-    const headingOffset = 130;
-    let activeLink: HTMLAnchorElement | undefined;
-
-    for (const entry of tocEntries) {
-      if (entry.heading.getBoundingClientRect().top <= headingOffset) {
-        activeLink = entry.link;
-      } else {
-        break;
-      }
-    }
-
-    setActiveTocLink(activeLink);
-  };
-
-  let frameRequested = false;
-  const updateProgress = () => {
-    if (!bar) return;
-    const height = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = height > 0 ? (window.scrollY / height) * 100 : 0;
-    bar.style.width = `${Math.min(progress, 100)}%`;
-  };
-
-  const updateReadingState = () => {
-    if (frameRequested) return;
-    frameRequested = true;
-    requestAnimationFrame(() => {
-      updateProgress();
-      updateToc();
-      frameRequested = false;
-    });
-  };
-
-  tocLinks.forEach((link) => {
-    link.addEventListener('click', () => setActiveTocLink(link));
-  });
-
-  updateReadingState();
-  document.addEventListener('scroll', updateReadingState, { passive: true });
-  window.addEventListener('resize', updateReadingState, { passive: true });
+  }
 </script>

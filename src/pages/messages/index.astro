@@ -6,7 +6,7 @@ const sortedMessages = [...messages].sort((a, b) => b.date.localeCompare(a.date)
 const formatMessageDate = (date: string) => date.replaceAll('-', '.');
 ---
 
-<PageLayout title="留言栏" description="记录每天偶然想到的一句话。" eyebrow="Daily Fragments">
+<PageLayout title="留言" description="记录每天偶然想到的一句话。">
   <section class="message-board" aria-label="每日留言">
     {
       sortedMessages.length > 0 ? (
@@ -20,7 +20,6 @@ const formatMessageDate = (date: string) => date.replaceAll('-', '.');
         </ol>
       ) : (
         <div class="message-empty">
-          <p class="eyebrow">Waiting For A Thought</p>
           <h2>这里还没有留言</h2>
           <p>第一句话会在这里出现。</p>
         </div>
