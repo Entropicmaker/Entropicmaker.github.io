@@ -2,7 +2,7 @@
 
 一个面向长期知识积累的中文静态博客，使用 Astro、TypeScript、Markdown / MDX 与 Content Collections 构建。无需数据库或后台，推送到 GitHub 的 `main` 分支后可自动发布到 GitHub Pages。
 
-日常使用请先看 [03教程](03教程/00-从这里开始.md)，平板阅读可使用 [合并版维护手册](03教程/博客维护手册-平板阅读版.md)。2026-11-09 的 v012 已在本地源码完成目录重构与原主站配色恢复，见 [结构与维护说明](docs/READABILITY_REDESIGN.md)。已发布到 https://lingeocs.com/；旧静态示意仅保留为历史记录。
+日常使用请先看 [03教程](03教程/00-从这里开始.md)，平板阅读可使用 [合并版维护手册](03教程/博客维护手册-平板阅读版.md)。2026-11-09 的阅读版式支持持续新增文章、自动目录与搜索分页，沿用原主站配色，见 [结构与维护说明](docs/READABILITY_REDESIGN.md)。已发布到 https://lingeocs.com/；旧静态示意仅保留为历史记录。
 
 博客与 CodeVision Lab 已解除导航和品牌关联，两个仓库继续独立维护、部署；不再维护站群清单。
 
@@ -78,7 +78,7 @@ flowchart LR
 - 站点名称、作者、简介、邮箱与 GitHub 地址：`src/data/site.ts`；
 - 社交分享图：`public/og.png`；
 - 分类说明：`src/data/categories.ts`；
-- 项目卡片：`src/data/projects.ts`；
+- 项目数据：`src/data/projects.ts`；当前为空，有真实项目后自动恢复导航入口；
 - 首页与文章分组目录：`src/pages/index.astro`、`src/components/ArticleIndex.astro`；
 - 颜色与排版：`src/styles/global.css` 顶部的 CSS 变量。
 

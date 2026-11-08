@@ -102,3 +102,41 @@ test('introductory h2 stays h2 before later top-level parts', () => {
     [2, 2, 3]
   );
 });
+
+test('every search result remains reachable as the collection grows', async () => {
+  const { paginateResults } = await import('../src/utils/pagination.ts');
+  const { searchEntries } = await import('../src/utils/search.ts');
+  for (const count of [0, 1, 5, 20, 21, 65, 205]) {
+    const entries = Array.from({ length: count }, (_, i) => ({
+      title: `遥感笔记 ${i}`,
+      description: 'growth sample',
+      text: '遥感方法',
+      url: `/posts/sample-${i}/`
+    }));
+    const matches = searchEntries(entries, '遥感');
+    const first = paginateResults(matches);
+    const urls = Array.from({ length: first.totalPages }, (_, i) =>
+      paginateResults(matches, i + 1)
+    ).flatMap((batch) => batch.items.map((entry) => entry.url));
+    assert.equal(first.total, count);
+    assert.deepEqual(
+      urls,
+      entries.map((entry) => entry.url)
+    );
+    assert.equal(new Set(urls).size, count);
+  }
+});
+test('invalid and stale search page numbers resolve to available pages', async () => {
+  const { paginateResults } = await import('../src/utils/pagination.ts');
+  const entries = Array.from({ length: 21 }, (_, i) => i);
+  for (const page of [-1, 0, NaN, Infinity]) assert.equal(paginateResults(entries, page).page, 1);
+  assert.equal(paginateResults(entries, 999).page, 2);
+  assert.deepEqual(paginateResults(entries, 2).items, [20]);
+  assert.equal(paginateResults([], 2).page, 1);
+});
+test('search return preserves the result page as well as the query', () => {
+  assert.deepEqual(getReturnDestination(article('/search/?q=Vcmax&page=4')), {
+    href: '/search/?q=Vcmax&page=4',
+    label: '返回搜索结果'
+  });
+});

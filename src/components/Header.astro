@@ -1,7 +1,11 @@
 ---
 import { navigation, siteConfig } from '../data/site';
+import { projects } from '../data/projects';
 import { withBase } from '../utils/site';
 const currentPath = Astro.url.pathname;
+const visibleNavigation = navigation.filter(
+  (item) => item.href !== '/projects/' || projects.length > 0
+);
 const isActive = (href: string) =>
   currentPath.startsWith(withBase(href)) ||
   (href === '/posts/' && currentPath.startsWith(withBase('/tags/')));
@@ -13,7 +17,7 @@ const isActive = (href: string) =>
     >
     <nav class="site-nav" aria-label="主导航">
       {
-        navigation.map((item) => (
+        visibleNavigation.map((item) => (
           <a href={withBase(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
             {item.label}
           </a>

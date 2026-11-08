@@ -4,8 +4,16 @@ import ProjectCard from '../../components/ProjectCard.astro';
 import { projects } from '../../data/projects';
 ---
 
-<PageLayout title="项目" description="作品、实验与研究记录。">
-  <div class="project-grid">
-    {projects.map((project) => <ProjectCard project={project} />)}
-  </div>
+<PageLayout title="项目" description={projects.length ? '作品、实验与研究记录。' : undefined}>
+  {
+    projects.length > 0 ? (
+      <div class="project-grid">
+        {projects.map((project) => (
+          <ProjectCard project={project} />
+        ))}
+      </div>
+    ) : (
+      <p class="empty-note">暂无公开项目。</p>
+    )
+  }
 </PageLayout>

@@ -1,0 +1,12 @@
+{
+  "baseline": 5,
+  "extra": 65,
+  "expected": 70,
+  "directories": "all entries present and correctly grouped",
+  "archive": "all entries present",
+  "tagIndex": "all 65 fixture entries present",
+  "rss": "all entries present",
+  "draft": "excluded",
+  "productionFixtures": 0,
+  "projectPlaceholders": 0
+}

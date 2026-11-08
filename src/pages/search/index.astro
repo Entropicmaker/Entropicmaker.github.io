@@ -17,16 +17,22 @@ import PageLayout from '../../layouts/PageLayout.astro';
     </form>
     <p class="search-status" id="search-status" aria-live="polite">输入关键词开始搜索。</p>
     <div class="search-results" id="search-results"></div>
+    <nav class="search-pagination" id="search-pagination" aria-label="搜索结果分页" hidden></nav>
   </section>
 </PageLayout>
 
 <script>
   import { searchEntries, type SearchEntry } from '../../utils/search';
+  import { paginateResults } from '../../utils/pagination';
   const base = import.meta.env.BASE_URL;
   const form = document.querySelector<HTMLFormElement>('#search-form');
   const input = document.querySelector<HTMLInputElement>('#search-input');
   const status = document.querySelector<HTMLElement>('#search-status');
   const container = document.querySelector<HTMLElement>('#search-results');
+  const pager = document.querySelector<HTMLElement>('#search-pagination');
+  type SearchMatch = {
+    data: () => Promise<{ meta: { title: string }; url: string; excerpt: string }>;
+  };
   let indexPromise: Promise<SearchEntry[]> | undefined;
   let generation = 0;
 
@@ -44,10 +50,23 @@ import PageLayout from '../../layouts/PageLayout.astro';
     target.searchParams.set('from', source.pathname + source.search);
     return escapeHtml(target.pathname + target.search + target.hash);
   };
-  const runSearch = async (query: string) => {
+  const searchUrl = (query: string, page: number) => {
+    const url = new URL(window.location.href);
+    url.hash = '';
+    if (query) url.searchParams.set('q', query);
+    else url.searchParams.delete('q');
+    if (page > 1) url.searchParams.set('page', String(page));
+    else url.searchParams.delete('page');
+    return url.pathname + url.search;
+  };
+  const runSearch = async (query: string, requestedPage = 1) => {
     const request = ++generation;
     if (!status || !container) return;
     container.innerHTML = '';
+    if (pager) {
+      pager.hidden = true;
+      pager.innerHTML = '';
+    }
     if (!query.trim()) {
       status.textContent = '输入关键词开始搜索。';
       return;
@@ -55,21 +74,14 @@ import PageLayout from '../../layouts/PageLayout.astro';
     status.textContent = '正在搜索…';
     try {
       let results: { title: string; url: string; excerpt: string }[] = [];
-      let count = 0;
+      let pagination = { page: 1, totalPages: 1, total: 0 };
       if (!/[\u3400-\u9fff]/.test(query)) {
         try {
           const pagefind = await import(/* @vite-ignore */ `${base}pagefind/pagefind.js`);
           const search = await pagefind.search(query);
-          count = search.results.length;
-          const matches = await Promise.all(
-            search.results
-              .slice(0, 20)
-              .map(
-                (result: {
-                  data: () => Promise<{ meta: { title: string }; url: string; excerpt: string }>;
-                }) => result.data()
-              )
-          );
+          const batch = paginateResults<SearchMatch>(search.results, requestedPage);
+          pagination = batch;
+          const matches = await Promise.all(batch.items.map((result) => result.data()));
           results = matches.map((result) => ({
             title: result.meta.title || '无标题',
             url: result.url,
@@ -90,13 +102,25 @@ import PageLayout from '../../layouts/PageLayout.astro';
             throw error;
           });
         const matches = searchEntries(await indexPromise, query);
-        count = matches.length;
-        results = matches
-          .slice(0, 20)
-          .map((result) => ({ ...result, excerpt: escapeHtml(result.excerpt) }));
+        const batch = paginateResults(matches, requestedPage);
+        pagination = batch;
+        results = batch.items.map((result) => ({ ...result, excerpt: escapeHtml(result.excerpt) }));
       }
       if (request !== generation) return;
-      status.textContent = `找到 ${count} 条结果。`;
+      history.replaceState(null, '', searchUrl(query, pagination.page));
+      status.textContent = `找到 ${pagination.total} 条结果。`;
+      if (pager && pagination.totalPages > 1) {
+        pager.innerHTML = [
+          pagination.page > 1
+            ? `<a rel="prev" href="${escapeHtml(searchUrl(query, pagination.page - 1))}">上一页</a>`
+            : '',
+          `<span>第 ${pagination.page} / ${pagination.totalPages} 页</span>`,
+          pagination.page < pagination.totalPages
+            ? `<a rel="next" href="${escapeHtml(searchUrl(query, pagination.page + 1))}">下一页</a>`
+            : ''
+        ].join('');
+        pager.hidden = false;
+      }
       container.innerHTML = results
         .map(
           (result) => `
@@ -114,13 +138,12 @@ import PageLayout from '../../layouts/PageLayout.astro';
   form?.addEventListener('submit', (event) => {
     event.preventDefault();
     const query = input?.value || '';
-    const url = new URL(window.location.href);
-    if (query) url.searchParams.set('q', query);
-    else url.searchParams.delete('q');
-    history.replaceState(null, '', url);
+    history.replaceState(null, '', searchUrl(query, 1));
     void runSearch(query);
   });
-  const initial = new URLSearchParams(window.location.search).get('q') || '';
+  const params = new URLSearchParams(window.location.search);
+  const initial = params.get('q') || '';
+  const initialPage = Number(params.get('page')) || 1;
   if (input) input.value = initial;
-  if (initial) void runSearch(initial);
+  if (initial) void runSearch(initial, initialPage);
 </script>
