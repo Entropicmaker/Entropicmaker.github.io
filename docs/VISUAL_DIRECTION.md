@@ -2,7 +2,7 @@
 
 2026-11-09：按用户最新要求恢复原主站颜色设计。全站默认采用灰绿浅底、深青正文、苔绿的“地理”标题强调与暖棕点缀；沿用旧首页的淡绿径向背景及导航颜色关系。停止按系统或旧 localStorage 自动切换深色。分组目录与紧凑阅读布局保持；v013 支持搜索分页并清空占位项目。
 
-具体结构见 [READABILITY_REDESIGN.md](READABILITY_REDESIGN.md)，恢复快照见 [VISUAL_VERSIONS.md](VISUAL_VERSIONS.md)。v012 已上线，部署提交 `88471f3`，恢复标签 `blog-v012-20261109`。下文为旧版历史设计记录。
+具体结构见 [READABILITY_REDESIGN.md](READABILITY_REDESIGN.md)，恢复快照见 [VISUAL_VERSIONS.md](VISUAL_VERSIONS.md)。v013 已上线，部署提交 `4a9c04b`，恢复标签 `blog-v013-20261109`。下文为旧版历史设计记录。
 
 ---
 
