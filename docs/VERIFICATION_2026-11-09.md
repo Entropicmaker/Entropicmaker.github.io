@@ -1,3 +1,16 @@
+# v012 已上线 · 2026-11-09
+
+- 通过本机 Clash `127.0.0.1:7897` 上传，未修改全局代理配置。
+- 主站提交 `88471f3`，[构建和部署成功](https://github.com/Entropicmaker/Entropicmaker.github.io/actions/runs/42505993220)。
+- 线上 `/`、`/posts/`、`/projects/`、`/archive/`、`/messages/`、`/about/`、论文笔记、旧地理分类地址和搜索 JSON 共 9 项返回 200；配色、分组、分类跳转与搜索数据检查通过。
+- CodeVision 提交 `f9462d3`，[构建、部署及 production-smoke 成功](https://github.com/Entropicmaker/codevision-lab/actions/runs/42506001521)。
+- 浏览器工具超时，线上画面复核仍未完成。此次 HTTP 源码检查不替代视觉检查。
+- 03教程 已随主仓库上传；未上传 Linote。
+
+以下保留发布前的验证记录。
+
+---
+
 # v012 配色恢复验证 · 2026-11-09
 
 本地恢复原主站的浅色背景、标题强调和导航颜色关系。原有分组目录与文章结构不变，尚未上线。

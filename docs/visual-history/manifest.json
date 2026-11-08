@@ -64,7 +64,7 @@
       "recordedDate": "2026-10-15"
     }
   ],
-  "productionVersion": "v010",
+  "productionVersion": "v012",
   "productionReleases": [
     {
       "id": "v005",
@@ -381,6 +381,208 @@
         "checksFile": "v010-motion-check.json",
         "checksSha256": "e195339e2d728f3bb7b833900b813fd73f90eae335f524c98193a76535fd6baa"
       }
+    },
+    {
+      "id": "v012",
+      "parent": "v011",
+      "name": "恢复原主站颜色设计",
+      "recordedDate": "2026-11-09",
+      "status": "deployed",
+      "file": "v012-original-colors-source.tar.gz",
+      "sha256": "ca97bb86c628660e47cacb7174ac9917040d3b4eb23b9030a79c123eb5142df4",
+      "bytes": 4397309,
+      "sourceFiles": [
+        {
+          "path": "src/components/ArticleIndex.astro",
+          "sha256": "bda4e6d5a78f6079261e01da705def26dcdb03549492a499db7f3dbf1db0eac4"
+        },
+        {
+          "path": "src/components/Breadcrumb.astro",
+          "sha256": "767c6cc53a40f082ad936144b3d9b8e943c957c1b1f426b61c10278d7d6d1969"
+        },
+        {
+          "path": "src/components/Footer.astro",
+          "sha256": "68173f312d54d3ecb93e42bf6b66c6774ba14af36f998b50c10ddc3e55acb57f"
+        },
+        {
+          "path": "src/components/Header.astro",
+          "sha256": "36182c24dd74b0219f8a2f6ea1f34a782e3e59f83aed0bdfe96ec6bd3476f9bc"
+        },
+        {
+          "path": "src/components/IndexRedirect.astro",
+          "sha256": "4ade69f937601ec599ef99be72afd3f650e24b07a495f26b9db67318d8bb6b5d"
+        },
+        {
+          "path": "src/components/MermaidRenderer.astro",
+          "sha256": "de92bdf93d6c2e75edeaeb4abf8e9ef687006a17badc5ff6b5341982d6ad8f19"
+        },
+        {
+          "path": "src/components/PostList.astro",
+          "sha256": "68017b2a857823c9aab9912c390289cde2e27dd2465b920efc0c5ef94e131017"
+        },
+        {
+          "path": "src/components/ProjectCard.astro",
+          "sha256": "5924f0f5de42b42508832e46e4ce44b27ccaad7dc51a06431d30b9dc498a3f78"
+        },
+        {
+          "path": "src/components/SlideDeck.astro",
+          "sha256": "b18092070395ecd08aa15b74baacdf13b5640ca7a34a607dd5baf4d3ecdb2697"
+        },
+        {
+          "path": "src/content/posts/26-summer-paper-glossary.md",
+          "sha256": "bbdee56ccb1b578c109bfb180281aa9ca94f9493f6b3f62e5889f6f60182fc86"
+        },
+        {
+          "path": "src/content/posts/blog-diary-01.md",
+          "sha256": "98bae1d58bfde80d926bf07e1f7cff7cad3d889602f9e0c87ee7d942921f5801"
+        },
+        {
+          "path": "src/content/posts/how-to-read-a-paper.md",
+          "sha256": "c07670aa00740ab65170104290b35b4bfc3946ebde82dd4e5e913fe774f848f1"
+        },
+        {
+          "path": "src/content/posts/photosynthesis-vcmax-courseware.mdx",
+          "sha256": "9bea57755a2b6f6b28f03d0f70e1873f43ffef1c83edf94528aeeb478c2c45f3"
+        },
+        {
+          "path": "src/content/posts/vacation-diary.md",
+          "sha256": "529f49130d877baa924179a1135813c045a42c0e23a93876ab3b06bd393d8295"
+        },
+        {
+          "path": "src/content.config.ts",
+          "sha256": "98975f7b34b73937ccdbd101fb224d36f0987ae5d7f05769879a1ad84a5638a2"
+        },
+        {
+          "path": "src/data/categories.ts",
+          "sha256": "2a48cf08bc8164ab9d5c8a2bfb3379042008cb911e574bc9aa9ef243ec03bfaf"
+        },
+        {
+          "path": "src/data/courseware-vcmax.ts",
+          "sha256": "501011d4ca10766bcbd32d8b5b9d3ed70d75504332a135bb3db034f4ee61a0aa"
+        },
+        {
+          "path": "src/data/messages.ts",
+          "sha256": "2c5efd0d37dd50d7316f159cdde6d371432e1cc3600499741d2aaa81a62c4fcd"
+        },
+        {
+          "path": "src/data/projects.ts",
+          "sha256": "dabb0f85828dadea5818cbee1f35949bb952a16c23b0a1c394bfecd0024f0dcc"
+        },
+        {
+          "path": "src/data/site.ts",
+          "sha256": "7bc283775d618d09273d6f16f3e949fc53cb4ac265e0d20849dc1e11bb834d0a"
+        },
+        {
+          "path": "src/env.d.ts",
+          "sha256": "9c9283a414423d9223e5ea86941b142443b8af7a007f77612dc2c098de2d2500"
+        },
+        {
+          "path": "src/layouts/BaseLayout.astro",
+          "sha256": "139b4bfca48d011488897caf6b95fb4c1f28ec1e14acd14f50810203bf43c7c9"
+        },
+        {
+          "path": "src/layouts/PageLayout.astro",
+          "sha256": "7d40c49ef7064da9c8ca6f2768b177ade449864df8d1c5ca02907f4d8d8fa9ff"
+        },
+        {
+          "path": "src/pages/404.astro",
+          "sha256": "89b8980412ecf6eeb0fc5fc9cbae0021da70d7f56fe35f4feed0dd05cd24b00d"
+        },
+        {
+          "path": "src/pages/about/index.astro",
+          "sha256": "606d6e15cf5c8ab16dd5c3df2d228f0d0747b257f66b2a67ad782b73513c395c"
+        },
+        {
+          "path": "src/pages/archive/index.astro",
+          "sha256": "330f9d7b10147a952bce138f86e03d89bb18443d922f320bc56b435e2c737984"
+        },
+        {
+          "path": "src/pages/categories/[category].astro",
+          "sha256": "9b1ac2ad10db65aad4b6386e83df5140e8f2362814665eba4a135335be83125d"
+        },
+        {
+          "path": "src/pages/categories/index.astro",
+          "sha256": "0736cd4e385dbe97a1e6e6073ac5625e29ae431305e0f197ae881fe212cef0c4"
+        },
+        {
+          "path": "src/pages/index.astro",
+          "sha256": "e327de352164fc3b26ad9714395b35214f27cdeaa4217cc58ef9b1ee4d367cec"
+        },
+        {
+          "path": "src/pages/messages/index.astro",
+          "sha256": "83944d43375a647fd6d8eb639cc0097d116f7ea5cb2cea3eb9b4b15dc3a4dcf8"
+        },
+        {
+          "path": "src/pages/posts/[...slug].astro",
+          "sha256": "eede88f910c868547b7f35f4e7bc4c83c701d0bd18647b7ce501ff05f9435f5e"
+        },
+        {
+          "path": "src/pages/posts/index.astro",
+          "sha256": "a2a0a09c51d087d6039d9db8b53787337dd685c646461467858e302ad69e5447"
+        },
+        {
+          "path": "src/pages/projects/index.astro",
+          "sha256": "f7bd0bffadf7564fd8b92e3f5d501b31527a55e60080042c2d983b3bc3a48b3b"
+        },
+        {
+          "path": "src/pages/rss.xml.ts",
+          "sha256": "c0b6b3088d655aff2d4c9328ff197695ce357596ffbe1244b789d270b040cd8d"
+        },
+        {
+          "path": "src/pages/search/index.astro",
+          "sha256": "7ae839fd9902a102223955a04d408388a48dbc107f432303e3a0335293b033ec"
+        },
+        {
+          "path": "src/pages/search-index.json.ts",
+          "sha256": "fef5e9b2713071734fcf7c6b8036e06007a914d7a9cc58a5f1b37c0ba41ed537"
+        },
+        {
+          "path": "src/pages/tags/[tag].astro",
+          "sha256": "dedf572c31f1b84700f491d9665727ccefabc6c69f8e636279780e8b5f5dac45"
+        },
+        {
+          "path": "src/pages/tags/index.astro",
+          "sha256": "80ec24b8032f38ae29a36eb62015a2260aa9b95cafb51c845a42685745abbc03"
+        },
+        {
+          "path": "src/styles/article-widgets.css",
+          "sha256": "74efac29d3f1b0128a845929def8a352419259d81f4d0930f9222543b12e6fc4"
+        },
+        {
+          "path": "src/styles/global.css",
+          "sha256": "054ddd1d5c413718a882003d1059f1dd1ba20b892d8a052d5df47bb403dd13d1"
+        },
+        {
+          "path": "src/utils/navigation.ts",
+          "sha256": "2ee7f5ae4819784311e6b786e7aad49e000d89bbc6e5fb128726ed26b65b6a6f"
+        },
+        {
+          "path": "src/utils/posts.ts",
+          "sha256": "65cdda9f2493aa165c860b6824227219fced913a2e6ad4eb93e185d435b7ebb4"
+        },
+        {
+          "path": "src/utils/remark-article-headings.mjs",
+          "sha256": "7187fbbce3e651b3baae29d4cba0b02e0f93c1be8b372544b355236458d4c1d2"
+        },
+        {
+          "path": "src/utils/search.ts",
+          "sha256": "0bc05dd464a554e85a57cf00cd64b3adbda3a3d45c15324a38a5f2e8ed253582"
+        },
+        {
+          "path": "src/utils/site.ts",
+          "sha256": "d30c735d142811cefb22619204fad3fb175b4d9bef88953ef9a13087efb52d3a"
+        }
+      ],
+      "validation": {
+        "typecheck": "passed",
+        "build": "passed",
+        "originalLightTheme": "restored",
+        "browserVisualReview": "unavailable-browser-timeout"
+      },
+      "commit": "88471f3735eeffb314c091990738b8a5bf2656f8",
+      "tag": "blog-v012-20261109",
+      "deploymentUrl": "https://github.com/Entropicmaker/Entropicmaker.github.io/actions/runs/42505993220",
+      "site": "https://lingeocs.com/"
     }
   ],
   "localVersion": "v012",
@@ -618,7 +820,7 @@
       "parent": "v011",
       "name": "恢复原主站颜色设计",
       "recordedDate": "2026-11-09",
-      "status": "local-not-deployed",
+      "status": "deployed",
       "file": "v012-original-colors-source.tar.gz",
       "sha256": "ca97bb86c628660e47cacb7174ac9917040d3b4eb23b9030a79c123eb5142df4",
       "bytes": 4397309,
@@ -809,7 +1011,11 @@
         "build": "passed",
         "originalLightTheme": "restored",
         "browserVisualReview": "unavailable-browser-timeout"
-      }
+      },
+      "commit": "88471f3735eeffb314c091990738b8a5bf2656f8",
+      "tag": "blog-v012-20261109",
+      "deploymentUrl": "https://github.com/Entropicmaker/Entropicmaker.github.io/actions/runs/42505993220",
+      "site": "https://lingeocs.com/"
     }
   ]
 }
